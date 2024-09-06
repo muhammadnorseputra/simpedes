@@ -59,17 +59,24 @@
 										<p class="mb-0">Silahkan login dengan akun desa anda.</p>
 									</div>
 									<div class="form-body">
-										<?= form_open("", ["class" => 'row g-3 needs-validation', 'novalidate' => '']) ?>
+										<div id="message"></div>
+										<?= form_open(base_url("auth/action"), ["id" => "formAuth", "class" => 'row g-3 needs-validation', 'novalidate' => '']) ?>
 											<div class="col-12">
-											<div class="form-floating  isInvalid">
-  <input type="text" class="form-control" id="floatingInput" placeholder="Masukan username">
-  <label for="floatingInput">Username</label>
-</div>
+											<div class="form-floating">
+												<input type="text" required minlength="3" name="username" value="<?= set_value('username') ?>" class="form-control" id="floatingInputUsername" placeholder="Masukan username">
+												<label for="floatingInputUsername">Username</label>
+												<div id="floatingInputUsername" class="invalid-feedback">
+													Please choose a username.
+												</div>
+											</div>
 											</div>
 											<div class="col-12">
 												<label for="inputChoosePassword" class="form-label">Password</label>
 												<div class="input-group" id="show_hide_password">
-													<input type="password" class="form-control form-control-lg border-end-1" id="inputChoosePassword" placeholder="Masukan Password"> <a href="javascript:;" class="input-group-text bg-transparent"><i class="bx bx-hide"></i></a>
+													<input type="password" required name="password" class="form-control form-control-lg border-end-1" id="inputChoosePassword" placeholder="Masukan Password"> <a href="javascript:;" class="input-group-text bg-transparent"><i class="bx bx-hide"></i></a>
+													<div id="floatingInputUsername" class="invalid-feedback">
+														Please choose a password.
+													</div>
 												</div>
 											</div>
 											<div class="col-md-6">
@@ -82,7 +89,7 @@
 												</div>
 											</div>
 											<div class="col-12">
-												<p class="text-center text-secondary">&copy; Dikembangkan oleh Badan Kepegawaian dan Pengembangan Sumber Daya Manusia - 2024</p>
+												<p class="text-center text-secondary">&copy; Dikembangkan oleh TIM PPIK . 2024 - <?= date('Y') ?></p>
 												<p class="text-center">Version <?= $config->siteVersion ?></p>
 											</div>
 										<?= form_close() ?>
@@ -134,6 +141,38 @@
 					$('#show_hide_password i').addClass("bx-show");
 				}
 			});
+
+			$("form#formAuth").on("submit", function(event) {
+				event.preventDefault();
+				let _ = $(this)
+				$containerMsg = $("#message"),
+				$url = _.attr('action'),
+				$data = _.serialize(),
+				$method = _.attr('method');
+
+				if (!this.checkValidity()) {
+					event.preventDefault()
+					event.stopPropagation()
+				}
+				this.classList.add('was-validated')
+				$.ajax({
+					url: $url,
+					method: $method,
+					data: $data,
+					success: function (res) {
+						$containerMsg.attr("class", "alert alert-danger").html(res.message);
+						if(res.status === true) {
+							$containerMsg.attr("class", "alert alert-success").html(res.message);
+							setTimeout(function() {
+								window.location.href = res.data.redirect
+							}, 1000)
+						}
+					},
+					error: function(err) {
+						$containerMsg.attr("class", "alert alert-danger").html(err.message);
+					}
+				})
+			})
 		});
 	</script>
 </body>

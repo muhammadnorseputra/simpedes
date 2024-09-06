@@ -8,10 +8,9 @@ class Dashboard extends BaseController
         $config = config('SiteConfig');
         $data = [
             'title' => 'Dashboard - Simpedes Kab. Balangan',
-            'content' => 'backend/pages/dashboard',
             'config' => $config
         ];
-        return view('backend/layouts/app', $data);
+        return view('backend/pages/dashboard', $data);
     }
 }
 
