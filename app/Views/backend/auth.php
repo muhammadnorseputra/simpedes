@@ -197,7 +197,7 @@
 							msg: err.message,
 							size: 'mini',
 						});
-					}
+					},
 				})
 			})
 		});
