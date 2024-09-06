@@ -8,9 +8,7 @@
 	<!--favicon-->
 	<link rel="icon" href="<?= base_url("assets/images/app/logo.png") ?>" type="image/png" />
 	<!--plugins-->
-	<link href="<?= base_url("template/vertical/plugins/simplebar/css/simplebar.css") ?>" rel="stylesheet" />
-	<link href="<?= base_url("template/vertical/plugins/perfect-scrollbar/css/perfect-scrollbar.css") ?>" rel="stylesheet" />
-	<link href="<?= base_url("template/vertical/plugins/metismenu/css/metisMenu.min.css") ?>" rel="stylesheet" />
+	<link rel="stylesheet" href="<?= base_url("template/vertical/plugins/notifications/css/lobibox.min.css") ?>" />
 	<!-- loader-->
 	<link href="<?= base_url("template/vertical/css/pace.min.css") ?>" rel="stylesheet" />
 	<script src="<?= base_url("template/vertical/js/pace.min.js") ?>"></script>
@@ -123,9 +121,8 @@
 	<script src="<?= base_url("template/vertical/js/bootstrap.bundle.min.js") ?>"></script>
 	<!--plugins-->
 	<script src="<?= base_url("template/vertical/js/jquery.min.js") ?>"></script>
-	<script src="<?= base_url("template/vertical/plugins/simplebar/js/simplebar.min.js") ?>"></script>
-	<script src="<?= base_url("template/vertical/plugins/metismenu/js/metisMenu.min.js") ?>"></script>
-	<script src="<?= base_url("template/vertical/plugins/perfect-scrollbar/js/perfect-scrollbar.js") ?>"></script>
+	<script src="<?= base_url("template/vertical/plugins/notifications/js/lobibox.min.js") ?>"></script>
+	<script src="<?= base_url("template/vertical/plugins/notifications/js/notifications.min.js") ?>"></script>
 	<!--Password show & hide js -->
 	<script>
 		$(document).ready(function () {
@@ -160,16 +157,46 @@
 					method: $method,
 					data: $data,
 					success: function (res) {
-						$containerMsg.attr("class", "alert alert-danger").html(res.message);
+						// $containerMsg.attr("class", "alert alert-danger").html(res.message);
+						if(res.status !== true) {
+
+							Lobibox.notify('error', {
+								pauseDelayOnHover: true,
+								rounded: true,
+								continueDelayOnInactiveTab: false,
+								position: 'top center',
+								icon: 'bx bx-x-circle',
+								msg: res.message,
+								size: 'mini',
+							});
+						}
 						if(res.status === true) {
-							$containerMsg.attr("class", "alert alert-success").html(res.message);
+							// $containerMsg.attr("class", "alert alert-success").html(res.message);
+							Lobibox.notify('success', {
+								pauseDelayOnHover: true,
+								rounded: true,
+								continueDelayOnInactiveTab: false,
+								position: 'top center',
+								icon: 'bx bx-check-circle',
+								msg: res.message,
+								size: 'mini',
+							});
 							setTimeout(function() {
 								window.location.href = res.data.redirect
 							}, 1000)
 						}
 					},
 					error: function(err) {
-						$containerMsg.attr("class", "alert alert-danger").html(err.message);
+						// $containerMsg.attr("class", "alert alert-danger").html(err.message);
+						Lobibox.notify('error', {
+							pauseDelayOnHover: true,
+							rounded: true,
+							continueDelayOnInactiveTab: false,
+							position: 'top center',
+							icon: 'bx bx-x-circle',
+							msg: err.message,
+							size: 'mini',
+						});
 					}
 				})
 			})
