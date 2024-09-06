@@ -20,7 +20,7 @@
 	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
 	<link href="<?= base_url("template/vertical/css/app.css") ?>" rel="stylesheet">
 	<link href="<?= base_url("template/vertical/css/icons.css") ?>" rel="stylesheet">
-	<title>SIMPEDES - Sistem Informasi Manajemen Pemerintah Desa Kab. Balangan</title>
+	<title><?= $config->siteSortName ?> - <?= $config->siteDesc ?></title>
 </head>
 
 <body class="">
@@ -38,12 +38,11 @@
                         <div class="card bg-transparent shadow-none">
                             <div class="card-header">
                                 <div class="card-title text-center">
-                                    <h2 class="text-white">Sistem Informasi Manajemen Pemerintah Desa</h2>
+                                    <h2 class="text-white"><?= $config->siteName ?></h2>
                                 </div>
                             </div>
                             <div class="card-body text-white text-center fs-5">
-                                Selamat Datang pada Portal Informasi Desa Kabupaten Balangan Tahun <?= date('Y') ?> <br/>
-                                Layanan terpadu yang dikelola oleh Dinas Pemberdayaan Masyarakat dan Desa.
+								<?= $config->siteDesc ?>
                             </div>
                         </div>
                     </div>
@@ -82,6 +81,10 @@
 													<button type="submit" class="btn btn-lg btn-primary">Masuk</button>
 												</div>
 											</div>
+											<div class="col-12">
+												<p class="text-center text-secondary">&copy; Dikembangkan oleh Badan Kepegawaian dan Pengembangan Sumber Daya Manusia - 2024</p>
+												<p class="text-center">Version <?= $config->siteVersion ?></p>
+											</div>
 										<?= form_close() ?>
 									</div>
 								</div>
@@ -104,7 +107,7 @@
                 </div>
                 <div class="modal-body">Jika anda lupa password, silahkan hubungi admin desa untuk melakukan reset password operator.</div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary">OK</button>
+                    <button type="button" data-bs-dismiss="modal" aria-label="Oke" class="btn btn-primary">OKE</button>
                 </div>
             </div>
         </div>

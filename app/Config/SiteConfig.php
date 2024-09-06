@@ -3,10 +3,14 @@
 namespace Config;
 
 use CodeIgniter\Config\BaseConfig;
+use CodeIgniter\CodeIgniter;
 
-class MyConfig extends BaseConfig
+class SiteConfig extends BaseConfig
 {
-    //
-    public $siteName = 'Belajar CI4';
-    public $siteDesc = 'Bismillah dulu lah mudahan lancar.';
+    // Site Info
+    public $siteSortName = "SIMPEDES";
+    public $siteName = "Sistem Informasi Manajemen Pemerintah Desa";
+    public $siteDesc = "Selamat Datang pada Portal Informasi Desa Kabupaten Balangan <br/> Layanan terpadu yang dikelola oleh Dinas Pemberdayaan Masyarakat dan Desa.";
+    // App Info
+    public $siteVersion = CodeIgniter::CI_VERSION;
 }

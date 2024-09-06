@@ -5,5 +5,9 @@ use CodeIgniter\Router\RouteCollection;
 /**
  * @var RouteCollection $routes
  */
-$routes->get('/', 'Auth::index');
-$routes->get('/dashboard', 'Dashboard::index');
+
+$routes->group('auth', static function ($routes) {
+    $routes->get('/', 'Auth::index');
+});
+
+
