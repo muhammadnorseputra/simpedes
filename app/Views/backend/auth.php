@@ -87,7 +87,7 @@
 												</div>
 											</div>
 											<div class="col-12">
-												<p class="text-center text-secondary">&copy; Dikembangkan oleh TIM PPIK . 2024 - <?= date('Y') ?></p>
+												<p class="text-center text-secondary">&copy; Dikembangkan oleh PPIK . 2024 - <?= date('Y') ?></p>
 												<p class="text-center">Version <?= $config->siteVersion ?></p>
 											</div>
 										<?= form_close() ?>
@@ -124,6 +124,7 @@
 	<script src="<?= base_url("template/vertical/plugins/notifications/js/lobibox.min.js") ?>"></script>
 	<script src="<?= base_url("template/vertical/plugins/notifications/js/notifications.min.js") ?>"></script>
 	<!--Password show & hide js -->
+	<script src="<?= base_url("assets/js/notification.js") ?>"></script>
 	<script>
 		$(document).ready(function () {
 			$("#show_hide_password a").on('click', function (event) {
@@ -158,45 +159,20 @@
 					data: $data,
 					success: function (res) {
 						// $containerMsg.attr("class", "alert alert-danger").html(res.message);
+						
 						if(res.status !== true) {
-
-							Lobibox.notify('error', {
-								pauseDelayOnHover: true,
-								rounded: true,
-								continueDelayOnInactiveTab: false,
-								position: 'top center',
-								icon: 'bx bx-x-circle',
-								msg: res.message,
-								size: 'mini',
-							});
+							NotifError(res.message)
 						}
 						if(res.status === true) {
 							// $containerMsg.attr("class", "alert alert-success").html(res.message);
-							Lobibox.notify('success', {
-								pauseDelayOnHover: true,
-								rounded: true,
-								continueDelayOnInactiveTab: false,
-								position: 'top center',
-								icon: 'bx bx-check-circle',
-								msg: res.message,
-								size: 'mini',
-							});
+							NotifSuccess(res.message)
 							setTimeout(function() {
 								window.location.href = res.data.redirect
 							}, 1000)
 						}
 					},
 					error: function(err) {
-						// $containerMsg.attr("class", "alert alert-danger").html(err.message);
-						Lobibox.notify('error', {
-							pauseDelayOnHover: true,
-							rounded: true,
-							continueDelayOnInactiveTab: false,
-							position: 'top center',
-							icon: 'bx bx-x-circle',
-							msg: err.message,
-							size: 'mini',
-						});
+						NotifError(`${err.statusText} (${err.status})`)
 					},
 				})
 			})

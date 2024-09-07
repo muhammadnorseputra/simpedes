@@ -1,0 +1,5 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/bkpsdm/public_html/simpedes
+    - /bin/cp -R public/* $DEPLOYPATH
