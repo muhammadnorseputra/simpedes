@@ -5,5 +5,5 @@
 		<!--End Back To Top Button-->
         
 <footer class="page-footer">
-			<p class="mb-0">Copyright © <?= date('Y') ?> SIMPEDES Version <?= $config->siteVersion ?> - All right reserved. Page rendered in {elapsed_time} seconds</p>
+			<p class="mb-0">Copyright © <?= date('Y') ?> SIMPEDES Version <?= config('SiteConfig')->siteVersion ?> - All right reserved. Page rendered in {elapsed_time} seconds</p>
 		</footer>

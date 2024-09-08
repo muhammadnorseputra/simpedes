@@ -27,10 +27,76 @@
 				
 				<li class="menu-label">Pegawai</li>
 				<li>
-					<a href="widgets.html">
-						<div class="parent-icon"><i class='bx bx-cookie'></i>
+					<a href="<?= base_url('app/pegawai/unit_kerja') ?>">
+						<div class="parent-icon"><i class='bx bx-buildings'></i>
 						</div>
 						<div class="menu-title">By Unit Kerja</div>
+					</a>
+				</li>
+
+				<li class="menu-label">Data Master</li>
+				<li>
+					<a href="<?= base_url('app/master/pegawai') ?>">
+						<div class="parent-icon"><i class='bx bx-user-plus'></i>
+						</div>
+						<div class="menu-title">Pegawai</div>
+					</a>
+				</li>
+				<li>
+					<a href="<?= base_url('app/master/jabatan') ?>">
+						<div class="parent-icon"><i class='bx bx-data'></i>
+						</div>
+						<div class="menu-title">Jabatan</div>
+					</a>
+				</li>
+				<li class="menu-label">Referensi</li>
+				<li>
+					<a href="<?= base_url('app/referensi/agama') ?>">
+						<div class="parent-icon"><i class='bx bx-flag'></i>
+						</div>
+						<div class="menu-title">Agama</div>
+					</a>
+				</li>
+				<li>
+					<a href="<?= base_url('app/referensi/kecamatan') ?>">
+						<div class="parent-icon"><i class='bx bx-map'></i>
+						</div>
+						<div class="menu-title">Kecamatan</div>
+					</a>
+				</li>
+				<li>
+					<a href="<?= base_url('app/referensi/desa') ?>">
+						<div class="parent-icon"><i class='bx bx-home-circle'></i>
+						</div>
+						<div class="menu-title">Desa</div>
+					</a>
+				</li>
+				<li>
+					<a href="<?= base_url('app/referensi/jenis_workshop') ?>">
+						<div class="parent-icon"><i class='bx bx-calendar-star'></i>
+						</div>
+						<div class="menu-title">Jenis Workshop</div>
+					</a>
+				</li>
+				<li>
+					<a href="<?= base_url('app/referensi/jurusan_pendidikan') ?>">
+						<div class="parent-icon"><i class='bx bx-book-alt'></i>
+						</div>
+						<div class="menu-title">Jurusan Pendidikan</div>
+					</a>
+				</li>
+				<li>
+					<a href="<?= base_url('app/referensi/rumpun_diklat') ?>">
+						<div class="parent-icon"><i class='bx bx-collection'></i>
+						</div>
+						<div class="menu-title">Rumpun Diklat</div>
+					</a>
+				</li>
+				<li>
+					<a href="<?= base_url('app/referensi/satuan_unit_kerja') ?>">
+						<div class="parent-icon"><i class='bx bx-building'></i>
+						</div>
+						<div class="menu-title">Satuan Unit Kerja</div>
 					</a>
 				</li>
 			</ul>

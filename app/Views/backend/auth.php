@@ -71,7 +71,10 @@
 											<div class="col-12">
 												<label for="inputChoosePassword" class="form-label">Password</label>
 												<div class="input-group" id="show_hide_password">
-													<input type="password" required name="password" class="form-control form-control-lg border-end-1" id="inputChoosePassword" placeholder="Masukan Password"> <a href="javascript:;" class="input-group-text bg-transparent"><i class="bx bx-hide"></i></a>
+													<input type="password" required name="password" class="form-control form-control-lg border-end-1" id="inputChoosePassword" placeholder="Masukan Password"> 
+													<a href="javascript:;" class="input-group-text bg-transparent">
+														<i class="bx bx-hide"></i>
+													</a>
 													<div id="floatingInputUsername" class="invalid-feedback">
 														Please choose a password.
 													</div>

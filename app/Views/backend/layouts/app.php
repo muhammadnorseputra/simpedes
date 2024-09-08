@@ -18,6 +18,11 @@ $colorScheme = implode(" ", [$theme, $color, $sidebarColor])
 	<link href="<?= base_url("template/vertical/plugins/simplebar/css/simplebar.css") ?>" rel="stylesheet" />
 	<link href="<?= base_url("template/vertical/plugins/perfect-scrollbar/css/perfect-scrollbar.css") ?>" rel="stylesheet" />
 	<link href="<?= base_url("template/vertical/plugins/metismenu/css/metisMenu.min.css") ?>" rel="stylesheet" />
+	<link rel="stylesheet" href="<?= base_url("template/vertical/plugins/jquery-toast/iziToast.min.css") ?>"/>
+	<link
+      href="<?= base_url('template/vertical/plugins/jquery-confirm/jquery-confirm.min.css') ?>"
+      rel="stylesheet"
+    />
 	<!-- loader-->
 	<link href="<?= base_url("template/vertical/css/pace.min.css") ?>" rel="stylesheet" />
 	<script src="<?= base_url("template/vertical/js/pace.min.js") ?>"></script>
@@ -32,7 +37,7 @@ $colorScheme = implode(" ", [$theme, $color, $sidebarColor])
 	<link rel="stylesheet" href="<?= base_url("template/vertical/css/semi-dark.css") ?>" />
 	<link rel="stylesheet" href="<?= base_url("template/vertical/css/header-colors.css") ?>" />
 	<!-- Custom CSS -->
-	 <?= $this->renderSection('css'); ?>
+	 <?= $this->renderSection('style'); ?>
 	<title><?= esc($title) ?? 'Administrasi Pemerintahan Desa' ?></title>
 </head>
 
@@ -62,7 +67,7 @@ $colorScheme = implode(" ", [$theme, $color, $sidebarColor])
 		<?= $this->include('backend/layouts/footer'); ?>
 	</div>
 	
-
+	<?= $this->renderSection('modal'); ?>
 	<!-- search modal -->
     <div class="modal" id="SearchModal" tabindex="-1">
 		<div class="modal-dialog modal-dialog-scrollable modal-fullscreen-md-down">
@@ -192,17 +197,23 @@ $colorScheme = implode(" ", [$theme, $color, $sidebarColor])
 		</div>
 	</div>
 	<!--end switcher-->
+
+
 	<!-- Bootstrap JS -->
+	<script src="<?= base_url("assets/js/baseUrl.js") ?>"></script>
 	<script src="<?= base_url("template/vertical/js/bootstrap.bundle.min.js") ?>"></script>
 	<!--plugins-->
 	<script src="<?= base_url("template/vertical/js/jquery.min.js") ?>"></script>
 	<script src="<?= base_url("template/vertical/plugins/simplebar/js/simplebar.min.js") ?>"></script>
 	<script src="<?= base_url("template/vertical/plugins/metismenu/js/metisMenu.min.js") ?>"></script>
 	<script src="<?= base_url("template/vertical/plugins/perfect-scrollbar/js/perfect-scrollbar.js") ?>"></script>
+	<script src="<?= base_url('template/vertical/plugins/jquery-confirm/jquery-confirm.min.js') ?>"></script>
+	<script src="<?= base_url("template/vertical/plugins/jquery-toast/iziToast.min.js") ?>"></script>
+
 	<!--app JS-->
 	<script src="<?= base_url("template/vertical/js/app.js") ?>"></script>
 	<!-- Custom JS -->
-	 <?= $this->renderSection('script'); ?>
+	<?= $this->renderSection('script'); ?>
 </body>
 
 </html>
