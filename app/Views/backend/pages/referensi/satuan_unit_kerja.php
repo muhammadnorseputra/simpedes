@@ -17,13 +17,13 @@
     <div class="card">
         <div class="card-body">
             <div class="table-responsive">
-                <table id="example" class="table table-bordered table-striped">
+                <table id="example" class="table table-striped table-separate table-hover border border-3">
                     <thead>
                         <tr>
                             <th>ID</th>
                             <th>Nama Unit Kerja</th>
                             <th>Kecamatan</th>
-                            <th>Status Aktif</th>
+                            <th>Flag Aktif</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -119,6 +119,7 @@
                     <div id="errorTerpencil"></div>
                 </div>
                 <div class="col-12">
+                    <div class="alert alert-info d-flex justify-content-between align-items-center">Geolokasi akan diupdate setiap 2 menit, dimulai saat izin lokasi diaktifkan. <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Dapatkan Lokasi Saat Ini" id="getlokasi" onclick="handleLocation()"><i class="bx bx-map"></i> Lokasi saat ini.</button></div>
                     <label for="map" class="form-label fw-bold">Link Google Maps <span class="text-danger">*</span></label>
                     <div class="position-relative input-icon">
                         <textarea name="map" rows="4" class="form-control" id="map" placeholder="Masukan Link Google Maps" required></textarea>
@@ -126,11 +127,11 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-6">
+                    <div class="col-5">
                         <label for="lat" class="form-label fw-bold">Lat</label>
                         <input type="text" name="lat" class="form-control" id="lat" placeholder="Latitude" readonly required>
                     </div>
-                    <div class="col-6">
+                    <div class="col-5">
                         <label for="long" class="form-label fw-bold">Long</label>
                         <input type="text" name="long" class="form-control" id="long" placeholder="Longitude" readonly required>
                     </div>
@@ -152,6 +153,7 @@
 <script src="<?= base_url("template/vertical/plugins/parsley/i18n/id.js") ?>"></script>
 <script src="<?= base_url("template/vertical/plugins/parsley/default.js") ?>"></script>
 <script src="<?= base_url("template/vertical/plugins/parsley/bootstrap-maxlength.min.js") ?>"></script>
+<script src="<?= base_url("assets/js/geolocation.js") ?>"></script>
 <script type="text/javascript">
     var ModalTambah = '#exampleScrollableModal';
     var FormTambah = 'form#FormTambah';
@@ -163,14 +165,21 @@
             
     var FormValidate = $(FormTambah).parsley();
 
-
+    function handleLocation() {
+        const loc = JSON.parse(localStorage.getItem("location"));
+        if (loc) {
+            $(FormTambah).find("input[name='lat']").val(loc?.lat);
+            $(FormTambah).find("input[name='long']").val(loc?.long);
+            $(FormTambah).find("textarea[name='map']").val(`http://www.google.com/maps/place/${loc?.lat},${loc?.long}`);
+        }
+    }
     $(FormTambah).on("submit", function(event) {
         event.preventDefault();
         let _ = $(this),
         $url = _.attr('action'),
         $method = _.attr('method'),
         $data = _.serialize();
-        _.find("button[type='submit']").html(`<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>`);
+        _.find("button[type='submit']").html(`<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>`).prop("disabled", true);
         $.post(`${$url}`, $data, 'json').then((res) => {
             if (res.statusCode === 201) {
                 iziToast.success({
@@ -179,18 +188,20 @@
                 });
                 modal.hide()
                 datatable.ajax.reload();
-                _.find("button[type='submit']").html(`<i class="bx bx-save"></i> Simpan`)
+                _.find("button[type='submit']").html(`<i class="bx bx-save"></i> Simpan`).prop("disabled", false)
                 return false;
             } 
             iziToast.warning({
                 message: res.message,
                 position: 'topCenter'
             });
+            _.find("button[type='submit']").html(`<i class="bx bx-save"></i> Simpan`).prop("disabled", false)
         }).fail((err) => {
             iziToast.error({
                 message: err.statusText,
                 position: 'topCenter'
             });
+            _.find("button[type='submit']").html(`<i class="bx bx-save"></i> Simpan`).prop("disabled", false)
         })
     });
 
@@ -211,8 +222,8 @@
         if(_.val() !== "") {
             var regex = new RegExp('@(.*),(.*),');
             var lat_long_match = _.val().match(regex);
-            $(this).find("input[name='lat']").val(lat_long_match[1]);
-            $(this).find("input[name='long']").val(lat_long_match[2]);
+            $(FormTambah).find("input[name='lat']").val(lat_long_match[1]);
+            $(FormTambah).find("input[name='long']").val(lat_long_match[2]);
         }
     })
 
@@ -220,6 +231,8 @@
        $(FormTambah)[0].reset();
        $(FormTambah).find('select[name="kecamatan"]').val('').trigger('change');
        FormValidate.reset()
+       localStorage.removeItem("location")
+       clearWatch();
     })
 
     $( 'select#kecamatan' ).select2( {
@@ -263,7 +276,8 @@
     $.fn.dataTable.ext.buttons.add = {
         text: '<i class="bx bx-plus"></i> Tambah',
         action: function ( e, dt, node, config ) {
-            modal.show()
+            modal.show();
+            getLocation();
         },
         className: 'btn btn-primary'
     };
@@ -320,6 +334,21 @@
 
 <?= $this->section('script'); ?>
 <script>
+function LocationFn(q,lat,long) {
+    $.dialog({
+        title: `Location : ${q}`,
+        columnClass: 'col-10',
+        content: `<div style="width:100%; height: 600px; position: relative;overflow: hidden; ">
+                    <iframe
+                    style="position: absolute;top: 0;left: 0;bottom: 0;right: 0;width: 100%;height: 100%;"
+                    frameborder="0" style="border:0" 
+                    referrerpolicy="no-referrer-when-downgrade"
+                    src="https://www.google.com/maps/embed/v1/place?key=AIzaSyB3mY70TwKObZIg6_WUz0ntbbT_sGOTvVM
+                    &q=${lat},${long}&maptype=satellite&zoom=18"
+                    allowfullscreen>
+                    </iframe></div>`
+    });
+}
 function FlagFn(id, isAktif) {
     let flagIs = isAktif === 'Y' ? 'N' : 'Y';
     // CSRF Hash

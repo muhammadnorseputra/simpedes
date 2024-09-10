@@ -40,11 +40,17 @@ class AjaxDatatable extends BaseController
         return DataTable::of($builder)->toJson();
     }
 
+    public function tingkat_pendidikan()
+    {
+        $builder = $this->db->table('ref_tingkat_pendidikan');
+        return DataTable::of($builder)->toJson();
+    }
+
     public function jurusan_pendidikan()
     {
-        $builder = $this->db->table('ref_jurusan_pendidikan as t')
+        $builder = $this->db->table('ref_jurusan_pendidikan t')
         ->select('t.id_jurusan_pendidikan, t.nama_jurusan_pendidikan, k.nama_tingkat_pendidikan')
-        ->join('ref_tingkat_pendidikan as k', 't.fid_tingkat_pendidikan=k.id_tingkat_pendidikan', 'left');
+        ->join('ref_tingkat_pendidikan k', 't.fid_tingkat_pendidikan=k.id_tingkat_pendidikan', 'left');
         
         return DataTable::of($builder)->toJson();
     }
@@ -58,9 +64,11 @@ class AjaxDatatable extends BaseController
 
     public function satuan_unit_kerja()
     {
+        helper(['googlemap']);
+
         $builder = $this->db->table('ref_unit_kerja u')
-        ->select('u.id_unit_kerja,u.nama_unit_kerja,u.aktif,u.link_google_map,k.nama_kecamatan')
-        ->join('ref_kecamatan k', 'u.kecamatan=k.id_kecamatan');
+        ->select('u.id_unit_kerja,u.nama_unit_kerja,u.aktif,u.latitude,u.longitude,u.link_google_map,k.nama_kecamatan')
+        ->join('ref_kecamatan k', 'u.kecamatan=k.id_kecamatan', 'left');
 
         return DataTable::of($builder)
         ->format('nama_kecamatan', function($value){
@@ -71,13 +79,63 @@ class AjaxDatatable extends BaseController
             return"<span class='badge bg-secondary p-2'>Disabled</span>";
         })
         ->add('action', function($row){
+            $map_address = extractAddressFromGoogleMapsURL($row->link_google_map);
+            $map_title = $row->nama_unit_kerja;
             $flagIs = $row->aktif === "Y" ? "Off" : "On";
             return '<button type="button" class="btn btn-danger btn-sm" onClick="HapusFn('.$row->id_unit_kerja.')"><i class="bx bx-trash-alt"></i>Hapus</button> 
             <button type="button" class="btn '.($row->aktif === "Y" ? "btn-secondary" : "btn-success").' btn-sm" onClick="FlagFn('.$row->id_unit_kerja.',\''.$row->aktif.'\')"><i class="bx bx-flag"></i>Flag '.$flagIs.'</button>
             <a href="'.base_url("app/referensi/satuan_unit_kerja/edit/".$row->id_unit_kerja).'" class="btn btn-warning btn-sm"><i class="bx bx-message-square-edit"></i>Edit</a>
-            <button type="button" class="btn btn-info btn-sm" onClick="LocationFn(\''.$row->link_google_map.'\')"><i class="bx bx-map-alt"></i>Maps</button> ';
+            <button type="button" class="btn btn-info btn-sm" onClick="LocationFn(\''.$map_title.'\',\''.$row->latitude.'\',\''.$row->longitude.'\')"><i class="bx bx-map-alt"></i> Maps</button> ';
         }, 'first')
         ->toJson(true);
+
+    }
+
+    public function jabatan_atasan(int $id)
+    {
+        $builder = $this->db->table('ref_jabatan')->select('nama_jabatan')->where('id', $id)->get();
+        $row = $builder->getRow();
+        return $row->nama_jabatan;
+    }
+
+    public function jabatan() 
+    {
+        helper('number');
+
+        $builder = $this->db->table('ref_jabatan')->select('id,nama_jabatan,id_atasan,jenis,gaji,tunjangan');
+        
+        return DataTable::of($builder)
+        ->format('id_atasan', function($value) {
+            if($value === "0") return "-";
+            return $this->jabatan_atasan($value);
+        })
+        ->format('gaji', function($value) {
+            return number_to_currency($value, 'IDR', 'id_ID', 0);
+        })
+        ->format('tunjangan', function($value) {
+            return number_to_currency($value, 'IDR', 'id_ID', 0);
+        })
+        ->postQuery(function($query){
+
+            $query->orderBy('id', 'desc');
+    
+        })
+        ->add('action', function($row) {
+            return '<div class="dropdown">
+                        <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="true"><i class="bx bx-edit"></i></button>
+                        <ul class="dropdown-menu" data-popper-placement="bottom-start">
+                            <li><button type="button" class="dropdown-item text-secondary d-flex justify-content-between align-items-center" id="EditFn" data-uid="'.$row->id.'">Edit <i class="bx bx-edit-alt"></i></button></li>
+                            <li><button type="button" class="dropdown-item text-danger d-flex justify-content-between align-items-center" id="HapusFn" data-uid="'.$row->id.'">Hapus <i class="bx bx-trash-alt"></i></button></li>
+                        </ul>
+                    </div>';
+        })
+        ->addNumbering("no")->toJson(true);
+    }
+
+    public function pegawai() {
+        $builder = $this->db->table('pegawai')->select('nik,nipd,nama,gelar_depan,gelar_blk,jns_kelamin,fid_keldesa,photo');
+        
+        return DataTable::of($builder)->toJson(true);
     }
 }
 

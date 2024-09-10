@@ -9,7 +9,7 @@
                 <ol class="breadcrumb mb-0 p-0">
                     <li class="breadcrumb-item"><a href="<?= base_url('/') ?>"><i class="bx bx-home-alt"></i></a>
                     </li>
-                    <li class="breadcrumb-item active" aria-current="page">Agama</li>
+                    <li class="breadcrumb-item active" aria-current="page">Tingkat Pendidikan</li>
                 </ol>
             </nav>
         </div>
@@ -22,7 +22,7 @@
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Nama Agama</th>
+                            <th>Nama Tingkat Pendidikan</th>
                         </tr>
                     </thead>
                 </table>
@@ -38,14 +38,18 @@ $(document).ready(function() {
     $('table#example').DataTable({
         processing: true,
         serverSide: true,
-        order: [[0, 'asc']], //this mean no init order on datatable
+        order: [], //this mean no init order on datatable
         ajax: {
-            url: '<?= base_url('datatable/agama') ?>',
+            url: '<?= base_url('datatable/tingkat_pendidikan') ?>',
             method: 'POST',
             data: {
                 csrf_token_simpedes: '<?= csrf_hash() ?>'
             },
-        }
+        },
+        column: [
+            {data: 'id_tingkat_pendidikan', orderable: false, searchable: false},
+            {data: 'nama_tingkat_pendidikan'},
+        ]
     });
 });
 </script>

@@ -18,7 +18,7 @@
     <div class="card">
         <div class="card-body">
             <div class="table-responsive">
-                <table id="example" class="table table-bordered table-striped">
+                <table id="example" class="table table-striped table-bordered table-hover border border-3">
                     <thead>
                         <tr>
                             <th>ID</th>
@@ -47,8 +47,10 @@ $(document).ready(function() {
                 csrf_token_simpedes: '<?= csrf_hash() ?>'
             },
         },
-        columnDefs: [
-            {target: 0, orderable: false}
+        column: [
+            {data: 'id_jurusan_pendidikan', orderable: false, searchable: false},
+            {data: 'nama_jurusan_pendidikan'},
+            {data: 'nama_tingkat_pendidikan', searchable: false},
         ]
     });
 });

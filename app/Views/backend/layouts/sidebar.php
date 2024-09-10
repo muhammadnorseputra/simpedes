@@ -12,17 +12,11 @@
 			<!--navigation-->
 			<ul class="metismenu" id="menu">
 				<li>
-					<a href="javascript:;" class="has-arrow">
+					<a href="<?= base_url('app/dashboard') ?>">
 						<div class="parent-icon"><i class='bx bx-home-alt'></i>
 						</div>
 						<div class="menu-title">Dashboard</div>
 					</a>
-					<ul>
-						<li> <a href="index.html"><i class='bx bx-radio-circle'></i>Dinas</a>
-						</li>
-						<li> <a href="index2.html"><i class='bx bx-radio-circle'></i>BPD</a>
-						</li>
-					</ul>
 				</li>
 				
 				<li class="menu-label">Pegawai</li>
@@ -76,6 +70,13 @@
 						<div class="parent-icon"><i class='bx bx-calendar-star'></i>
 						</div>
 						<div class="menu-title">Jenis Workshop</div>
+					</a>
+				</li>
+				<li>
+					<a href="<?= base_url('app/referensi/tingkat_pendidikan') ?>">
+						<div class="parent-icon"><i class='bx bx-layer'></i>
+						</div>
+						<div class="menu-title">Tingkat Pendidikan</div>
 					</a>
 				</li>
 				<li>

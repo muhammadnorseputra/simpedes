@@ -70,10 +70,11 @@
 											</div>
 											<div class="col-12">
 												<label for="inputChoosePassword" class="form-label">Password</label>
-												<div class="input-group" id="show_hide_password">
+												<div class="position-relative input-icon" id="show_hide_password">
 													<input type="password" required name="password" class="form-control form-control-lg border-end-1" id="inputChoosePassword" placeholder="Masukan Password"> 
-													<a href="javascript:;" class="input-group-text bg-transparent">
-														<i class="bx bx-hide"></i>
+													<span class="position-absolute top-0 pt-2 mt-1"><em class="bx bx-key"></em></span>
+													<a href="javascript:;" class="bg-transparent position-absolute end-0" data-bs-toggle="tooltip" data-bs-placement="top" style="top: -30px">
+														<i class="bx bx-hide fs-5 text-secondary"></i>
 													</a>
 													<div id="floatingInputUsername" class="invalid-feedback">
 														Please choose a password.
@@ -130,17 +131,28 @@
 	<script src="<?= base_url("assets/js/notification.js") ?>"></script>
 	<script>
 		$(document).ready(function () {
+			var exampleEl = $("a")
+			var tooltip = new bootstrap.Tooltip(exampleEl, {
+				trigger: 'hover',
+				title: 'Lihat Password'
+			})
+
 			$("#show_hide_password a").on('click', function (event) {
 				event.preventDefault();
 				if ($('#show_hide_password input').attr("type") == "text") {
 					$('#show_hide_password input').attr('type', 'password');
 					$('#show_hide_password i').addClass("bx-hide");
-					$('#show_hide_password i').removeClass("bx-show");
+					$('#show_hide_password i').removeClass("bx-show-alt");
+					// $(this).attr('title', 'Show Password');
+					tooltip._config.title = "Lihat Password";
 				} else if ($('#show_hide_password input').attr("type") == "password") {
 					$('#show_hide_password input').attr('type', 'text');
 					$('#show_hide_password i').removeClass("bx-hide");
-					$('#show_hide_password i').addClass("bx-show");
+					$('#show_hide_password i').addClass("bx-show-alt");
+					// $(this).attr('title', 'Hide Password');
+					tooltip._config.title = "Sembuyikan Password";
 				}
+				tooltip.update();
 			});
 
 			$("form#formAuth").on("submit", function(event) {

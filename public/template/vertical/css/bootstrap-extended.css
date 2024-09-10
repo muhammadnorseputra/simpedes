@@ -10,7 +10,9 @@ a {
 .table-responsive {
 	white-space: nowrap;
 }
-
+.table-separate {
+	border-collapse: separate;
+}
 .form-check-input:checked {
 	background-color: #008cff;
 	border-color: #008cff

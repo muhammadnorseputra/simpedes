@@ -36,6 +36,7 @@ class Auth extends BaseController
                     'name'     => $data['nama_lengkap'],
                     'email'    => $data['email'],
                     'username'    => $data['username'],
+                    'role' => $data['role'],
                     'isLogin'     => TRUE
                 ];
                 $session->set($sessionSetData);

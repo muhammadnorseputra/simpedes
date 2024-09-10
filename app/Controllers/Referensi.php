@@ -42,6 +42,14 @@ class Referensi extends BaseController
         return view('backend/pages/referensi/jenis_workshop', $data);
     }
 
+    public function tingkat_pendidikan(): string
+    {
+        $data = [
+            'title' => 'Referensi Tingkat Pendidikan - Simpedes Kab. Balangan',
+        ];
+        return view('backend/pages/referensi/tingkat_pendidikan', $data);
+    }
+
     public function jurusan_pendidikan(): string
     {
         $data = [

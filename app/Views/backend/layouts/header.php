@@ -257,7 +257,7 @@
 							<img src="<?= base_url("template/vertical/images/avatars/avatar-1.png") ?>" class="user-img" alt="user avatar">
 							<div class="user-info">
 								<p class="user-name mb-0"><?= session()->get('name') ?></p>
-								<p class="designattion mb-0">Web Designer</p>
+								<p class="designattion mb-0"><?= session()->get('role'); ?></p>
 							</div>
 						</a>
 						<ul class="dropdown-menu dropdown-menu-end">

@@ -15,6 +15,15 @@ $routes->group('auth', ['filter' => 'redirectIfAuthenticated'], function ($route
 
 $routes->group('app', function($route) {
     $route->get('dashboard', 'Dashboard::index');
+    
+    // Nested router group /app/master
+    $route->group('master', function($route) {
+        $route->get('jabatan', 'Master::jabatan');
+        $route->get('jabatan/edit/(:num)', 'Master::jabatan/$1');
+        $route->post('jabatan', 'Master::jabatan');
+        $route->delete('jabatan', 'Master::jabatan');
+        $route->get('pegawai', 'Master::pegawai');
+    });
 
     // Nested router group /app/referensi
     $route->group('referensi', function($route) {
@@ -22,6 +31,7 @@ $routes->group('app', function($route) {
         $route->get('kecamatan', 'Referensi::kecamatan');
         $route->get('desa', 'Referensi::desa');
         $route->get('jenis_workshop', 'Referensi::jenis_workshop');
+        $route->get('tingkat_pendidikan', 'Referensi::tingkat_pendidikan');
         $route->get('jurusan_pendidikan', 'Referensi::jurusan_pendidikan');
         $route->get('rumpun_diklat', 'Referensi::rumpun_diklat');
         // route satuan_unit_kerja
@@ -39,11 +49,18 @@ $routes->group('datatable', function($route) {
     $route->post('kecamatan', 'AjaxDatatable::kecamatan');
     $route->post('desa', 'AjaxDatatable::desa');
     $route->post('jenis_workshop', 'AjaxDatatable::jenis_workshop');
+    $route->post('tingkat_pendidikan', 'AjaxDatatable::tingkat_pendidikan');
     $route->post('jurusan_pendidikan', 'AjaxDatatable::jurusan_pendidikan');
     $route->post('rumpun_diklat', 'AjaxDatatable::rumpun_diklat');
     $route->post('satuan_unit_kerja', 'AjaxDatatable::satuan_unit_kerja');
+    // Nested router group /datatable/master
+    $route->group('master', function($route) {
+        $route->post('jabatan', 'AjaxDatatable::jabatan');
+        $route->post('pegawai', 'AjaxDatatable::pegawai');
+    });
 });
 
 $routes->group('select2', function($route) {
     $route->post('kecamatan', 'AjaxSelect2::kecamatan');
+    $route->post('atasan_jabatan', 'AjaxSelect2::atasan');
 });

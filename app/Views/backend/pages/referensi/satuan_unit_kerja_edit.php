@@ -3,7 +3,7 @@
 <?= $this->section('content'); ?>
     <!--breadcrumb-->
     <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-        <div class="breadcrumb-title pe-3">Referensi</div>
+        <div class="breadcrumb-title ps-2 pe-3">Referensi</div>
         <div class="ps-3">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb mb-0 p-0">
@@ -15,7 +15,7 @@
         </div>
     </div>
     <!--end breadcrumb-->
-    <div class="row">
+    <div class="row ">
         <div class="col-12 col-md-10 col-lg-8 col-xl-6">
             <div class="card">
             <?= form_open(base_url('app/referensi/satuan_unit_kerja'), ['class' => 'needs-validation', 'id' => 'FormUpdate', 'novalidate' => '', 'autocomplete' => 'off']); ?>
@@ -105,6 +105,8 @@
                     </div>
                     <div class="col-12">
                         <label for="map" class="form-label fw-bold">Link Google Maps <span class="text-danger">*</span></label>
+                        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Dapatkan Lokasi Saat Ini" id="getlokasi" onclick="handleLocation()"><i class="bx bx-map"></i> Lokasi saat ini.</button>
+                        <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="tooltip" data-bs-placement="top" title="Izinkan akses lokasi" id="getlokasi" onclick="getLocation()"><i class="bx bx-map"></i> Izinkan Lokasi.</button>
                         <div class="position-relative input-icon">
                             <textarea name="map" rows="4" class="form-control" id="map" placeholder="Masukan Link Google Maps" required><?= $row->link_google_map ?></textarea>
                             <span class="position-absolute top-0 pt-2"><i class="bx bx-map"></i></span>
@@ -137,6 +139,7 @@
 <script src="<?= base_url("template/vertical/plugins/parsley/i18n/id.js") ?>"></script>
 <script src="<?= base_url("template/vertical/plugins/parsley/default.js") ?>"></script>
 <script src="<?= base_url("template/vertical/plugins/parsley/bootstrap-maxlength.min.js") ?>"></script>
+<script src="<?= base_url("assets/js/geolocation.js") ?>"></script>
 <script>
     var FORM = $("form#FormUpdate");
     var FormValidate = FORM.parsley();
@@ -168,6 +171,16 @@
         width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
         placeholder: $( this ).data( 'placeholder' )
     }).val('<?= $row->kecamatan ?>').trigger("change");
+
+    // handle location
+    function handleLocation() {
+        const loc = JSON.parse(localStorage.getItem("location"));
+        if (loc) {
+            FORM.find("input[name='lat']").val(loc?.lat);
+            FORM.find("input[name='long']").val(loc?.long);
+            FORM.find("textarea[name='map']").val(`http://www.google.com/maps/place/${loc?.lat},${loc?.long}`);
+        }
+    }
 
     // submit form
     FORM.on("submit", function(event) {
