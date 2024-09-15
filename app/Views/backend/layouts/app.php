@@ -198,6 +198,44 @@ $colorScheme = implode(" ", [$theme, $color, $sidebarColor])
 	</div>
 	<!--end switcher-->
 
+	<!-- Offcanvas -->
+	<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+		<div class="offcanvas-header">
+			<h5 class="offcanvas-title" id="offcanvasRightLabel">Userportal</h5>
+			<button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+		</div>
+		<div class="offcanvas-body shadow-lg rounded">
+			<div class="d-flex flex-column justify-content-between align-items-start gap-3">
+				<div class="w-100 text-center">
+					<img src="<?= base_url("assets/images/users/".session()->get('photo')) ?>" class="user-img w-25 h-25" alt="<?= session()->name ?>">
+				</div>
+				<div class="d-inline-flex flex-column gap-1 w-100 border-bottom pb-3">
+					<div class="text-uppercase">Level</div>
+					<div class="fw-bold "><?= session()->role ?></div>
+				</div>
+				<div class="d-inline-flex flex-column gap-1 w-100 border-bottom pb-3">
+					<div class="text-uppercase">Nomor Induk Kependudukan</div>
+					<div class="fw-bold "><?= session()->nik ?></div>
+				</div>
+				<div class="d-inline-flex flex-column gap-1 w-100 border-bottom pb-3">
+					<div class="text-uppercase">Nama Lengkap</div>
+					<div class="fw-bold "><?= session()->fullname ?></div>
+				</div>
+				<div class="d-inline-flex flex-column gap-1 w-100 border-bottom pb-3">
+					<div class="text-uppercase">Email</div>
+					<div class="fw-bold "><?= session()->email ?></div>
+				</div>
+				<div class="d-inline-flex flex-column gap-1 w-100 border-bottom pb-3">
+					<div class="text-uppercase">Satuan Unit Kerja</div>
+					<div class="fw-bold "><?= session()->nama_unit_kerja ?></div>
+				</div>
+				<div class="d-grid gap-3 w-100">
+					<button type="button" class="btn btn-primary">Ganti Password <i class="bx bx-lock"></i></button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- End Offcanvas -->
 
 	<!-- Bootstrap JS -->
 	<script src="<?= base_url("assets/js/baseUrl.js") ?>"></script>

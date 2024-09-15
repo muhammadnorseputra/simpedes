@@ -2,6 +2,7 @@
 namespace App\Controllers;
 
 use \Hermawan\DataTables\DataTable;
+use CodeIgniter\Exceptions\PageNotFoundException;
 
 class Referensi extends BaseController
 {
@@ -71,12 +72,18 @@ class Referensi extends BaseController
         if($mode === 'edit') {
             $row = $this->db->table('ref_unit_kerja')->where('id_unit_kerja', $id)->get();
             $kecamatan = $this->db->table('ref_kecamatan')->orderBy('id_kecamatan', 'desc')->get();
+            
+            if(count($row->getResultArray()) === 0) {
+                return throw PageNotFoundException::forPageNotFound();
+            }
+
             $data = [
                 'title' => $row->getRow()->nama_unit_kerja.' - Simpedes Kab. Balangan',
                 'id' => $id,
                 'row' => $row->getRow(),
-                'kecamatan' => $kecamatan->getResult(),
+                'kecamatan' => $kecamatan->getResult()
             ];
+
             return view('backend/pages/referensi/satuan_unit_kerja_edit', $data);
         };
 

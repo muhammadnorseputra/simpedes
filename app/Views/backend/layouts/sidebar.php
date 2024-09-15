@@ -4,7 +4,7 @@
 					<img src="<?= base_url("assets/images/app/logo.png") ?>" width="30" class="rounded" alt="logo icon">
 				</div>
 				<div class="d-flex flex-column justify-content-center align-items-start">
-					<h4 class="logo-text ms-0">Simpedes</h4>
+					<h4 class="logo-text ms-0"><?= config('SiteConfig')->siteSortName ?></h4>
 					<span class="logo-desc small mutted lh-0 text-center">Kab. Balangan</span>
 				</div>
 				<div class="toggle-icon ms-auto"><i class='bx bx-menu-alt-left'></i></div>
@@ -24,10 +24,11 @@
 					<a href="<?= base_url('app/pegawai/unit_kerja') ?>">
 						<div class="parent-icon"><i class='bx bx-buildings'></i>
 						</div>
-						<div class="menu-title">By Unit Kerja</div>
+						<div class="menu-title">Satuan Unit Kerja</div>
 					</a>
 				</li>
 
+				<?php if(session()->get('role') === 'ADMIN' || session()->get('role') === 'USER'): ?>
 				<li class="menu-label">Data Master</li>
 				<li>
 					<a href="<?= base_url('app/master/pegawai') ?>">
@@ -43,6 +44,15 @@
 						<div class="menu-title">Jabatan</div>
 					</a>
 				</li>
+				<li>
+					<a href="<?= base_url('app/master/users') ?>">
+						<div class="parent-icon"><i class='bx bx-user-circle'></i>
+						</div>
+						<div class="menu-title">User Portal</div>
+					</a>
+				</li>
+				<?php endif; ?>
+				<?php if(session()->get('role') === 'ADMIN'): ?>
 				<li class="menu-label">Referensi</li>
 				<li>
 					<a href="<?= base_url('app/referensi/agama') ?>">
@@ -100,6 +110,7 @@
 						<div class="menu-title">Satuan Unit Kerja</div>
 					</a>
 				</li>
+				<?php endif; ?>
 			</ul>
 			<!--end navigation-->
 		</div>

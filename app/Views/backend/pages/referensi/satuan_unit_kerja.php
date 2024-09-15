@@ -23,7 +23,7 @@
                             <th>ID</th>
                             <th>Nama Unit Kerja</th>
                             <th>Kecamatan</th>
-                            <th>Flag Aktif</th>
+                            <th>Status</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -288,10 +288,7 @@
         order: [[1, 'asc']], //this mean no init order on datatable
         layout: {
             topStart: [{
-                buttons: ['add', {
-                    text: '<i class="bx bx-export"></i> Export',
-                    'split': ['print', 'csv']
-                }]
+                buttons: ['add']
             }],
             topEnd: [{
                 search: {
@@ -302,6 +299,11 @@
             }, {
                 buttons: [
                     'colvis',
+                    'spacer',
+                    {
+                        text: '<i class="bx bx-export"></i> Export',
+                        'split': ['print', 'csv']
+                    },
                     'spacer',
                     'reload',
                 ]
@@ -315,7 +317,7 @@
             url: '<?= base_url('datatable/satuan_unit_kerja') ?>',
             method: 'POST',
             data: {
-                csrf_token_simpedes: '<?= csrf_hash() ?>'
+                ['<?= csrf_token() ?>']: '<?= csrf_hash() ?>'
             },
         },
         columns: [

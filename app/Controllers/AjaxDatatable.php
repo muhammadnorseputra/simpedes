@@ -75,17 +75,19 @@ class AjaxDatatable extends BaseController
             return strtoupper($value);
         })
         ->format('aktif', function($value){
-            if($value === 'Y') return "<span class='badge bg-success p-2'>Enable</span>";
-            return"<span class='badge bg-secondary p-2'>Disabled</span>";
+            if($value === 'Y') return "<span class='badge rounded-pill text-success bg-light-success p-2 text-uppercase px-3'><i class='bx bxs-circle me-1'></i> enable</span>";
+            return"<span class='badge rounded-pill text-danger bg-light-danger p-2 text-uppercase px-3'><i class='bx bxs-circle me-1'></i> disabled</span>";
         })
         ->add('action', function($row){
             $map_address = extractAddressFromGoogleMapsURL($row->link_google_map);
             $map_title = $row->nama_unit_kerja;
             $flagIs = $row->aktif === "Y" ? "Off" : "On";
-            return '<button type="button" class="btn btn-danger btn-sm" onClick="HapusFn('.$row->id_unit_kerja.')"><i class="bx bx-trash-alt"></i>Hapus</button> 
-            <button type="button" class="btn '.($row->aktif === "Y" ? "btn-secondary" : "btn-success").' btn-sm" onClick="FlagFn('.$row->id_unit_kerja.',\''.$row->aktif.'\')"><i class="bx bx-flag"></i>Flag '.$flagIs.'</button>
-            <a href="'.base_url("app/referensi/satuan_unit_kerja/edit/".$row->id_unit_kerja).'" class="btn btn-warning btn-sm"><i class="bx bx-message-square-edit"></i>Edit</a>
-            <button type="button" class="btn btn-info btn-sm" onClick="LocationFn(\''.$map_title.'\',\''.$row->latitude.'\',\''.$row->longitude.'\')"><i class="bx bx-map-alt"></i> Maps</button> ';
+            return '<div class="d-flex gap-2">
+                    <button type="button" class="btn '.($row->aktif === "Y" ? "btn-secondary" : "btn-success").' btn-sm" onClick="FlagFn('.$row->id_unit_kerja.',\''.$row->aktif.'\')"><i class="bx bx-flag"></i>Flag '.$flagIs.'</button>
+                    <button type="button" class="btn btn-info btn-sm" onClick="LocationFn(\''.$map_title.'\',\''.$row->latitude.'\',\''.$row->longitude.'\')"><i class="bx bx-map-alt"></i> Maps</button> 
+                        <button type="button" class="btn btn-danger btn-sm" onClick="HapusFn('.$row->id_unit_kerja.')"><i class="bx bx-trash-alt"></i>Hapus</button> 
+                        <a href="'.base_url("app/referensi/satuan_unit_kerja/edit/".$row->id_unit_kerja).'" class="btn btn-warning btn-sm"><i class="bx bx-message-square-edit"></i>Edit</a>
+                    </div>';
         }, 'first')
         ->toJson(true);
 
@@ -105,6 +107,7 @@ class AjaxDatatable extends BaseController
         $builder = $this->db->table('ref_jabatan')->select('id,nama_jabatan,id_atasan,jenis,gaji,tunjangan');
         
         return DataTable::of($builder)
+        ->setSearchableColumns(['nama_jabatan', 'jenis', 'gaji', ])
         ->format('id_atasan', function($value) {
             if($value === "0") return "-";
             return $this->jabatan_atasan($value);
@@ -133,9 +136,73 @@ class AjaxDatatable extends BaseController
     }
 
     public function pegawai() {
-        $builder = $this->db->table('pegawai')->select('nik,nipd,nama,gelar_depan,gelar_blk,jns_kelamin,fid_keldesa,photo');
+    
+        helper(["hash", "pegawai"]);
+
+        $builder = $this->db->table('pegawai')
+        ->select('nik,nipd,nama,gelar_depan,gelar_blk,jns_kelamin,fid_unit_kerja,photo,status,nama_unit_kerja')
+        ->join('ref_unit_kerja', 'pegawai.fid_unit_kerja=ref_unit_kerja.id_unit_kerja', 'left')
+        ->orderBy("created_at", 'desc');
         
-        return DataTable::of($builder)->toJson(true);
+        return DataTable::of($builder)
+        ->setSearchableColumns(['nik', 'nipd', 'nama', 'status'])
+        ->format('status', function($value){
+            if($value === 'ENTRI') return "<span class='badge rounded-pill text-white bg-secondary p-2 text-uppercase px-3'><i class='bx bxs-circle me-1'></i> entri</span>";
+            if($value === 'ENTRI_ULANG') return "<span class='badge rounded-pill text-white bg-secondary p-2 text-uppercase px-3'><i class='bx bxs-circle me-1'></i> entri ulang</span>";
+            if($value === 'VERIFIKASI') return "<span class='badge rounded-pill text-primary bg-light-primary p-2 text-uppercase px-3'><i class='bx bxs-circle me-1'></i> verifikasi</span>";
+            if($value === 'AKTIF') return "<span class='badge rounded-pill text-success bg-light-success p-2 text-uppercase px-3'><i class='bx bxs-circle me-1'></i> aktif</span>";
+            if($value === 'NON_AKTIF') return "<span class='badge rounded-pill text-danger bg-light-danger p-2 text-uppercase px-3'><i class='bx bxs-circle me-1'></i> non aktif</span>";
+            return"<span class='badge rounded-pill text-white-50 bg-dark p-2 text-uppercase px-3'><i class='bx bxs-circle me-1'></i> NON AKTIF-NIK DITOLAK</span>";
+        })
+        ->edit('nama', function($row) {
+            return namalengkap($row->gelar_depan, $row->nama, $row->gelar_blk);
+        })
+        ->format('photo', function($value) {
+            return '<a href="'.base_url("assets/images/users/".$value).'" target="_blank"><img src="'.base_url("assets/images/users/".$value).'" class="user-img" alt="'.$value.'"></a>';
+        })
+        ->add('action', function($row) {
+            $verif = $row->status === 'VERIFIKASI' || $row->status === 'AKTIF' || $row->status === 'NON_AKTIF' || $row->status === 'NON_AKTIF_NIK_DITOLAK' ? 
+            '<li><a href="'.base_url("/app/master/pegawai/peremajaan?token=".dohash($row->nik)).'" id="verifikasi" data-uid="'.dohash($row->nik).'" class="dropdown-item text-primary d-flex justify-content-between align-items-center">Verifikasi <i class="bx bx-check-circle"></i></a></li>' : 
+            '<li><a href="'.base_url("/app/master/pegawai/peremajaan?token=".dohash($row->nik)).'" class="dropdown-item text-secondary d-flex justify-content-between align-items-center">Perbaharui <i class="bx bx-edit-alt"></i></a></li>';
+            return '<div class="dropdown">
+                        <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="true"><i class="bx bx-edit"></i></button>
+                        <ul class="dropdown-menu" data-popper-placement="bottom-start">
+                            '.$verif.'
+                        </ul>
+                    </div>';
+        })->toJson(true);
+    }
+
+    public function users() {
+    
+        helper(["hash", "pegawai"]);
+
+        $builder = $this->db->table('users s')
+        ->select('p.nik,p.nipd,p.nama,s.username,s.is_disabled,s.role,p.gelar_depan,p.gelar_blk,p.jns_kelamin,p.fid_unit_kerja,p.photo,u.nama_unit_kerja')
+        ->join('pegawai p','s.nik=p.nik', 'left')
+        ->join('ref_unit_kerja u', 'p.fid_unit_kerja=u.id_unit_kerja', 'left')
+        ->orderBy("p.created_at", 'desc');
+        
+        return DataTable::of($builder)
+        ->setSearchableColumns(['p.nik', 'p.nipd', 'p.nama', 's.username'])
+        ->edit('nama', function($row) {
+            return namalengkap($row->gelar_depan, $row->nama, $row->gelar_blk)."<br/><span class='badge bg-light-primary text-primary'>".$row->role."</span>";
+        })
+        ->format('photo', function($value) {
+            return '<a href="'.base_url("assets/images/users/".$value).'" target="_blank"><img src="'.base_url("assets/images/users/".$value).'" class="user-img" alt="'.$value.'"></a>';
+        })
+        ->add('action', function($row) {
+            $isDisabled = $row->is_disabled === 'Y' ? 'Enabled' : 'Disabled';
+            $isDisabledTextColor = $row->is_disabled === 'Y' ? 'text-success' : 'text-danger';
+            return '<div class="dropdown">
+                        <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="true"><i class="bx bx-edit"></i></button>
+                        <ul class="dropdown-menu" data-popper-placement="bottom-start">
+                            <li><button type="button" class="dropdown-item text-secondary d-flex justify-content-between align-items-center" id="EditFn" data-uid="'.$row->nik.'">Reset Password <i class="bx bx-key"></i></button></li>
+                            <li><button type="button" class="dropdown-item text-secondary d-flex justify-content-between align-items-center" id="SetRoleFn" data-uid="'.$row->nik.'" data-rolenow="'.$row->role.'">Setting Role <i class="bx bx-lock-open"></i></button></li>
+                            <li><button type="button" class="dropdown-item '.$isDisabledTextColor.' d-flex justify-content-between align-items-center" id="DisabledFn" data-status="'.$row->is_disabled.'" data-uid="'.$row->nik.'">'.$isDisabled.' <i class="bx bx-block"></i></button></li>
+                        </ul>
+                    </div>';
+        })->toJson(true);
     }
 }
 

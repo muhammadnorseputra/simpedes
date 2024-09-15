@@ -53,8 +53,8 @@
                                     <img class="mb-2" src="<?= base_url("assets/images/app/logo.png") ?>" alt="logo balangan" width="50">
 									</div>
 									<div class="text-center mb-4">
-										<h5 class="mb-2">Masuk Aplikasi Simpedes</h5>
-										<p class="mb-0">Silahkan login dengan akun desa anda.</p>
+										<h5 class="mb-2">Masuk Aplikasi <?= ucwords(strtolower($config->siteSortName)) ?></h5>
+										<p class="mb-0">Silahkan login dengan akun pegawai anda.</p>
 									</div>
 									<div class="form-body">
 										<div id="message"></div>
@@ -114,7 +114,7 @@
                     <h5 class="modal-title">Lupa Password ?</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">Jika anda lupa password, silahkan hubungi admin desa untuk melakukan reset password operator.</div>
+                <div class="modal-body">Jika anda lupa password, silahkan hubungi operator desa untuk melakukan reset password pegawai.</div>
                 <div class="modal-footer">
                     <button type="button" data-bs-dismiss="modal" aria-label="Oke" class="btn btn-primary">OKE</button>
                 </div>
@@ -187,7 +187,7 @@
 						}
 					},
 					error: function(err) {
-						NotifError(`${err.statusText} (${err.status})`)
+						NotifError(`${ err.responseJSON.message || err.statusText} (${err.status})`)
 					},
 				})
 			})

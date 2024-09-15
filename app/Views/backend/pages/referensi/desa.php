@@ -44,7 +44,7 @@ $(document).ready(function() {
             url: '<?= base_url('datatable/desa') ?>',
             method: 'POST',
             data: {
-                csrf_token_simpedes: '<?= csrf_hash() ?>'
+                ['<?= csrf_token() ?>']: '<?= csrf_hash() ?>'
             },
         },
         columnDefs: [

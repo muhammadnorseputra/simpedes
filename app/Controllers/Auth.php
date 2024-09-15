@@ -2,11 +2,10 @@
 
 namespace App\Controllers;
 
-use CodeIgniter\API\ResponseTrait;
+use \App\Models\UserModel;
 
 class Auth extends BaseController
 {
-    use ResponseTrait;
 
     public function index(): string
     {
@@ -18,8 +17,9 @@ class Auth extends BaseController
     }
 
     public function action() {
+        helper("pegawai");
         $session = session();
-        $db = new \App\Models\UserModel();
+        $db = new UserModel();
 
         if($this->request->isAjax()) {
             $username = $this->request->getPost('username');
@@ -30,13 +30,35 @@ class Auth extends BaseController
         if ($data) {
             $passwordHash = $data['password'];
             $verify_pass = password_verify($password, $passwordHash);
-            if($verify_pass){
+            if($verify_pass) {
+                $builder = $db->builder();
+                $profile = $builder->select('users.*,p.gelar_depan,p.gelar_blk,p.nama,p.email,p.photo,u.id_unit_kerja,
+                u.nama_unit_kerja')
+                ->join('pegawai p', 'users.nik=p.nik', 'left')
+                ->join('ref_unit_kerja u', 'p.fid_unit_kerja=u.id_unit_kerja', 'left')
+                ->where('users.username', $username)
+                ->where('users.is_disabled', 'N')
+                ->where('p.status', 'AKTIF')->get()->getFirstRow();
+                // dd($profile);
+                if($profile === null) {
+                    $res = [
+                        'status' => false,
+                        'message' => 'Profile pegawai tidak ditemukan atau non aktif.',
+                        'data' => []
+                    ];
+                    return $this->response->setJson($res);
+                }
+
                 $sessionSetData = [
-                    'id'       => $data['id'],
-                    'name'     => $data['nama_lengkap'],
-                    'email'    => $data['email'],
-                    'username'    => $data['username'],
-                    'role' => $data['role'],
+                    'nik'       => $profile->nik,
+                    'photo' => $profile->photo,
+                    'name'     => strtolower($profile->nama),
+                    'fullname'     => namalengkap($profile->gelar_depan,$profile->nama,$profile->gelar_blk),
+                    'email'    => $profile->email,
+                    'username'    => $profile->username,
+                    'role' => $profile->role,
+                    'id_unit_kerja' => $profile->id_unit_kerja,
+                    'nama_unit_kerja' => $profile->nama_unit_kerja,
                     'isLogin'     => TRUE
                 ];
                 $session->set($sessionSetData);

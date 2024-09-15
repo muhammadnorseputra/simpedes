@@ -2,5 +2,4 @@
 
 <?= $this->section('content'); ?>
 Selamat Datang <?= session()->get('name') ?>
-
 <?= $this->endSection(); ?>

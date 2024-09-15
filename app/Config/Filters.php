@@ -26,6 +26,7 @@ class Filters extends BaseConfig
         'secureheaders' => SecureHeaders::class,
         'authfilter' => \App\Filters\AuthSessionCheck::class,
         'redirectIfAuthenticated' => \App\Filters\RedirectIfAuthenticated::class,
+        'cors'     => \App\Filters\Cors::class,
     ];
 
     /**
@@ -37,6 +38,7 @@ class Filters extends BaseConfig
     public array $globals = [
         'before' => [
             // 'honeypot',
+            'cors',
             'csrf',
             'authfilter' => [
                 'except' => [

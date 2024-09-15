@@ -67,11 +67,9 @@ $(function () {
   }
 
   applyThemeFromCookie();
-  new PerfectScrollbar(".app-container"),
-    new PerfectScrollbar(".header-message-list"),
-    $(".mobile-search-icon").on("click", function () {
-      $(".search-bar").addClass("full-search-bar");
-    }),
+  $(".mobile-search-icon").on("click", function () {
+    $(".search-bar").addClass("full-search-bar");
+  }),
     $(".search-close").on("click", function () {
       $(".search-bar").removeClass("full-search-bar");
     }),

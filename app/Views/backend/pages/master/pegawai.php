@@ -25,7 +25,18 @@
                             <th>NIPD</th>
                             <th>Photo</th>
                             <th>Nama Lengkap</th>
-                            <th>Desa</th>
+                            <th>Unit Kerja</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                        <tr>
+                            <th class="filterhead"></th>
+                            <th class="filterhead"></th>
+                            <th></th>
+                            <th class="filterhead"></th>
+                            <th class="filterhead"></th>
+                            <th class="filterhead"></th>
+                            <th></th>
                         </tr>
                     </thead>
                 </table>
@@ -38,44 +49,42 @@
 <script type="text/javascript">
 $(document).ready(function() {
     $.fn.dataTable.ext.buttons.reload = {
-        text: '<i class="bx bx-refresh"></i> Reload',
+        text: '<i class="bx bx-refresh"></i> Refresh',
         action: function ( e, dt, node, config ) {
             dt.ajax.reload();
         },
-        className: 'btn btn-info',
+        className: 'btn btn-secondary',
         
     };
 
     $.fn.dataTable.ext.buttons.add = {
         text: '<i class="bx bx-plus"></i> Tambah',
         action: function ( e, dt, node, config ) {
-            console.log('add')
+            window.location.href= `${origin}/app/master/pegawai/peremajaan`
         },
         className: 'btn btn-primary'
     };
 
-    $('table#example').DataTable({
+    var datatable = $('table#example').DataTable({
         processing: true,
         serverSide: true,
+        responsive: true,
         order: [[1, 'asc']], //this mean no init order on datatable
         layout: {
             topStart: [{
-                buttons: ['add', {
-                    text: '<i class="bx bx-export"></i> Export',
-                    'split': ['print', 'csv']
-                }]
+                buttons: ['add']
             }],
             topEnd: [{
-                search: {
-                    placeholder: 'Masukan keyword ..',
-                    type: 'search',
-                    boundary: true
-                }
-            }, {
                 buttons: [
                     'colvis',
                     'spacer',
+                    {
+                        text: '<i class="bx bx-export"></i> Export',
+                        'split': ['print', 'csv']
+                    },
+                    'spacer',
                     'reload',
+
                 ]
             }],
             bottomStart: ['info','pageLength']
@@ -84,20 +93,53 @@ $(document).ready(function() {
             url: '<?= base_url('datatable/master/pegawai') ?>',
             method: 'POST',
             data: {
-                csrf_token_simpedes: '<?= csrf_hash() ?>'
+                ['<?= csrf_token() ?>']: '<?= csrf_hash() ?>'
             },
         },
         columns: [
             {data: 'nik', orderable: true},
             {data: 'nipd', orderable: true},
-            {data: 'photo', orderable: false, searchable: false},
-            {data: 'nama'},
-            {data: 'fid_keldesa', orderable: false, searchable: false}
+            {data: 'photo', width: '5%', className: 'text-center align-middle', orderable: false, searchable: false},
+            {data: 'nama',  className: 'align-middle'},
+            {data: 'nama_unit_kerja', orderable: false},
+            {data: 'status', width: '10%', orderable: false},
+            {data: 'action', width: '10%',orderable: false, searchable: false}
         ],
         columnDefs: [
             {target: 0, orderable: false}
-        ]
+        ],
+        orderCellsTop: true,
+        initComplete: function( settings, json ) 
+        {
+
+            var indexColumn = 0;
+
+            this.api().columns([0,1,3,4,5]).every(function () 
+            {
+                
+                var column      = this;
+                var input       = document.createElement("input");
+                
+                $(input).attr( 'placeholder', 'Search' )
+                        .attr("type", "search")
+                        .addClass('form-control form-control-sm')
+                        .appendTo( $('.filterhead:eq('+indexColumn+')').empty() )
+                        .on('change', function () {
+                            column.search($(this).val(), false, false, true).draw();
+                        });
+
+                indexColumn++;
+            });
+        }
     });
+
+    datatable.on("click", "a#verifikasi", function (event) {
+        event.preventDefault();
+        let _ = $(this);
+        let ID = _.data('uid');
+        let URL = _.attr('href');
+        window.location.href = URL;
+    })
 });
 </script>
 <?= $this->endSection(); ?>

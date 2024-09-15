@@ -17,21 +17,28 @@
     <!--end breadcrumb-->
     <div class="card">
         <div class="card-body">
-            <div class="table-responsive">
                 <table id="example" class="table table-striped table-separate table-hover border border-3">
                     <thead>
                         <tr>
                             <th>No</th>
-                            <th>Nama Jabatan</th>
+                            <th class="all">Nama Jabatan</th>
                             <th>Atasan</th>
                             <th>Jenis</th>
                             <th>Gajih</th>
                             <th>Tunjangan</th>
-                            <th>Aksi</th>
+                            <th class="all">Aksi</th>
+                        </tr>
+                        <tr>
+                            <th>#</th>
+                            <th class="filterhead"></th>
+                            <th></th>
+                            <th class="filterhead"></th>
+                            <th class="filterhead"></th>
+                            <th class="filterhead"></th>
+                            <th></th>
                         </tr>
                     </thead>
                 </table>
-            </div>
         </div>
     </div>
 <?= $this->endSection(); ?>
@@ -180,11 +187,11 @@ $(document).ready(function() {
     })
     
     $.fn.dataTable.ext.buttons.reload = {
-        text: '<i class="bx bx-refresh"></i> Reload',
+        text: '<i class="bx bx-refresh"></i> Refresh',
         action: function ( e, dt, node, config ) {
             dt.ajax.reload();
         },
-        className: 'btn btn-info',
+        className: 'btn btn-secondary',
         
     };
 
@@ -199,23 +206,23 @@ $(document).ready(function() {
     var datatable = $('table#example').DataTable({
         processing: true,
         serverSide: true,
+        fixedHeader: {
+            headerOffset: 60
+        },
+        responsive: true,
         order: [], //this mean no init order on datatable
         layout: {
             topStart: [{
-                buttons: ['add', {
-                    text: '<i class="bx bx-export"></i> Export',
-                    'split': ['print', 'csv']
-                }]
+                buttons: ['add']
             }],
             topEnd: [{
-                search: {
-                    placeholder: 'Masukan keyword ..',
-                    type: 'search',
-                    boundary: true
-                }
-            }, {
                 buttons: [
                     'colvis',
+                    'spacer',
+                    {
+                        text: '<i class="bx bx-export"></i> Export',
+                        'split': ['print', 'csv']
+                    },
                     'spacer',
                     'reload',
                 ]
@@ -226,15 +233,15 @@ $(document).ready(function() {
             url: '<?= base_url('datatable/master/jabatan') ?>',
             method: 'POST',
             data: {
-                csrf_token_simpedes: '<?= csrf_hash() ?>'
+                ['<?= csrf_token() ?>']: '<?= csrf_hash() ?>'
             },
         },
         columns: [
             {data: 'no', orderable: false, searchable: false},
             {data: 'nama_jabatan'},
-            {data: 'id_atasan'},
+            {data: 'id_atasan', searchable: false},
             {data: 'jenis'},
-            {data: 'gaji'},
+            {data: 'gaji'}, 
             {data: 'tunjangan'},
             {data: 'action'}
         ],
@@ -242,10 +249,33 @@ $(document).ready(function() {
             {target: 0, className: 'text-center align-middle'},
             {target: [1,2,3,4,5], className: 'align-middle'},
             {target: -1, orderable: false, searchable: false, className: 'align-middle'},
-        ]
+        ],
+        orderCellsTop: true,
+        initComplete: function( settings, json ) 
+        {
+
+            var indexColumn = 0;
+
+            this.api().columns([1,3,4,5]).every(function () 
+            {
+                
+                var column      = this;
+                var input       = document.createElement("input");
+                
+                $(input).attr( 'placeholder', 'Search' )
+                        .attr("type", "search")
+                        .addClass('form-control form-control-sm')
+                        .appendTo( $('.filterhead:eq('+indexColumn+')').empty() )
+                        .on('change', function () {
+                            column.search($(this).val(), false, false, true).draw();
+                        });
+
+                indexColumn++;
+            });
+        }
     });
 
-    $( 'select#atasan' ).select2( {
+    $( 'select#atasan' ).select2({
         theme: "bootstrap-5",
         width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
         placeholder: $( this ).data( 'placeholder' ),
