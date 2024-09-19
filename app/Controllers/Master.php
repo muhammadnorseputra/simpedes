@@ -329,6 +329,10 @@ class Master extends BaseController
             return view('backend/pages/master/pegawai_add', $data);
         };
 
+        if(session()->role === 'OPERATOR') {
+            return redirect()->to('app/pegawai/unit');
+        }
+
         $data = [
             'title' => 'Master Pegawai - Simpedes Kab. Balangan',
         ];
@@ -336,6 +340,8 @@ class Master extends BaseController
     }
 
     public function users($paramsType = "") {
+        helper("hash");
+
         $request = $this->request;
         if($request->is('put') && $request->is('ajax') && $paramsType === 'status-active') {
             $data = [
@@ -388,6 +394,26 @@ class Master extends BaseController
             ];
             return $this->respond($msg, 400);
         }
+        
+        if($request->is('put') && $request->is('ajax') && $paramsType === 'ganti-password') {
+            $data = [
+                'password' => password_hash($request->getPost('retype_new_password'), PASSWORD_DEFAULT)
+            ];
+            $db = $this->db->table('users')->where('nik', rehash($request->getPost('token')))->update($data);
+            if($db)
+            {
+                $msg = [
+                    'status' => true,
+                    'message' => 'Password telah diperbaharui',
+                ];
+                return $this->respond($msg, 200);
+            }
+            $msg = [
+                'status' => false,
+                'message' => 'Password gagal diperbaharui',
+            ];
+            return $this->respond($msg, 400);
+        }
 
         if($request->is('post') && $request->is('ajax')) {
             $data = [
@@ -414,6 +440,15 @@ class Master extends BaseController
             ];
             return $this->respond($msg, 400);
 
+        }
+
+        if($request->is('get') && $paramsType === 'ganti-password')
+        {
+            $data = [
+                'title' => 'Ganti Password - Simpedes Kab. Balangan ',
+                'nik' => dohash(session()->nik)
+            ];
+            return view('backend/pages/master/ganti_password', $data);
         }
 
         $data = [

@@ -108,11 +108,11 @@ class AjaxSelect2 extends BaseController
             return $this->response->setJSON($response);
         }
 
-        $desa = $this->db->table('ref_unit_kerja')->where('aktif', 'Y')->like('nama_unit_kerja', $q)->orderBy('id_unit_kerja', 'desc')->get();
+        $unor = $this->db->table('ref_unit_kerja')->where('aktif', 'Y')->like('nama_unit_kerja', $q)->orderBy('id_unit_kerja', 'desc')->get();
         
-        if(count($desa->getResultArray()) > 0):
+        if(count($unor->getResultArray()) > 0):
             $data = array();
-            foreach($desa->getResult() as $list){
+            foreach($unor->getResult() as $list){
                 $data[] = array(
                     "id" => $list->id_unit_kerja,
                     "text" => ucwords($list->nama_unit_kerja),
@@ -132,6 +132,38 @@ class AjaxSelect2 extends BaseController
 
         return $this->response->setJSON($response);
 
+
+    }
+
+    public function unit_kerja_list()
+    {
+        $request = service('request');
+        $postData = $request->getPost();
+
+        $response = array();
+
+        // Read new token and assign in $response['token']
+        $response[csrf_token()] = csrf_hash();
+
+        if(!isset($postData['searchTerm'])){
+            // Fetch record
+            $unor = $this->db->table('ref_unit_kerja')->where('aktif', 'Y')->orderBy('id_unit_kerja', 'desc')->get();
+        }else{
+            $searchTerm = $postData['searchTerm'];
+            // Fetch record
+            $unor = $this->db->table('ref_unit_kerja')->where('aktif', 'Y')->like('nama_unit_kerja', $searchTerm)->orderBy('id_unit_kerja', 'desc')->get();
+        } 
+        $data = array();
+        foreach($unor->getResult() as $list){
+            $data[] = array(
+                "id" => $list->id_unit_kerja,
+                "text" => ucwords(strtolower($list->nama_unit_kerja)),
+            );
+        }
+
+        $response['data'] = $data;
+
+        return $this->response->setJSON($response);
 
     }
 

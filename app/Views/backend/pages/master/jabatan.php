@@ -172,7 +172,7 @@ $(document).ready(function() {
                 _.find("button[type='submit']").html(`<i class="bx bx-save"></i> Simpan`).prop("disabled", false)
             }).fail((err) => {
                 iziToast.error({
-                    message: err.statusText,
+                    message: err.responseJSON.message || err.statusText,
                     position: 'topCenter'
                 });
                 _.find("button[type='submit']").html(`<i class="bx bx-save"></i> Simpan`).prop("disabled", false)
@@ -335,7 +335,7 @@ $(document).ready(function() {
                             "json"
                         ).fail((err) => {
                             iziToast.error({
-                                message: err.statusText,
+                                message: err.responseJSON.message || err.statusText,
                                 position: 'topCenter'
                             });
                         });

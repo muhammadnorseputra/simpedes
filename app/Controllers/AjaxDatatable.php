@@ -142,10 +142,13 @@ class AjaxDatatable extends BaseController
         $builder = $this->db->table('pegawai')
         ->select('nik,nipd,nama,gelar_depan,gelar_blk,jns_kelamin,fid_unit_kerja,photo,status,nama_unit_kerja')
         ->join('ref_unit_kerja', 'pegawai.fid_unit_kerja=ref_unit_kerja.id_unit_kerja', 'left')
-        ->orderBy("created_at", 'desc');
+        ->whereNotIn('status', ['ENTRI','ENTRI_ULANG']);
         
         return DataTable::of($builder)
-        ->setSearchableColumns(['nik', 'nipd', 'nama', 'status'])
+        ->setSearchableColumns(['pegawai.nik', 'pegawai.nipd', 'pegawai.nama', 'pegawai.status'])
+        ->postQuery(function($query){
+            $query->orderBy('pegawai.created_at', 'desc');
+        })
         ->format('status', function($value){
             if($value === 'ENTRI') return "<span class='badge rounded-pill text-white bg-secondary p-2 text-uppercase px-3'><i class='bx bxs-circle me-1'></i> entri</span>";
             if($value === 'ENTRI_ULANG') return "<span class='badge rounded-pill text-white bg-secondary p-2 text-uppercase px-3'><i class='bx bxs-circle me-1'></i> entri ulang</span>";
@@ -180,11 +183,13 @@ class AjaxDatatable extends BaseController
         $builder = $this->db->table('users s')
         ->select('p.nik,p.nipd,p.nama,s.username,s.is_disabled,s.role,p.gelar_depan,p.gelar_blk,p.jns_kelamin,p.fid_unit_kerja,p.photo,u.nama_unit_kerja')
         ->join('pegawai p','s.nik=p.nik', 'left')
-        ->join('ref_unit_kerja u', 'p.fid_unit_kerja=u.id_unit_kerja', 'left')
-        ->orderBy("p.created_at", 'desc');
+        ->join('ref_unit_kerja u', 'p.fid_unit_kerja=u.id_unit_kerja', 'left');
         
         return DataTable::of($builder)
         ->setSearchableColumns(['p.nik', 'p.nipd', 'p.nama', 's.username'])
+        ->postQuery(function($query){
+            $query->orderBy('p.created_at', 'desc');
+        })
         ->edit('nama', function($row) {
             return namalengkap($row->gelar_depan, $row->nama, $row->gelar_blk)."<br/><span class='badge bg-light-primary text-primary'>".$row->role."</span>";
         })

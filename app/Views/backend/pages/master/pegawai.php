@@ -69,7 +69,7 @@ $(document).ready(function() {
         processing: true,
         serverSide: true,
         responsive: true,
-        order: [[1, 'asc']], //this mean no init order on datatable
+        order: [[0, "desc"]], //this mean no init order on datatable
         layout: {
             topStart: [{
                 buttons: ['add']
@@ -104,9 +104,6 @@ $(document).ready(function() {
             {data: 'nama_unit_kerja', orderable: false},
             {data: 'status', width: '10%', orderable: false},
             {data: 'action', width: '10%',orderable: false, searchable: false}
-        ],
-        columnDefs: [
-            {target: 0, orderable: false}
         ],
         orderCellsTop: true,
         initComplete: function( settings, json ) 

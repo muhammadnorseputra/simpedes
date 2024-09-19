@@ -73,15 +73,21 @@ $colorScheme = implode(" ", [$theme, $color, $sidebarColor])
 		<div class="modal-dialog modal-dialog-scrollable modal-fullscreen-md-down">
 		  <div class="modal-content">
 			<div class="modal-header gap-2">
-			  <div class="position-relative popup-search w-100">
-				<input class="form-control form-control-lg ps-5 border border-3 border-primary" type="search" placeholder="Search">
+			<?= form_open(base_url('app/pegawai/search'), ['id' => 'FormSearchPegawai', 'class' => 'position-relative popup-search w-100 needs-validation', 'autocomplete' => 'off']); ?>
+				<input name="search" class="form-control form-control-lg ps-5 border border-3 border-primary" type="search" placeholder="Search" autocomplete="off">
 				<span class="position-absolute top-50 search-show ms-3 translate-middle-y start-0 top-50 fs-4"><i class='bx bx-search'></i></span>
-			  </div>
+			<?= form_close(); ?>
 			  <button type="button" class="btn-close d-md-none" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 			<div class="modal-body">
 				<div class="search-list">
-				   
+					<!-- search list will be populated here -->
+					 <p class="text-center text-secondary opacity-50">
+						<span><i class="bx bx-box bx-lg"></i></span>
+						<p class="text-center text-secondary opacity-50">
+							Tidak ada hasil pencarian, kosong !
+						</p>
+					 </p>
 				</div>
 			</div>
 		  </div>
@@ -230,7 +236,7 @@ $colorScheme = implode(" ", [$theme, $color, $sidebarColor])
 					<div class="fw-bold "><?= session()->nama_unit_kerja ?></div>
 				</div>
 				<div class="d-grid gap-3 w-100">
-					<button type="button" class="btn btn-primary">Ganti Password <i class="bx bx-lock"></i></button>
+					<button type="button" class="btn btn-primary" onClick="window.location.href= '<?= base_url('app/password') ?>';">Ganti Password <i class="bx bx-lock"></i></button>
 				</div>
 			</div>
 		</div>

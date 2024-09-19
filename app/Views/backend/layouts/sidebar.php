@@ -21,7 +21,7 @@
 				
 				<li class="menu-label">Pegawai</li>
 				<li>
-					<a href="<?= base_url('app/pegawai/unit_kerja') ?>">
+					<a href="<?= base_url('app/pegawai/unit') ?>">
 						<div class="parent-icon"><i class='bx bx-buildings'></i>
 						</div>
 						<div class="menu-title">Satuan Unit Kerja</div>

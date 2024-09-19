@@ -82,7 +82,7 @@
             <div><img src="<?= base_url('assets/images/notif/undraw_access_denied_re_awnf.svg') ?>" alt="Status Verifikasi" width="300"/></div>
             <h3>Waduh, sepertinya data tidak valid <i class="bx bx-x-circle text-danger"></i></h3>
             <p>Usulan pegawai "<strong>(<?= $status->nik ?>) <?= namalengkap($status->gelar_depan, $status->nama, $status->gelar_blk) ?></strong>" telah diverifikasi.</p>
-            <p class="border border-danger p-3"> <strong> PEGAWAI NON AKTIF</strong> <br> <?= $status->ket_status ?></p>
+            <p class="border border-danger p-3"> <strong> PEGAWAI NON AKTIF</strong> <br>Catatan Verifikator : <?= $status->ket_status ?></p>
         </div>
     </div>
 <?= $this->endSection(); ?>
@@ -112,7 +112,7 @@
             <div><img src="<?= base_url('assets/images/notif/undraw_access_denied_re_awnf.svg') ?>" alt="Status Verifikasi" width="300"/></div>
             <h3>Waduh, sepertinya data tidak valid <i class="bx bx-x-circle text-danger"></i></h3>
             <p>Usulan pegawai "<strong>(<?= $status->nik ?>) <?= namalengkap($status->gelar_depan, $status->nama, $status->gelar_blk) ?></strong>" telah diverifikasi.</p>
-            <p class="border border-danger p-3"><strong> PEGAWAI NON AKTIF ATAU NIK DITOLAK</strong> <br> <?= $status->ket_status ?></p>
+            <p class="border border-danger p-3"><strong> PEGAWAI NON AKTIF ATAU NIK DITOLAK</strong> <br>Catatan Verifikator : <?= $status->ket_status ?></p>
         </div>
     </div>
 <?= $this->endSection(); ?>

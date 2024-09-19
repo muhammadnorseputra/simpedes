@@ -24,7 +24,7 @@
                             <th>NIK</th>
                             <th>NIPD</th>
                             <th>Photo</th>
-                            <th>Nama Lengkap</th>
+                            <th>Nama Lengkap / Role</th>
                             <th>Username</th>
                             <th>Unit Kerja</th>
                             <th>Aksi</th>
@@ -340,7 +340,7 @@ $(document).ready(function() {
         processing: true,
         serverSide: true,
         responsive: true,
-        order: [[0, 'asc']], //this mean no init order on datatable
+        order: [[0, 'desc']], //this mean no init order on datatable
         layout: {
             topStart: [{
                 buttons: ['add']
@@ -373,11 +373,8 @@ $(document).ready(function() {
             {data: 'photo', width: '5%', className: 'text-center align-middle', orderable: false, searchable: false},
             {data: 'nama',  className: 'align-middle'},
             {data: 'username',  className: 'align-middle'},
-            {data: 'nama_unit_kerja', orderable: false, searchable: false},
+            {data: 'nama_unit_kerja', orderable: false},
             {data: 'action', width: '10%',orderable: false, searchable: false}
-        ],
-        columnDefs: [
-            {target: 0, orderable: false}
         ],
         createdRow: function(row, data, dataIndex){
             if(data.is_disabled ===  'Y'){

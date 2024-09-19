@@ -15,6 +15,7 @@ $routes->group('auth', ['filter' => 'redirectIfAuthenticated'], function ($route
 
 $routes->group('app', function($route) {
     $route->get('dashboard', 'Dashboard::index');
+    $route->get('password', 'Master::users/ganti-password');
     
     // Nested router group /app/master
     $route->group('master', function($route) {
@@ -54,6 +55,15 @@ $routes->group('app', function($route) {
         $route->put('satuan_unit_kerja', 'Referensi::update_satuan_unit_kerja');
         $route->patch('satuan_unit_kerja/(:num)', 'Referensi::update_satuan_unit_kerja/$1');
     });
+
+    // Nested router group /app/unit
+    $route->group('pegawai', function($route) {
+        $route->get('unit', 'Pegawai::index');
+        $route->get('detail/(:any)', 'Pegawai::detail/$1');
+        $route->post('unit', 'Pegawai::index');
+        $route->post('search', 'Pegawai::search');
+    });
+
 });
 
 $routes->group('datatable', function($route) {
@@ -77,6 +87,7 @@ $routes->group('select2', function($route) {
     $route->post('desa', 'AjaxSelect2::desa');
     $route->post('kecamatan', 'AjaxSelect2::kecamatan');
     $route->post('unit_kerja', 'AjaxSelect2::unit_kerja');
+    $route->post('unit_kerja_list', 'AjaxSelect2::unit_kerja_list');
     $route->post('atasan_jabatan', 'AjaxSelect2::atasan');
     $route->get('pegawai', 'AjaxSelect2::show_pegawai');
     $route->post('pegawai', 'AjaxSelect2::pegawai');

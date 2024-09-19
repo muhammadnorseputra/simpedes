@@ -1,6 +1,60 @@
 $(function () {
   "use strict";
 
+  function Placeholder() {
+    return `<div class="d-flex align-items-center justify-content-center w-100"><div class="spinner-border" role="status"> <span class="visually-hidden">Loading...</span></div></div>`;
+  }
+
+  let FormSearch = $("form#FormSearchPegawai"),
+    FormResult = $(".search-list");
+
+  FormSearch.on("submit", function (e) {
+    e.preventDefault();
+    let _ = $(this),
+      url = _.attr("action"),
+      data = _.serializeArray(),
+      method = _.attr("method");
+    $.ajax({
+      type: method,
+      url: url,
+      data: data,
+      cache: false,
+      beforeSend: () => {
+        FormResult.html(Placeholder);
+      },
+      success: (res) => {
+        if (res.status === true) {
+          let result = "";
+          res?.data?.map((pegawai) => {
+            const { photo, nama, nama_unit_kerja, status, token } = pegawai;
+            result += `
+              <div class="d-flex flex-row justify-content-between align-items-center gap-3 border-bottom pb-3 mb-3">
+                  <img src="${photo}" class="user-img" alt="${nama}">
+                  <div class="d-inline-flex flex-column justify-content-start align-items-start w-100">
+                      <span class="fw-bold">${nama}</span>
+                      <span>${nama_unit_kerja}</span>
+                      <span class="badge bg-light-primary text-primary px-2 py-1 rounded">${status}</span>
+                  </div>
+                  <div class="flex-1">
+                    <a href="${origin}/app/pegawai/detail/${token}" class="btn btn-default rounded"><i class="bx bx-right-arrow-alt"></i></a>
+                  </div>
+              </div>  
+            `;
+          });
+          FormResult.html(result).removeClass("text-danger text-center");
+        }
+      },
+      error: (err) => {
+        iziToast.error({
+          message: err.responseJSON.message || err.statusText,
+          position: "bottomCenter",
+        });
+        FormResult.html(err.responseJSON.message || err.statusText).addClass(
+          "text-danger text-center"
+        );
+      },
+    });
+  });
   // Fungsi untuk menyimpan cookie
   function setCookie(cname, cvalue, exdays) {
     const d = new Date();
