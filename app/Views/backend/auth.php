@@ -61,8 +61,8 @@
 										<?= form_open(base_url("auth/action"), ["id" => "formAuth", "class" => 'row g-3 needs-validation', 'novalidate' => '']) ?>
 											<div class="col-12">
 											<div class="form-floating">
-												<input type="text" required minlength="3" name="username" value="<?= set_value('username') ?>" class="form-control" id="floatingInputUsername" placeholder="Masukan username">
-												<label for="floatingInputUsername">Username</label>
+												<input type="text" required minlength="3" name="username" value="<?= set_value('username') ?>" class="form-control" id="floatingInputUsername" placeholder="Masukan username / NIPD / email">
+												<label for="floatingInputUsername">Masukan Username / NIPD / Email</label>
 												<div id="floatingInputUsername" class="invalid-feedback">
 													Please choose a username.
 												</div>
@@ -173,21 +173,22 @@
 					method: $method,
 					data: $data,
 					success: function (res) {
-						// $containerMsg.attr("class", "alert alert-danger").html(res.message);
 						
 						if(res.status !== true) {
-							NotifError(res.message)
+							// NotifError(res.message)
+							$containerMsg.attr("class", "alert alert-danger d-flex justify-content-start align-items-center p-2").html(`<span class="ms-2">${res.message}</span> <i class="bx bxs-error-circle bx-sm ms-auto"></i>`);
 						}
 						if(res.status === true) {
-							// $containerMsg.attr("class", "alert alert-success").html(res.message);
-							NotifSuccess(res.message)
+							$containerMsg.attr("class", "alert alert-success d-flex justify-content-start align-items-center p-2").html(`<span class="ms-2">${res.message}</span> <i class="bx bxs-check-circle bx-sm ms-auto text-success"></i>`);
+							// NotifSuccess(res.message)
 							setTimeout(function() {
 								window.location.href = res.data.redirect
 							}, 1000)
 						}
 					},
 					error: function(err) {
-						NotifError(`${ err.responseJSON.message || err.statusText} (${err.status})`)
+						$containerMsg.attr("class", "alert alert-danger d-flex justify-content-start align-items-center p-2").html(`<span class="ms-2">${ err.responseJSON.message || err.statusText} (${err.status})</span> <i class="bx bxs-error-circle bx-sm ms-auto"></i>`);
+						// NotifError(`${ err.responseJSON.message || err.statusText} (${err.status})`)
 					},
 				})
 			})

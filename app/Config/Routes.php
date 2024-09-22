@@ -62,6 +62,23 @@ $routes->group('app', function($route) {
         $route->get('detail/(:any)', 'Pegawai::detail/$1');
         $route->post('unit', 'Pegawai::index');
         $route->post('search', 'Pegawai::search');
+        // riwayat pendidikan
+        $route->get('(:any)/pendidikan', 'Pegawai::riwayat_pendidikan/$1');
+        $route->get('(:any)/pendidikan/(:any)', 'Pegawai::riwayat_pendidikan/$1/$2');
+        $route->post('(:any)/pendidikan/(:any)', 'Pegawai::riwayat_pendidikan/$1/$2');
+        $route->delete('(:any)/pendidikan/(:any)', 'Pegawai::riwayat_pendidikan/$1/$2');
+        // riwayat jabatan
+        $route->get('(:any)/jabatan', 'Pegawai::riwayat_jabatan/$1');
+        $route->get('(:any)/jabatan/(:any)', 'Pegawai::riwayat_jabatan/$1/$2');
+        $route->post('(:any)/jabatan/(:any)', 'Pegawai::riwayat_jabatan/$1/$2');
+        $route->delete('(:any)/jabatan/(:any)', 'Pegawai::riwayat_jabatan/$1/$2');
+        // riwayat keluarga
+        $route->get('(:any)/keluarga', 'Pegawai::riwayat_keluarga/$1');
+        $route->get('(:any)/keluarga/(:any)/(:any)', 'Pegawai::riwayat_keluarga/$1/$2/$3');
+        $route->post('(:any)/keluarga/(:any)/(:any)', 'Pegawai::riwayat_keluarga/$1/$2/$3');
+        $route->put('(:any)/keluarga/(:any)/(:any)', 'Pegawai::riwayat_keluarga/$1/$2/$3');
+        $route->patch('(:any)/keluarga/(:any)/(:any)', 'Pegawai::riwayat_keluarga/$1/$2/$3');
+        $route->delete('(:any)/keluarga/(:any)/(:any)', 'Pegawai::riwayat_keluarga/$1/$2/$3');
     });
 
 });
@@ -81,6 +98,13 @@ $routes->group('datatable', function($route) {
         $route->post('pegawai', 'AjaxDatatable::pegawai');
         $route->post('users', 'AjaxDatatable::users');
     });
+    // Nested router group /datatable/riwayat
+    $route->group('riwayat', function($route) {
+        $route->post('pendidikan', 'AjaxDatatable::riwayat_pendidikan');
+        $route->post('jabatan', 'AjaxDatatable::riwayat_jabatan');
+        $route->post('keluarga/sutri', 'AjaxDatatable::riwayat_keluarga_sutri');
+        $route->post('keluarga/anak', 'AjaxDatatable::riwayat_keluarga_anak');
+    });
 });
 
 $routes->group('select2', function($route) {
@@ -91,4 +115,6 @@ $routes->group('select2', function($route) {
     $route->post('atasan_jabatan', 'AjaxSelect2::atasan');
     $route->get('pegawai', 'AjaxSelect2::show_pegawai');
     $route->post('pegawai', 'AjaxSelect2::pegawai');
+    $route->post('tingkat_pendidikan', 'AjaxSelect2::tingkat_pendidikan');
+    $route->post('jurusan_pendidikan', 'AjaxSelect2::jurusan_pendidikan');
 });

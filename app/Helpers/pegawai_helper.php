@@ -5,14 +5,14 @@ use CodeIgniter\I18n\Time;
 function namalengkap($gelarDepan, $nama, $gelarBelakang) {
     // Cek apakah gelar depan ada atau tidak
     $result = '';
-    if (!empty($gelarDepan) && $gelarDepan !== "-") {
+    if (!empty($gelarDepan) && $gelarDepan !== "-" && $gelarDepan !== null) {
         $result .= $gelarDepan . ' ';
     }
 
     $result .= $nama;
     
     // Cek apakah gelar belakang ada atau tidak
-    if (!empty($gelarBelakang) && $gelarBelakang !== "-") {
+    if (!empty($gelarBelakang) && $gelarBelakang !== "-" && $gelarDepan !== null) {
         $result .= ', ' . $gelarBelakang;
     }
     
@@ -36,18 +36,17 @@ function statusdata($data, $variant = "bg") {
     }
 }
 
-function hitungUsia($tanggalLahir) {
-    // Membuat objek DateTime dari tanggal lahir
-    $tglLahir = new DateTime($tanggalLahir);
+function hitungUsia($tanggal_lahir) {
+    // Ubah string tanggal lahir menjadi objek DateTime
+    $tanggal_lahir = new DateTime($tanggal_lahir);
+    // Ambil tanggal saat ini
+    $tanggal_sekarang = new DateTime();
     
-    // Membuat objek DateTime untuk tanggal saat ini
-    $sekarang = new DateTime();
-    
-    // Menghitung selisih antara tanggal sekarang dan tanggal lahir
-    $selisih = $sekarang->diff($tglLahir);
-    
-    // Mengembalikan usia dalam tahun
-    return $selisih->y;
+    // Hitung selisih antara tanggal lahir dan tanggal saat ini
+    $selisih = $tanggal_sekarang->diff($tanggal_lahir);
+
+    // Format hasil menjadi "XX Tahun YY Bulan"
+    return $selisih->y . ' Tahun, ' . $selisih->m . ' Bulan';
 }
 
 
@@ -57,6 +56,11 @@ function updateAt($tanggal) {
     
     // Mengembalikan selisih waktu relatif
     return $time->humanize();
+}
+
+function isNull($value) {
+    if($value === null || $value === '') return "-";
+    return $value;
 }
 
 ?>

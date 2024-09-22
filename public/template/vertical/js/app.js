@@ -1,6 +1,13 @@
 $(function () {
   "use strict";
 
+  const tooltipTriggerList = document.querySelectorAll(
+    '[data-bs-toggle="tooltip"]'
+  );
+  const tooltipList = [...tooltipTriggerList].map(
+    (tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl)
+  );
+
   function Placeholder() {
     return `<div class="d-flex align-items-center justify-content-center w-100"><div class="spinner-border" role="status"> <span class="visually-hidden">Loading...</span></div></div>`;
   }
@@ -27,6 +34,10 @@ $(function () {
           let result = "";
           res?.data?.map((pegawai) => {
             const { photo, nama, nama_unit_kerja, status, token } = pegawai;
+            const link =
+              status === "AKTIF"
+                ? `${origin}/app/pegawai/detail/${token}`
+                : `${origin}/app/master/pegawai/peremajaan?token=${token}`;
             result += `
               <div class="d-flex flex-row justify-content-between align-items-center gap-3 border-bottom pb-3 mb-3">
                   <img src="${photo}" class="user-img" alt="${nama}">
@@ -36,7 +47,7 @@ $(function () {
                       <span class="badge bg-light-primary text-primary px-2 py-1 rounded">${status}</span>
                   </div>
                   <div class="flex-1">
-                    <a href="${origin}/app/pegawai/detail/${token}" class="btn btn-default rounded"><i class="bx bx-right-arrow-alt"></i></a>
+                    <a href="${link}" class="btn btn-default rounded"><i class="bx bx-right-arrow-alt"></i></a>
                   </div>
               </div>  
             `;

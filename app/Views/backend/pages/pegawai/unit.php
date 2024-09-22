@@ -78,6 +78,7 @@
                 <div class="card-body">
                     <h6 class="card-title cursor-pointer name"><?= namalengkap($row->gelar_depan,$row->nama,$row->gelar_blk); ?></h6>
                     <div class="clearfix">
+                        <p class="mb-0 float-start nipd"><strong><?= $row->nama_jabatan ?? "-" ?></strong></p> <br>
                         <p class="mb-0 float-start nipd"><strong>NIPD. <?= $row->nipd ?></strong></p>
                     </div>
                     <div class="d-flex align-items-center mt-3 fs-6">

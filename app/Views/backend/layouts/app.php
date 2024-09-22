@@ -66,8 +66,6 @@ $colorScheme = implode(" ", [$theme, $color, $sidebarColor])
 
 		<?= $this->include('backend/layouts/footer'); ?>
 	</div>
-	
-	<?= $this->renderSection('modal'); ?>
 	<!-- search modal -->
     <div class="modal" id="SearchModal" tabindex="-1">
 		<div class="modal-dialog modal-dialog-scrollable modal-fullscreen-md-down">
@@ -94,6 +92,9 @@ $colorScheme = implode(" ", [$theme, $color, $sidebarColor])
 		</div>
 	  </div>
     <!-- end search modal -->
+
+	<?= $this->renderSection('modal'); ?>
+	
 
 	<!--start switcher-->
 	<div class="switcher-wrapper">
@@ -231,9 +232,23 @@ $colorScheme = implode(" ", [$theme, $color, $sidebarColor])
 					<div class="text-uppercase">Email</div>
 					<div class="fw-bold "><?= session()->email ?></div>
 				</div>
+				<div class="d-flex justify-content-start align-items-center gap-1  w-100 border-bottom pb-3">
+					<div class="d-inline-flex flex-column gap-1">
+						<div class="text-uppercase">Jabatan</div>
+						<div class="fw-bold "><?= session()->nama_jabatan ?></div>
+					</div>
+					<div class="d-inline-flex flex-column gap-1">
+						<div class="text-uppercase">&nbsp;</div>
+						<div class="fw-bold "><?= session()->jenis_jabatan ?></div>
+					</div>
+				</div>
 				<div class="d-inline-flex flex-column gap-1 w-100 border-bottom pb-3">
 					<div class="text-uppercase">Satuan Unit Kerja</div>
 					<div class="fw-bold "><?= session()->nama_unit_kerja ?></div>
+				</div>
+				<div class="d-inline-flex flex-column gap-1 w-100 border-bottom pb-3">
+					<div class="text-uppercase">Desa / Kelurahan</div>
+					<div class="fw-bold "><?= session()->nama_desa ?></div>
 				</div>
 				<div class="d-grid gap-3 w-100">
 					<button type="button" class="btn btn-primary" onClick="window.location.href= '<?= base_url('app/password') ?>';">Ganti Password <i class="bx bx-lock"></i></button>

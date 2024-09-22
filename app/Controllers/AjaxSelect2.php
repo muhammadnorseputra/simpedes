@@ -68,7 +68,7 @@ class AjaxSelect2 extends BaseController
             foreach($desa->getResult() as $list){
                 $data[] = array(
                     "id" => $list->id_desa,
-                    "text" => ucwords($list->nama_desa),
+                    "text" => ucwords(strtolower($list->nama_desa)),
                 );
             }
 
@@ -265,35 +265,123 @@ class AjaxSelect2 extends BaseController
 
         $nik = $this->request->getGet('nik');
         if($this->request->is('ajax')):
-        $builder = $this->db->table('pegawai p')
-        ->select('p.nik,p.photo,p.gelar_depan,p.gelar_blk,p.nama,p.photo,u.nama_unit_kerja')
-        ->join('ref_unit_kerja u', 'p.fid_unit_kerja=u.id_unit_kerja')
-        ->where('p.nik', $nik);
+            $builder = $this->db->table('pegawai p')
+            ->select('p.nik,p.photo,p.gelar_depan,p.gelar_blk,p.nama,p.photo,u.nama_unit_kerja')
+            ->join('ref_unit_kerja u', 'p.fid_unit_kerja=u.id_unit_kerja')
+            ->where('p.nik', $nik);
 
-        if($builder->countAllResults(false) > 0) {
-            $row = $builder->get()->getRow();
+            if($builder->countAllResults(false) > 0) {
+                $row = $builder->get()->getRow();
+                $data = [
+                'status' => true,
+                'message' => "NIK. {$nik} Ditemukan",
+                'data' => [
+                        'nik' => $row->nik,
+                        'photo' => base_url("assets/images/users/".$row->photo),
+                        'nama' => namalengkap($row->gelar_depan, $row->nama, $row->gelar_blk),
+                        'nama_unit_kerja' => $row->nama_unit_kerja
+                    ]
+                ]; 
+                return $this->response->setJson($data);
+            };
+
             $data = [
-            'status' => true,
-            'message' => "NIK. {$nik} Ditemukan",
-            'data' => [
-                    'nik' => $row->nik,
-                    'photo' => base_url("assets/images/users/".$row->photo),
-                    'nama' => namalengkap($row->gelar_depan, $row->nama, $row->gelar_blk),
-                    'nama_unit_kerja' => $row->nama_unit_kerja
-                ]
-            ]; 
+                'status' => false,
+                'message' => 'NIK tidak ditemukan',
+                'data' => []
+            ];
             return $this->response->setJson($data);
-        };
-
-        $data = [
-            'status' => false,
-            'message' => 'NIK tidak ditemukan',
-            'data' => []
-        ];
-        return $this->response->setJson($data);
         endif;
     }
 
+    public function tingkat_pendidikan()
+    {
+        $postData = $this->request->getPost();
+
+        $response = array();
+
+        // Read new token and assign in $response['token']
+        $response[csrf_token()] = csrf_hash();
+
+        if(!isset($postData['searchTerm'])){
+            // Fetch record
+            $query = $this->db->table('ref_tingkat_pendidikan')->orderBy('id_tingkat_pendidikan', 'desc')->get();
+        }else{
+            $searchTerm = $postData['searchTerm'];
+            // Fetch record
+            $query = $this->db->table('ref_tingkat_pendidikan')->like('nama_tingkat_pendidikan',$searchTerm)
+            ->orderBy('id_tingkat_pendidikan', 'desc')
+            ->get();
+        } 
+        $data = array();
+        foreach($query->getResult() as $list){
+            $data[] = array(
+                "id" => $list->id_tingkat_pendidikan,
+                "text" => ucwords($list->nama_tingkat_pendidikan),
+            );
+        }
+
+        $response['data'] = $data;
+
+        return $this->response->setJSON($response);
+    }
+
+    public function jurusan_pendidikan()
+    {
+        $request = service('request');
+        $postData = $request->getPost();
+
+        $response = array();
+
+        // Read new token and assign in $response['token']
+        $response[csrf_token()] = csrf_hash();
+        $q = @$postData['searchTerm'];
+        // Fetch record
+        if(empty($postData['id_tingkat_pendidikan'])) {
+            $response['data'] = [[
+                "id" => 0,
+                "text" => 'Silahkan pilih tingkat pendidikan',
+                'disabled' => true
+            ]];
+            return $this->response->setJSON($response);
+        }
+        
+        if($q === "" || empty($q)) {
+            $response['data'] = [[
+                "id" => 0,
+                "text" => 'Silahkan ketikan kata kunci yang benar',
+                'disabled' => true
+            ]];
+            return $this->response->setJSON($response);
+        }
+
+        $db = $this->db->table('ref_jurusan_pendidikan')
+        ->like('nama_jurusan_pendidikan', $q)
+        ->where('fid_tingkat_pendidikan', $postData['id_tingkat_pendidikan'])
+        ->orderBy('id_jurusan_pendidikan', 'desc')->get();
+        
+        if(count($db->getResultArray()) > 0):
+            $data = array();
+            foreach($db->getResult() as $list){
+                $data[] = array(
+                    "id" => $list->id_jurusan_pendidikan,
+                    "text" => $list->nama_jurusan_pendidikan,
+                );
+            }
+
+            $response['data'] = $data;
+
+            return $this->response->setJSON($response);
+        endif;
+
+        $response['data'] = [[
+            "id" => 0,
+            "text" => 'Data tidak ditemukan, silahkan ketikan kata kunci yang benar',
+            'disabled' => true
+        ]];
+
+        return $this->response->setJSON($response);
+    }
 }
 
 ?>

@@ -76,13 +76,30 @@
             <!---end row-->
             <!-- Start row -->
             <div class="row mb-3 gap-md-0 gap-3">
-                <div class="col-md-6">
+                <div class="col-md-8">
                     <div class="form-floating">
                         <input type="text" name="nama" class="form-control" id="nama" value="<?= @$default->nama ?>" placeholder="Nama" required>
-                        <label for="nama">Nama <span class="text-danger">*</span></label>
+                        <label for="nama">Nama Tanpa Gelar <span class="text-danger">*</span></label>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
+                    <div class="form-floating">
+                    <?php  
+                    $agama = $db->table('ref_agama')->get()->getResult();
+                    ?>
+                    <select class="form-select" name="agama" id="agama" aria-label="Floating label select example" required>
+                        <option value="">Pilih Agama</option>
+                        <?php 
+                            foreach($agama as $a): 
+                            $defaultSelectedAgama = @$default->fid_agama === $a->id_agama ? 'selected' : '';
+                            ?>
+                            <option value="<?= $a->id_agama ?>" <?= $defaultSelectedAgama ?>><?= $a->nama_agama ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    <label for="agama">Agama <span class="text-danger">*</span></label>
+                    </div>
+                </div>
+                <!-- <div class="col-md-3">
                     <div class="form-floating">
                         <input type="text" name="gelar_depan" value="<?= @$default->gelar_depan ?>" class="form-control" id="gelar_depan" placeholder="Gelar Depan" required>
                         <label for="gelar_depan">Gelar Depan <span class="text-danger">*</span></label>
@@ -93,7 +110,7 @@
                         <input type="text" name="gelar_blk" value="<?= @$default->gelar_blk ?>" class="form-control" id="gelar_blk" placeholder="Gelar Belakang" required>
                         <label for="gelar_blk">Gelar Belakang <span class="text-danger">*</span></label>
                     </div>
-                </div>
+                </div> -->
             </div>
             <!---end row-->
             <!-- Start row -->
@@ -126,27 +143,32 @@
             <div class="row mb-3 gap-md-0 gap-3">
               <div class="col-md-6">
                 <div class="form-floating">
-                  <textarea class="form-control" name="alamat" placeholder="Masukan alamat lengkap disini." id="alamat" style="height: 130px" required><?= @$default->alamat ?></textarea>
+                  <textarea class="form-control" name="alamat" placeholder="Masukan alamat lengkap disini." id="alamat" style="height: 115px" required><?= @$default->alamat ?></textarea>
                   <label for="alamat">Alamat Lengkap / Domisili <span class="text-danger">*</span></label>
                 </div>
               </div>
               <div class="col-md-6">
-                <div class="form-floating mb-3">
-                  <?php  
-                  $agama = $db->table('ref_agama')->get()->getResult();
-                  ?>
-                  <select class="form-select" name="agama" id="agama" aria-label="Floating label select example" required>
-                      <option value="">Pilih Agama</option>
-                      <?php 
-                        foreach($agama as $a): 
-                        $defaultSelectedAgama = @$default->fid_agama === $a->id_agama ? 'selected' : '';
-                        ?>
-                        <option value="<?= $a->id_agama ?>" <?= $defaultSelectedAgama ?>><?= $a->nama_agama ?></option>
-                      <?php endforeach; ?>
-                  </select>
-                  <label for="agama">Agama <span class="text-danger">*</span></label>
+                <?php $disableUnitKerja = @$default->status !== "ENTRI" ? "disabled" : ""; ?>
+                <?= @$default->status !== "ENTRI" ? '<input name="fid_unit_kerja" value="'.@$default->fid_unit_kerja.'" type="hidden"/>' : ""; ?>
+                <div class="form-floating  mb-3">
+                    <select class="form-select" name="fid_unit_kerja" id="unitkerja" data-placeholder="Pilih Unit Kerja" 
+                    data-parsley-errors-container="#errorunitkerja"
+                    data-parsley-error-message="Tidak Boleh Kosong"
+                    required
+                    <?= $disableUnitKerja; ?>
+                    ></select>
+                    <label for="unitkerja" class="form-label">Pilih Unit kerja <span class="text-danger">*</span></label>
+                    <div id="errorunitkerja"></div>
                 </div>
                 <div class="form-floating">
+                    <select class="form-select" name="fid_keldesa" id="desa" data-placeholder="Pilih Desa" 
+                    data-parsley-errors-container="#errordesa"
+                    data-parsley-error-message="Tidak Boleh Kosong"
+                    required></select>
+                    <label for="desa" class="form-label">Pilih Desa <span class="text-danger">*</span></label>
+                    <div id="errordesa"></div>
+                </div>
+                <!-- <div class="form-floating">
                   <?php  
                   $statkaw = $db->table('ref_status_kawin')->get()->getResult();
                   ?>
@@ -160,36 +182,10 @@
                       <?php endforeach; ?>
                   </select>
                   <label for="status_kawin">Status Kawin <span class="text-danger">*</span></label>
-                </div>
+                </div> -->
               </div>
             </div>
             <!---end row-->
-            <!-- Start row -->
-            <div class="row mb-3 gap-md-0 gap-3">
-                <div class="col-md-6">
-                    <div class="form-floating">
-                    <select class="form-select" name="fid_unit_kerja" id="unitkerja" data-placeholder="Pilih Unit Kerja" 
-                    data-parsley-errors-container="#errorunitkerja"
-                    data-parsley-error-message="Tidak Boleh Kosong"
-                    required></select>
-                    <label for="unitkerja" class="form-label">Pilih Unit kerja <span class="text-danger">*</span></label>
-                    <div id="errorunitkerja"></div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-
-                <div class="form-floating">
-                  <select class="form-select" name="fid_keldesa" id="desa" data-placeholder="Pilih Desa" 
-                  data-parsley-errors-container="#errordesa"
-                  data-parsley-error-message="Tidak Boleh Kosong"
-                  required></select>
-                  <label for="desa" class="form-label">Pilih Desa <span class="text-danger">*</span></label>
-                  <div id="errordesa"></div>
-                </div>
-                </div>
-            </div>
-            <hr>
-            <!-- Start row -->
             <div class="row mb-3 gap-md-0 gap-3">
               <div class="col-md-4">
                   <div class="form-floating">
@@ -199,13 +195,13 @@
               </div>
               <div class="col-md-4">
                   <div class="form-floating">
-                      <input type="tel" name="no_hp" value="<?= @$default->no_hp ?>" class="form-control" id="no_hp" placeholder="Nomor Handphone">
+                      <input type="tel" name="no_hp" value="<?= @$default->no_hp ?>" class="form-control" id="no_hp" placeholder="Nomor Handphone" required>
                       <label for="no_hp">Nomor Handphone</label>
                   </div>
               </div>
               <div class="col-md-4">
                   <div class="form-floating">
-                      <input type="email" name="email" value="<?= @$default->email ?>" class="form-control" id="email" placeholder="Email">
+                      <input type="email" name="email" value="<?= @$default->email ?>" class="form-control" id="email" placeholder="Email" required>
                       <label for="email">Email</label>
                   </div>
               </div>
@@ -234,9 +230,9 @@
             </div>
             <!---end row-->
           </div>
-          <div class="col-md-3 order-first order-md-last">
+          <div class="col-md-3 order-first">
 
-            <div class="card">
+            <div class="card shadow-none border">
                 <?php if(!isset($default->photo)): ?>
                 <img id="preview" src="<?= base_url('assets/images/users/default.png') ?>" class="card-img-top" alt="MyPhoto">
                 <?php else: ?>
@@ -302,13 +298,13 @@
                 </tbody>
             </table>
             <div class="d-grid gap-2 mb-3">
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleScrollableModal">Verifikasi Data Usul Pegawai <i class="bx bx-mail-send"></i></button>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-verifikasi">Verifikasi Data Usul Pegawai <i class="bx bx-mail-send"></i></button>
             </div>
             <?php endif; ?>
           </div>
         </div>
         <?php if(@$default->status === 'ENTRI' || @$default->status === 'ENTRI_ULANG' || !isset($default->status)): ?>
-        <div class="card-body border-top">
+        <div class="card-body border-top d-flex justify-content-between align-items-center">
             <button type="button" class="btn btn-danger" onclick="window.location.href = '<?= base_url('/app/master/pegawai') ?>'"><i class="bx bx-left-arrow-alt"></i>  Batal</button>
             <button type="submit" class="btn btn-success"><i class="bx bx-save"></i>  Simpan Data</button>
         </div>
@@ -331,7 +327,7 @@ if(@$default->status === 'VERIFIKASI' || @$default->status === 'AKTIF' || @$defa
 ?>
 <?= $this->section('modal'); ?>
 <!-- Modal -->
-<div class="modal fade" id="exampleScrollableModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+<div class="modal fade" id="modal-verifikasi" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-body">
@@ -375,7 +371,7 @@ if(@$default->status === 'VERIFIKASI' || @$default->status === 'AKTIF' || @$defa
 <script>
 
     let FORM_STEP_AKUN = $("form#FormStepAkun");
-    let MODAL_VERIF = $("#exampleScrollableModal");
+    let MODAL_VERIF = $("#modal-verifikasi");
     let FORM_VERIF_AKUN = $("form#FormVerifikasi");
 
     MODAL_VERIF.on('hidden.bs.modal', (event) => {

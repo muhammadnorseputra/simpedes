@@ -135,7 +135,8 @@ class AjaxDatatable extends BaseController
         ->addNumbering("no")->toJson(true);
     }
 
-    public function pegawai() {
+    public function pegawai() 
+    {
     
         helper(["hash", "pegawai"]);
 
@@ -176,7 +177,8 @@ class AjaxDatatable extends BaseController
         })->toJson(true);
     }
 
-    public function users() {
+    public function users() 
+    {
     
         helper(["hash", "pegawai"]);
 
@@ -208,6 +210,197 @@ class AjaxDatatable extends BaseController
                         </ul>
                     </div>';
         })->toJson(true);
+    }
+
+    public function riwayat_pendidikan()
+    {
+        helper(["hash","tgl_indo"]);
+
+        $builder = $this->db->table('riwayat_pendidikan rp')
+        ->select('rp.id,rp.nik,rp.thn_lulus,rp.nama_sekolah,rp.nama_kepsek,rp.no_sttb,rp.tgl_sttb,rp.gelar_dpn,rp.gelar_blk,rp.berkas,tp.nama_tingkat_pendidikan,jp.nama_jurusan_pendidikan')
+        ->join('ref_tingkat_pendidikan tp', 'rp.fid_tingkat=tp.id_tingkat_pendidikan')
+        ->join('ref_jurusan_pendidikan jp', 'rp.fid_jurusan=jp.id_jurusan_pendidikan')
+        ->where('rp.nik', $this->request->getPost('nik'));
+
+        return DataTable::of($builder)
+        ->addNumbering('no')
+        ->postQuery(function($query){
+            $query->orderBy('rp.created_at', 'desc');
+        })
+        ->edit('nama_tingkat_pendidikan', function($row) {
+            $gd = $row->gelar_dpn !== "-" || $row->gelar_dpn !== "" ? "<span class='badge bg-light-primary text-primary'>$row->gelar_dpn</span>" : '';
+            $gb = $row->gelar_blk !== "-" || $row->gelar_blk !== "" ? "<span class='badge bg-light-primary text-primary'>$row->gelar_blk</span>" : '';
+            return $row->nama_tingkat_pendidikan."<br>".$row->nama_jurusan_pendidikan."<br>".$gd." ".$gb;
+        })
+        ->edit('no_sttb', function($row) {
+            return $row->nama_kepsek."<br> Nomor : ".$row->no_sttb." <br> Tanggal : ".date_indo($row->tgl_sttb);
+        })
+        ->add('berkas', function($row) {
+            if($row->berkas !== null && $row->berkas !== ""):
+                return '<a href="'.base_url("assets/file_pendidikan/".$row->berkas).'" target="_blank" class="d-flex align-items-center justify-content-center text-success" title="'.$row->berkas.'"><i class="bx bxs-file bx-sm"></i></a>';
+            else:
+                return '<div class="w-100 text-center text-secondary">Belum ada</div>';
+            endif;
+        })
+        ->add('action', function($row) {
+            return '<div class="dropdown">
+                        <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="true"><i class="bx bx-edit"></i></button>
+                        <ul class="dropdown-menu" data-popper-placement="bottom-start">
+                            <li><button type="button" class="dropdown-item text-secondary d-flex justify-content-between align-items-center" id="upload-berkas" data-uid="'.$row->id.'" data-nik="'.$row->nik.'">Upload Berkas <i class="bx bx-upload"></i></button></li>
+                            <li><button type="button" class="dropdown-item text-primary d-flex justify-content-between align-items-center" id="edit" data-uid="'.dohash($row->id).'" data-nik="'.$row->nik.'">Edit <i class="bx bx-edit-alt"></i></button></li>
+                            <li><button type="button" class="dropdown-item text-danger d-flex justify-content-between align-items-center" id="hapus" data-uid="'.$row->id.'" data-nik="'.$row->nik.'" data-file="'.$row->berkas.'">Hapus <i class="bx bx-trash"></i></button></li>
+                        </ul>
+                    </div>';
+        })
+        ->toJson(true);
+    }
+
+    public function riwayat_jabatan()
+    {
+        helper(["hash","tgl_indo"]);
+        $builder = $this->db->table('riwayat_jabatan rj')
+        ->select('rj.id, rj.nik, rj.tmt_mulai, rj.tmt_selesai, rj.tgl_pelantikan, rj.pejabat_sk, rj.tgl_sk, rj.no_sk, rj.berkas, 
+        u.nama_unit_kerja, ref_jab.nama_jabatan, ref_jab.jenis')
+        ->join('ref_jabatan ref_jab', 'rj.fid_jabatan=ref_jab.id')
+        ->join('ref_unit_kerja u', 'rj.fid_unit_kerja=u.id_unit_kerja')
+        ->where('rj.nik', $this->request->getPost('nik'));
+        
+        return DataTable::of($builder)
+        ->addNumbering('no')
+        ->postQuery(function($query){
+            $query->orderBy('rj.created_at', 'desc');
+        })
+        ->edit('nama_jabatan', function($row) {
+            return $row->nama_jabatan."<br><b>".$row->nama_unit_kerja."</b>";
+        })
+        ->edit('tmt_mulai', function($row) {
+            return date_indo($row->tmt_mulai)." s/d ".date_indo($row->tmt_selesai);
+        })
+        ->edit('no_sk', function($row) {
+            return $row->pejabat_sk."<br> Nomor : ".$row->no_sk." <br> Tanggal : ".date_indo($row->tgl_sk);
+        })
+        ->add('berkas', function($row) {
+            if($row->berkas !== null && $row->berkas !== ""):
+                return '<a href="'.base_url("assets/file_jabatan/".$row->berkas).'" target="_blank" class="d-flex align-items-center justify-content-center text-success" title="'.$row->berkas.'"><i class="bx bxs-file bx-sm"></i></a>';
+            else:
+                return '<div class="w-100 text-center text-secondary">Belum ada</div>';
+            endif;
+        })
+        ->add('action', function($row) {
+            return '<div class="dropdown">
+                        <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="true"><i class="bx bx-edit"></i></button>
+                        <ul class="dropdown-menu" data-popper-placement="bottom-start">
+                            <li><button type="button" class="dropdown-item text-secondary d-flex justify-content-between align-items-center" id="upload-berkas" data-uid="'.$row->id.'" data-nik="'.$row->nik.'">Upload Berkas <i class="bx bx-upload"></i></button></li>
+                            <li><button type="button" class="dropdown-item text-primary d-flex justify-content-between align-items-center" id="edit" data-uid="'.dohash($row->id).'" data-nik="'.$row->nik.'">Edit <i class="bx bx-edit-alt"></i></button></li>
+                            <li><button type="button" class="dropdown-item text-danger d-flex justify-content-between align-items-center" id="hapus" data-uid="'.$row->id.'" data-nik="'.$row->nik.'" data-file="'.$row->berkas.'">Hapus <i class="bx bx-trash"></i></button></li>
+                        </ul>
+                    </div>';
+        })
+        ->toJson(true);
+    }
+
+    protected function detail_sutri($nip)
+    {
+        helper(["hash"]);
+        if($nip !== "" && $nip !== null)
+        {
+            $builder = $this->db->table('pegawai p')->select('status,nik,nipd,photo,nama')->where('nik', $nip)->get()->getRow();
+            if($builder !== null)
+            {
+                if($builder->status === 'AKTIF'):
+                    return '<div class="mb-2 chip chip-md">
+                    <img src="'.base_url("assets/images/users/".$builder->photo).'" alt="'.$builder->nama.'" width="150" class="user-img"/><a href="'.base_url("app/pegawai/detail/".dohash($builder->nik)).'" title="'.$builder->nik.'">NIPD. '.$builder->nipd.'</a></div> <br>';
+                endif;
+                return '<div class="mb-2 chip chip-md"><img src="'.base_url("assets/images/users/".$builder->photo).'" alt="'.$builder->nama.'" width="150" class="user-img"/>NIPD. '.$builder->nipd.'</div><br>';
+            }
+            return "";
+        }
+    }
+
+    public function riwayat_keluarga_sutri()
+    {
+        helper(["hash","tgl_indo"]);
+
+        $builder = $this->db->table('riwayat_sutri')
+        ->select('id,nik,nama_sutri,tgl_nikah,no_akta_nikah,tmp_lahir,tgl_lahir,status_kawin,status_hidup,tanggungan,
+        tgl_cerai,no_akta_cerai,tgl_meninggal,no_akta_meninggal,nip_sutri,sutri_ke')
+        ->where('nik', $this->request->getPost('nik'));
+        
+        return DataTable::of($builder)
+        ->addNumbering('no')
+        ->postQuery(function($query){
+            $query->orderBy('created_at', 'desc');
+        })
+        ->edit('nama_sutri', function($row) {
+            return $this->detail_sutri($row->nip_sutri)."<b>".$row->nama_sutri."</b>";
+        })
+        ->edit('tgl_nikah', function($row) {
+            return "<u>".date_indo($row->tgl_nikah)."</u><br><b>".$row->no_akta_nikah."</b>";
+        })
+        ->edit('tmp_lahir', function($row) {
+            return "<u>".$row->tmp_lahir."</u><br><b>".date_indo($row->tgl_lahir)."</b>";
+        })
+        ->edit('status_kawin', function($row) {
+            return "<u>".$row->status_kawin."</u><br>Status Hidup : <b>".$row->status_hidup."</b><br> Tanggungan : <b>".$row->tanggungan."</b>";
+        })
+        ->edit('tgl_cerai', function($row) {
+            return "<u>".@date_indo($row->tgl_cerai)."</u><br><b>".$row->no_akta_cerai."</b>";
+        })
+        ->edit('tgl_meninggal', function($row) {
+            return "<u>".@date_indo($row->tgl_meninggal)."</u><br><b>".$row->no_akta_meninggal."</b>";
+        })
+        ->add('action', function($row) {
+            return '<div class="dropdown">
+                        <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="true"><i class="bx bx-edit"></i></button>
+                        <ul class="dropdown-menu" data-popper-placement="bottom-start">
+                            <li><button type="button" class="dropdown-item text-secondary d-flex justify-content-between align-items-center" id="status-cerai" data-uid="'.dohash($row->id).'" data-nik="'.dohash($row->nik).'" data-detail=\''.json_encode($row).'\'>Cerai <i class="bx bx-user-minus"></i></button></li>
+                            <li><button type="button" class="dropdown-item text-danger d-flex justify-content-between align-items-center" id="status-meninggal" data-uid="'.dohash($row->id).'" data-nik="'.dohash($row->nik).'" data-detail=\''.json_encode($row).'\'>Meninggal <i class="bx bx-user-minus"></i></button></li>
+                            <li><button type="button" class="dropdown-item text-danger d-flex justify-content-between align-items-center" id="hapus" data-uid="'.dohash($row->id).'" data-nik="'.dohash($row->nik).'" data-sutrike="'.$row->sutri_ke.'">Hapus <i class="bx bx-trash"></i></button></li>
+                        </ul>
+                    </div>';
+        })
+        ->toJson(true);
+    }
+
+    public function riwayat_keluarga_anak()
+    {
+        helper(["hash","tgl_indo"]);
+        
+        $pegawai = $this->db->table('pegawai')->select('jns_kelamin')->where('nik', $this->request->getPost('nik'))->get()->getRow();
+        $sutri = $this->db->table('riwayat_sutri')->select('nik,nip_sutri,sutri_ke')->where('nik', $this->request->getPost('nik'))->get()->getRow();
+
+        $builder = $this->db->table('riwayat_anak ra')
+        ->select('ra.id,ra.nik,ra.nama_anak,ra.fid_sutri_ke,ra.jns_kelamin,ra.tmp_lahir,ra.tgl_lahir,ra.status,ra.status_hidup,ra.tanggungan,rs.nama_sutri')
+        ->join('riwayat_sutri rs', 'ra.fid_sutri_ke=rs.sutri_ke', 'left')
+        ->where('rs.nik', $this->request->getPost('nik'))
+        ->groupStart()
+            ->where('ra.nik', @$sutri->nip_sutri)
+            ->orWhere('ra.nik', @$sutri->nik)
+        ->groupEnd();
+        
+        return DataTable::of($builder)
+        ->addNumbering('no')
+        ->postQuery(function($query){
+            $query->orderBy('ra.created_at', 'desc');
+        })
+        ->edit('fid_sutri_ke', function($row) {
+            return $row->nama_sutri;
+        })
+        ->edit('tmp_lahir', function($row) {
+            return "<u>".$row->tmp_lahir."</u><br>".date_indo($row->tgl_lahir);
+        })
+        ->edit('status', function($row) {
+            return "<u>".$row->status."</u><br>Status Hidup : <b>".$row->status_hidup."</b><br> Tanggungan : <b>".$row->tanggungan."</b>";
+        })
+        ->add('action', function($row) {
+            return '<div class="dropdown">
+                        <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="true"><i class="bx bx-edit"></i></button>
+                        <ul class="dropdown-menu" data-popper-placement="bottom-start">
+                            <li><button type="button" class="dropdown-item text-danger d-flex justify-content-between align-items-center" id="hapus" data-uid="'.dohash($row->id).'" data-nik="'.dohash($row->nik).'">Hapus <i class="bx bx-trash"></i></button></li>
+                        </ul>
+                    </div>';
+        })
+        ->toJson(true);
     }
 }
 
