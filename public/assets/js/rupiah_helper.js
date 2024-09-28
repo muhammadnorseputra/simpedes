@@ -87,3 +87,42 @@ function numbersonly(ini, e) {
     return false;
   }
 }
+
+// Versi 2
+function formatRupiah(input) {
+  // Hapus semua karakter non-digit
+  let number = input.replace(/\D/g, "");
+
+  // Jika kosong, kembalikan string kosong
+  if (number === "") {
+    return "";
+  }
+
+  // Ubah ke number untuk memastikan leading zero dihapus
+  number = parseInt(number, 10);
+
+  // Format number dengan pemisah titik
+  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
+
+const toIDR = document.getElementById("toIDR");
+
+toIDR.addEventListener("input", function (e) {
+  let cursorPosition = this.selectionStart;
+  let originalLength = this.value.length;
+  let formattedValue = formatRupiah(this.value);
+
+  this.value = formattedValue;
+
+  // Sesuaikan posisi kursor
+  let newLength = formattedValue.length;
+  cursorPosition += newLength - originalLength;
+  this.setSelectionRange(cursorPosition, cursorPosition);
+});
+
+toIDR.addEventListener("keypress", function (e) {
+  // Cek apakah karakter yang dimasukkan adalah angka
+  if (!/^\d$/.test(e.key)) {
+    e.preventDefault();
+  }
+});

@@ -32,7 +32,7 @@ class Pegawai extends BaseController
 
         if($request->getGet('id') !== null) {
             $pegawai = $this->db->table('pegawai p')
-            ->select('p.nik,p.nipd,p.gelar_depan,p.gelar_blk,p.nama,p.photo,p.status,u.nama_unit_kerja,rj.nama_jabatan')
+            ->select('p.nik,p.nipd,p.gelar_depan,p.gelar_blk,p.nama,p.photo,p.status,u.nama_unit_kerja,rj.nama_jabatan,rj.jenis')
             ->join('ref_unit_kerja u', 'p.fid_unit_kerja=u.id_unit_kerja', 'left')
             ->join('ref_jabatan rj', 'p.fid_jabatan=rj.id', 'left')
             ->where('p.fid_unit_kerja', rehash($request->getGet('id')))
@@ -47,7 +47,7 @@ class Pegawai extends BaseController
         }
 
         $pegawai = $this->db->table('pegawai p')
-            ->select('p.nik,p.nipd,p.gelar_depan,p.gelar_blk,p.nama,p.photo,p.status,u.nama_unit_kerja,rj.nama_jabatan')
+            ->select('p.nik,p.nipd,p.gelar_depan,p.gelar_blk,p.nama,p.photo,p.status,u.nama_unit_kerja,rj.nama_jabatan,rj.jenis')
             ->join('ref_unit_kerja u', 'p.fid_unit_kerja=u.id_unit_kerja', 'left')
             ->join('ref_jabatan rj', 'p.fid_jabatan=rj.id', 'left')
             ->where('p.fid_unit_kerja', $session->get('id_unit_kerja'))
@@ -533,7 +533,7 @@ class Pegawai extends BaseController
         return view("backend/pages/pegawai/riwayat/jabatan", $data);
     }
 
-    public function riwayat_keluarga($id="", $paramsType="", $methodType = "")
+    public function riwayat_keluarga($id="", $paramsType="", $methodType = "", $uid = "")
     {
         helper(["pegawai", "hash", "tgl_indo"]);
         $now = new Time('now', 'Asia/Jakarta', 'id_ID');
@@ -583,6 +583,41 @@ class Pegawai extends BaseController
                 'message' => 'Data '.$isGender.' Gagal Ditambahkan.'
             ];
             
+            return $this->respond($msg, 400);
+        }
+
+        if($request->isAJAX() && $request->is("put") && $paramsType === "sutri" && $methodType = "update")
+        {
+            $update = [
+                'nama_sutri' => $request->getPost('nama_sutri'),
+                'tmp_lahir' => $request->getPost('tmp_lahir'),
+                'tgl_lahir' => $request->getPost('tgl_lahir'),
+                'pekerjaan' => $request->getPost('pekerjaan'),
+                'no_akta_nikah' => $request->getPost('no_akta_nikah'),
+                'tgl_nikah' => $request->getPost('tgl_nikah'),
+                'status_kawin' => $request->getPost('status_kawin'),
+                'status_hidup' => $request->getPost('status_hidup') === 'YA' ? 'YA' : 'TIDAK',
+                'tanggungan' => $request->getPost('tanggungan') === 'YA' ? 'YA' : 'TIDAK',
+                'nip_sutri' => $request->getPost('nip_sutri'),
+                'updated_at' => $now->addHours(1),
+                'updated_by' => session()->nik,
+            ];
+            $db = $this->db->table('riwayat_sutri')->where('id', rehash($request->getPost('id')))->update($update);
+            if($db)
+            {
+                $msg = [
+                    'status' => true,
+                    'message' => 'Data keluarga berhasil diperbaharui.'
+                ];
+                $this->db->table('pegawai')->where('nik', rehash($id))->update([
+                    'fid_status_kawin' =>  $request->getPost('status_kawin') === 'MENIKAH' ? 2 : 3, // Kawin atau Janda duda
+                ]);
+                return $this->respond($msg, 200);
+            }
+            $msg = [
+                'status' => false,
+                'message' => 'Data keluarga gagal diperbaharui.'
+            ];
             return $this->respond($msg, 400);
         }
 
@@ -711,6 +746,36 @@ class Pegawai extends BaseController
             return $this->respond($msg, 400);
         }
 
+        if($request->isAJAX() && $request->is("put") && $paramsType === "anak" && $methodType = "update")
+        {
+            $update = [
+                'nama_anak' => $request->getPost('nama_anak'),
+                'fid_sutri_ke' => $request->getPost('fid_sutri_ke'),
+                'jns_kelamin' => $request->getPost('jns_kelamin'),
+                'tmp_lahir' => $request->getPost('tmp_lahir'),
+                'tgl_lahir' => $request->getPost('tgl_lahir'),
+                'status' => $request->getPost('status'),
+                'status_hidup' => $request->getPost('status_hidup') === 'YA' ? 'YA' : 'TIDAK',
+                'tanggungan' => $request->getPost('tanggungan') === 'YA' ? 'YA' : 'TIDAK',
+                'updated_at' => $now->addHours(1),
+                'updated_by' => session()->nik,
+            ];
+            $db = $this->db->table('riwayat_anak')->where('id', rehash($request->getPost('id')))->update($update);
+            if($db)
+            {
+                $msg = [
+                    'status' => true,
+                    'message' => 'Data keluarga (Anak) berhasil diperbaharui.'
+                ];
+                return $this->respond($msg, 200);
+            }
+            $msg = [
+                'status' => false,
+                'message' => 'Data keluarga (Anak) gagal diperbaharui.'
+            ];
+            return $this->respond($msg, 400);
+        }
+
         if($request->isAJAX() && $request->is("delete") && $paramsType === "anak" && $methodType = "delete")
         {
             $delete_id = $request->getPost('id');
@@ -736,6 +801,34 @@ class Pegawai extends BaseController
             return $this->respond($msg, 400);
         }
 
+        if($request->is("get") && $paramsType === 'sutri' && $methodType === "edit")
+        {
+            // ambil riwayat jabatan terakhir
+            $rwy_workshop = model("PegawaiModel");
+            $getRiwayat = $rwy_workshop->getSutriById(rehash($uid));
+
+            $data = [
+                'title' => "{$getRiwayat->nama_sutri} - Simpedes Kab. Balangan",
+                'row' => $getRiwayat,
+            ];
+
+            return view("backend/pages/pegawai/riwayat/keluarga_sutri_edit", $data);
+        }
+
+        if($request->is("get") && $paramsType === 'anak' && $methodType === "edit")
+        {
+            // ambil riwayat jabatan terakhir
+            $rwy_workshop = model("PegawaiModel");
+            $getRiwayat = $rwy_workshop->getAnakById(rehash($uid));
+
+            $data = [
+                'title' => "{$getRiwayat->nama_anak} - Simpedes Kab. Balangan",
+                'row' => $getRiwayat,
+            ];
+
+            return view("backend/pages/pegawai/riwayat/keluarga_anak_edit", $data);
+        }
+
         $namalengkap = namalengkap($row->gelar_depan, $row->nama, $row->gelar_blk);
         $data = [
             'title' => "Riwayat Keluarga - {$namalengkap} - Simpedes Kab. Balangan",
@@ -744,6 +837,317 @@ class Pegawai extends BaseController
         ];
 
         return view("backend/pages/pegawai/riwayat/keluarga", $data);
+    }
+
+    public function riwayat_workshop($id="", $paramsType="")
+    {
+        helper(["pegawai", "hash", "tgl_indo"]);
+        $now = new Time('now', 'Asia/Jakarta', 'id_ID');
+
+        $request = $this->request;
+
+        $pegawai = model('PegawaiModel');
+        $profile = $pegawai->getDetailPegawai(rehash($id));
+        $row = $profile->getRow();
+
+        if($request->isAJAX() && $request->is("post") && $paramsType === "add")
+        {
+            $lama_satuan_jam = $request->getPost('satuan') === "jam" ? $request->getPost('lama') : NULL;
+            $lama_satuan_hari = $request->getPost('satuan') === "hari" ? $request->getPost('lama') : NULL;
+            $lama_satuan_bulan = $request->getPost('satuan') === "bulan" ? $request->getPost('lama') : NULL;
+
+            $data = [
+                'nik' => rehash($id),
+                'fid_jenis_workshop' => $request->getPost('fid_jenis_workshop'),
+                'fid_rumpun_diklat' => $request->getPost('fid_rumpun_diklat'),
+                'nama_workshop' => $request->getPost('nama_kegiatan'),
+                'tahun' => $request->getPost('tahun'),
+                'instansi_penyelenggara' => $request->getPost('instansi_penyelenggara'),
+                'tempat' => $request->getPost('tempat'),
+                'tanggal' => $request->getPost('tanggal'),
+                'lama_bulan' => $lama_satuan_bulan,
+                'lama_hari' => $lama_satuan_hari,
+                'lama_jam' => $lama_satuan_jam,
+                'pejabat_sk' => $request->getPost('pejabat_sk'),
+                'no_sk' => $request->getPost('no_sk'),
+                'tgl_sk' => $request->getPost('tgl_sk'),
+                'created_at' => $now->addHours(1),
+                'created_by' => session()->nik,
+            ];
+            $db = $this->db->table('riwayat_workshop')->insert($data);
+
+            if($db)
+            {
+                $msg = [
+                    'status' => true,
+                    'message' => 'Data Workshop Berhasil Ditambahkan.'
+                ];
+                return $this->respond($msg, 200);
+            }
+
+            $msg = [
+                'status' => false,
+                'message' => 'Data Workshop Gagal Ditambahkan.'
+            ];
+            
+            return $this->respond($msg, 400);
+        }
+
+        if($request->isAJAX() && $request->is("delete") && $paramsType = "delete")
+        {
+            $delete_id = $request->getPost('id');
+            $delete_nik = $request->getPost('nik');
+
+            $db = $this->db->table('riwayat_workshop')->where('no', rehash($delete_id))->delete();
+            if($db)
+            {
+                $msg = [
+                    'statusCode' => 200,
+                    'status' => true,
+                    'message' => 'Data berhasil dihapus !',
+                    'data' => $db
+                ];
+                return $this->respond($msg, 200);
+            }
+            $msg = [
+                'statusCode' => 400,
+                'status' => false,
+                'message' => 'Data gagal dihapus !',
+                'data' => []
+            ];
+            return $this->respond($msg, 400);
+        }
+
+        if($request->isAJAX() && $request->is("post") && $paramsType === 'update')
+        {
+
+            $lama_satuan_jam = $request->getPost('satuan') === "jam" ? $request->getPost('lama') : NULL;
+            $lama_satuan_hari = $request->getPost('satuan') === "hari" ? $request->getPost('lama') : NULL;
+            $lama_satuan_bulan = $request->getPost('satuan') === "bulan" ? $request->getPost('lama') : NULL;
+
+            $update = [
+                'fid_jenis_workshop' => $request->getPost('fid_jenis_workshop'),
+                'fid_rumpun_diklat' => $request->getPost('fid_rumpun_diklat'),
+                'nama_workshop' => $request->getPost('nama_kegiatan'),
+                'tahun' => $request->getPost('tahun'),
+                'instansi_penyelenggara' => $request->getPost('instansi_penyelenggara'),
+                'tempat' => $request->getPost('tempat'),
+                'tanggal' => $request->getPost('tanggal'),
+                'lama_bulan' => $lama_satuan_bulan,
+                'lama_hari' => $lama_satuan_hari,
+                'lama_jam' => $lama_satuan_jam,
+                'pejabat_sk' => $request->getPost('pejabat_sk'),
+                'no_sk' => $request->getPost('no_sk'),
+                'tgl_sk' => $request->getPost('tgl_sk'),
+                'updated_at' => $now->addHours(1),
+                'updated_by' => session()->nik,
+            ];
+            $db = $this->db->table('riwayat_workshop')->where('no', rehash($request->getPost('id')))->update($update);
+            if($db)
+            {
+                $msg = [
+                    'status' => true,
+                    'message' => 'Riwayat workshop berhasil diperbaharui.'
+                ];
+                return $this->respond($msg, 200);
+            }
+            $msg = [
+                'status' => false,
+                'message' => 'Riwayat workshop gagal diperbaharui.'
+            ];
+            return $this->respond($msg, 400);
+        }
+
+        if($request->is("get") && $paramsType === 'edit')
+        {
+            // ambil riwayat jabatan terakhir
+            $rwy_workshop = model("PegawaiModel");
+            $getRiwayat = $rwy_workshop->getWorkshopById(rehash($id));
+
+            $data = [
+                'title' => "{$getRiwayat->nama_jenis_workshop} - {$getRiwayat->nama_workshop} - {$getRiwayat->nama_rumpun_diklat} - Simpedes Kab. Balangan",
+                'row' => $getRiwayat,
+            ];
+
+            return view("backend/pages/pegawai/riwayat/workshop_edit", $data);
+        }
+
+        $namalengkap = namalengkap($row->gelar_depan, $row->nama, $row->gelar_blk);
+        $data = [
+            'title' => "Riwayat Workshop - {$namalengkap} - Simpedes Kab. Balangan",
+            'nik' => rehash($id),
+            'row' => $row,
+        ];
+
+        return view("backend/pages/pegawai/riwayat/workshop", $data);
+    }
+
+    public function riwayat_lhkpn($id="", $paramsType="")
+    {
+        helper(["pegawai", "hash", "tgl_indo"]);
+        $now = new Time('now', 'Asia/Jakarta', 'id_ID');
+
+        $request = $this->request;
+
+        $pegawai = model('PegawaiModel');
+        $profile = $pegawai->getDetailPegawai(rehash($id));
+        $row = $profile->getRow();
+
+        if($request->isAJAX() && $request->is("post") && $paramsType === "add")
+        {
+            $data = [
+                'nik' => rehash($id),
+                'tahun_wajib' => $request->getPost('tahun_wajib'),
+                'tgl_lapor' => $request->getPost('tgl_lapor'),
+                'tgl_penyampaian' => $request->getPost('tgl_penyampaian'),
+                'jenis_form' => $request->getPost('jenis_form'),
+                'status' => $request->getPost('status'),
+                'jabatan' => $request->getPost('jabatan'),
+                'unit_kerja' => $request->getPost('unit_kerja'),
+                'created_at' => $now->addHours(1),
+                'created_by' => session()->nik,
+            ];
+            $db = $this->db->table('riwayat_lhkpn')->insert($data);
+
+            if($db)
+            {
+                $msg = [
+                    'status' => true,
+                    'message' => 'Data LHKPN Berhasil Ditambahkan.'
+                ];
+                return $this->respond($msg, 200);
+            }
+
+            $msg = [
+                'status' => false,
+                'message' => 'Data LHKPN Gagal Ditambahkan.'
+            ];
+            
+            return $this->respond($msg, 400);
+        }
+
+        if($request->isAJAX() && $request->is("post") && $paramsType === 'upload')
+        {
+            $berkas = $request->getFile('berkas');
+            $tahun = $request->getPost('tahun');
+            $berkas_id = rehash($request->getPost('id'));
+            $berkas_nik = rehash($request->getPost('nik'));
+
+            if($berkas->isValid()) {
+                // upload berkas
+                $filename = $tahun."-".$berkas_id."-".$berkas_nik.".".$berkas->getClientExtension();
+                $berkas->move("assets/file_lhkpn/", $filename, true);
+                $data = [
+                    'file_tbn' => $filename
+                ];
+                $db = $this->db->table('riwayat_lhkpn')
+                ->where('id', $berkas_id)
+                ->where('nik', $berkas_nik)
+                ->update($data);
+
+                if($db) {
+                    $msg = [
+                        'status' => true,
+                        'message' => 'Berkas Berhasil Diupload.'
+                    ];
+                    return $this->respond($msg, 200);
+                }
+                $msg = [
+                    'status' => false,
+                    'message' => 'Berkas Gagal Diupload.'
+                ];
+                return $this->respond($msg, 400);
+            }
+            $msg = [
+                'status' => false,
+                'message' => 'File Invalid.'
+            ];
+            return $this->respond($msg, 500);
+        }
+
+        if($request->isAJAX() && $request->is("delete") && $paramsType === 'delete')
+        {
+            $delete_id = rehash($request->getPost('id'));
+            $delete_nik = rehash($request->getPost('nik'));
+            $filename = $request->getPost('file');
+
+            if(file_exists("assets/file_lhkpn/".$filename)) {
+                // delete file
+                @unlink("assets/file_lhkpn/".$filename);
+                // delete data riwayat
+                $db = $this->db->table('riwayat_lhkpn')
+                ->where('id', $delete_id)
+                ->where('nik', $delete_nik)
+                ->delete();
+
+                $msg = [
+                    'statusCode' => 200,
+                    'status' => true,
+                    'message' => 'Data berhasil dihapus !',
+                    'data' => $db
+                ];
+                return $this->respond($msg, 200);
+            } 
+            $msg = [
+                'statusCode' => 400,
+                'status' => false,
+                'message' => 'Data gagal dihapus !',
+                'data' => []
+            ];
+            return $this->respond($msg, 400);
+        }
+
+        if($request->isAJAX() && $request->is("post") && $paramsType === 'update')
+        {
+            $update = [
+                'tahun_wajib' => $request->getPost('tahun_wajib'),
+                'tgl_lapor' => $request->getPost('tgl_lapor'),
+                'tgl_penyampaian' => $request->getPost('tgl_penyampaian'),
+                'jenis_form' => $request->getPost('jenis_form'),
+                'status' => $request->getPost('status'),
+                'jabatan' => $request->getPost('jabatan'),
+                'unit_kerja' => $request->getPost('unit_kerja'),
+                'updated_at' => $now->addHours(1),
+                'updated_by' => session()->nik,
+            ];
+            $db = $this->db->table('riwayat_lhkpn')->where('id', rehash($request->getPost('id')))->update($update);
+            if($db)
+            {
+                $msg = [
+                    'status' => true,
+                    'message' => 'Riwayat LHKPN berhasil diperbaharui.'
+                ];
+                return $this->respond($msg, 200);
+            }
+            $msg = [
+                'status' => false,
+                'message' => 'Riwayat LHKPN gagal diperbaharui.'
+            ];
+            return $this->respond($msg, 400);
+        }
+
+        if($request->is("get") && $paramsType === 'edit')
+        {
+            // ambil riwayat jabatan terakhir
+            $rwy_lhkpn = model("PegawaiModel");
+            $getRiwayat = $rwy_lhkpn->getLHKPNById(rehash($id));
+
+            $data = [
+                'title' => "{$getRiwayat->jabatan} - Simpedes Kab. Balangan",
+                'row' => $getRiwayat,
+            ];
+
+            return view("backend/pages/pegawai/riwayat/lhkpn_edit", $data);
+        }
+
+        $namalengkap = namalengkap($row->gelar_depan, $row->nama, $row->gelar_blk);
+        $data = [
+            'title' => "Riwayat LHKPN - {$namalengkap} - Simpedes Kab. Balangan",
+            'nik' => rehash($id),
+            'row' => $row,
+        ];
+
+        return view("backend/pages/pegawai/riwayat/lhkpn", $data);
     }
     
 }

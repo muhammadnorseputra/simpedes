@@ -148,7 +148,7 @@
                 </div>
               </div>
               <div class="col-md-6">
-                <?php $disableUnitKerja = @$default->status !== "ENTRI" ? "disabled" : ""; ?>
+                <?php $disableUnitKerja = @$default->status !== "ENTRI" && isset($_GET['token']) ? "disabled" : ""; ?>
                 <?= @$default->status !== "ENTRI" ? '<input name="fid_unit_kerja" value="'.@$default->fid_unit_kerja.'" type="hidden"/>' : ""; ?>
                 <div class="form-floating  mb-3">
                     <select class="form-select" name="fid_unit_kerja" id="unitkerja" data-placeholder="Pilih Unit Kerja" 

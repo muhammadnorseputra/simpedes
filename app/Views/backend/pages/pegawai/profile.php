@@ -1,5 +1,4 @@
 <?= $this->extend('backend/layouts/app'); ?>
-
 <?= $this->section('content'); ?>
 <!--breadcrumb-->
 <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
@@ -13,6 +12,7 @@
             </ol>
         </nav>
     </div>
+    <a href="<?= base_url("cetak/profile/".dohash($row->nik)); ?>" target="_blank" class="btn btn-success btn-sm ms-auto d-flex align-items-center"><i class="bx bx-printer"></i> Cetak Profile</a>
 </div>
 <!--end breadcrumb-->
 <div class="card">
@@ -236,13 +236,13 @@
                 </div>
             </div>
     </div>
-    <div class="card-body border-top sticky-md-bottom bg-white rounded-bottom" style="bottom: 30px">
+    <div class="card-body border-top">
         <div class="btn-group w-100 flex-column flex-md-row">
             <a href="<?= base_url("app/pegawai/".dohash($row->nik)."/jabatan") ?>" class="btn btn-outline-primary"> <i class="bx bx-sitemap"></i> Riwayat Jabatan</a>
             <a href="<?= base_url("app/pegawai/".dohash($row->nik)."/keluarga") ?>" class="btn btn-outline-primary"> <i class="lni lni-users"></i> Riwayat Keluarga</a>
-            <a href="#" class="btn btn-outline-primary"> <i class="bx bx-task"></i> Riwayat LHKPN</a>
+            <a href="<?= base_url("app/pegawai/".dohash($row->nik)."/lhkpn") ?>" class="btn btn-outline-primary"> <i class="bx bx-task"></i> Riwayat LHKPN</a>
             <a href="<?= base_url("app/pegawai/".dohash($row->nik)."/pendidikan") ?>" class="btn btn-outline-primary"> <i class="lni lni-graduation"></i> Riwayat Pendidikan</a>
-            <a href="#" class="btn btn-outline-primary"> <i class="lni lni-network"></i> Riwayat Workshop</a>
+            <a href="<?= base_url("app/pegawai/".dohash($row->nik)."/workshop") ?>" class="btn btn-outline-primary"> <i class="lni lni-network"></i> Riwayat Workshop</a>
         </div>
     </div>
 </div>

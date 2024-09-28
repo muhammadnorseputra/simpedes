@@ -696,6 +696,12 @@
                 }
             });
         })
+        datatable.on("click", "button#edit", function() {
+            let _ = $(this),
+            id = _.data('uid'),
+            nik = _.data('nik');
+            window.location.href = `${origin}/app/pegawai/${nik}/keluarga/sutri/edit/${id}`;
+        })
     })
 </script>
 <?= $this->endSection(); ?>
@@ -862,6 +868,13 @@
                     },
                 }
             });
+        })
+
+        datatable.on("click", "button#edit", function() {
+            let _ = $(this),
+            id = _.data('uid'),
+            nik = _.data('nik');
+            window.location.href = `${origin}/app/pegawai/${nik}/keluarga/anak/edit/${id}`;
         })
     })
 </script>

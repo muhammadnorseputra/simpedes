@@ -106,7 +106,7 @@
             <div class="ratio ratio-16x9">
                 <embed id="preview" src="https://comportcomputers.com/wp-content/uploads/2020/07/apa-itu-file-pdf.png" style="width:100%; height: 100%;" type="application/pdf" allowfullscreen>
             </div>
-            <div class="input-group">
+            <div class="input-group mt-3">
                 <input type="file" name="berkas" 
                 oninput="preview.src=window.URL.createObjectURL(this.files[0]) + '#toolbar=0&navpanes=0&scrollbar=0&page=1&zoom=FitH'"
                 accept=".pdf" 

@@ -27,7 +27,18 @@
 						<div class="menu-title">Satuan Unit Kerja</div>
 					</a>
 				</li>
-
+				<li class="menu-label">Pembayaran</li>
+				<li>
+					<a href="javascript:;" class="has-arrow">
+						<div class="parent-icon"><i class='bx bx-wallet'></i>
+						</div>
+						<div class="menu-title">Tunjangan</div>
+					</a>
+					<ul>
+						<li> <a href="<?= base_url('pembayaran/hitung') ?>"><i class='bx bx-radio-circle'></i>Hitung Tunjangan</a></li>
+						<li> <a href="<?= base_url('pembayaran/tunjangan') ?>"><i class='bx bx-radio-circle'></i>Tanda Terima</a></li>
+					</ul>
+				</li>
 				<?php if(session()->get('role') === 'ADMIN' || session()->get('role') === 'USER'): ?>
 				<li class="menu-label">Data Master</li>
 				<li>

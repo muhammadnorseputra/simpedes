@@ -49,6 +49,32 @@ function hitungUsia($tanggal_lahir) {
     return $selisih->y . ' Tahun, ' . $selisih->m . ' Bulan';
 }
 
+function lamaWorkshop($jam="",$hari="",$bulan="")
+{
+    if($jam !== null){
+        return $jam;
+    }
+    if($hari !== null){
+        return $hari;
+    }
+    if($bulan !== null){
+        return $bulan;
+    }
+    return "-";
+}
+
+function satuanWorkshop($jam="",$hari="",$bulan="") {
+    if($jam !== null){
+        return "Jam";
+    }
+    if($hari !== null){
+        return "Hari";
+    }
+    if($bulan !== null){
+        return "Bulan";
+    }
+    return "-";
+}
 
 function updateAt($tanggal) {
     // Membuat objek waktu dari tanggal input
@@ -61,6 +87,10 @@ function updateAt($tanggal) {
 function isNull($value) {
     if($value === null || $value === '') return "-";
     return $value;
+}
+
+function ucword($text) {
+    return ucwords(strtolower($text));
 }
 
 ?>

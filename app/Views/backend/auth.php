@@ -180,7 +180,7 @@
 						}
 						if(res.status === true) {
 							$containerMsg.attr("class", "alert alert-success d-flex justify-content-start align-items-center p-2").html(`<span class="ms-2">${res.message}</span> <i class="bx bxs-check-circle bx-sm ms-auto text-success"></i>`);
-							// NotifSuccess(res.message)
+							NotifSuccess(`Success, mohon tunggu loading ...`)
 							setTimeout(function() {
 								window.location.href = res.data.redirect
 							}, 1000)

@@ -75,10 +75,21 @@ $routes->group('app', function($route) {
         // riwayat keluarga
         $route->get('(:any)/keluarga', 'Pegawai::riwayat_keluarga/$1');
         $route->get('(:any)/keluarga/(:any)/(:any)', 'Pegawai::riwayat_keluarga/$1/$2/$3');
+        $route->get('(:any)/keluarga/(:any)/edit/(:any)', 'Pegawai::riwayat_keluarga/$1/$2/$3');
         $route->post('(:any)/keluarga/(:any)/(:any)', 'Pegawai::riwayat_keluarga/$1/$2/$3');
         $route->put('(:any)/keluarga/(:any)/(:any)', 'Pegawai::riwayat_keluarga/$1/$2/$3');
         $route->patch('(:any)/keluarga/(:any)/(:any)', 'Pegawai::riwayat_keluarga/$1/$2/$3');
         $route->delete('(:any)/keluarga/(:any)/(:any)', 'Pegawai::riwayat_keluarga/$1/$2/$3');
+        // Riwayat Workshop
+        $route->get('(:any)/workshop', 'Pegawai::riwayat_workshop/$1');
+        $route->get('(:any)/workshop/(:any)', 'Pegawai::riwayat_workshop/$1/$2');
+        $route->post('(:any)/workshop/(:any)', 'Pegawai::riwayat_workshop/$1/$2');
+        $route->delete('(:any)/workshop/(:any)', 'Pegawai::riwayat_workshop/$1/$2');
+        // Riwayat LHKPN
+        $route->get('(:any)/lhkpn', 'Pegawai::riwayat_lhkpn/$1');
+        $route->get('(:any)/lhkpn/(:any)', 'Pegawai::riwayat_lhkpn/$1/$2');
+        $route->post('(:any)/lhkpn/(:any)', 'Pegawai::riwayat_lhkpn/$1/$2');
+        $route->delete('(:any)/lhkpn/(:any)', 'Pegawai::riwayat_lhkpn/$1/$2');
     });
 
 });
@@ -104,6 +115,12 @@ $routes->group('datatable', function($route) {
         $route->post('jabatan', 'AjaxDatatable::riwayat_jabatan');
         $route->post('keluarga/sutri', 'AjaxDatatable::riwayat_keluarga_sutri');
         $route->post('keluarga/anak', 'AjaxDatatable::riwayat_keluarga_anak');
+        $route->post('workshop', 'AjaxDatatable::riwayat_workshop');
+        $route->post('lhkpn', 'AjaxDatatable::riwayat_lhkpn');
+    });
+    // Nested router group /datatable/tunjangan
+    $route->group('tunjangan', function($route) {
+        $route->post('hitung', 'AjaxDatatable::hitung_tunjangan');
     });
 });
 
@@ -117,4 +134,20 @@ $routes->group('select2', function($route) {
     $route->post('pegawai', 'AjaxSelect2::pegawai');
     $route->post('tingkat_pendidikan', 'AjaxSelect2::tingkat_pendidikan');
     $route->post('jurusan_pendidikan', 'AjaxSelect2::jurusan_pendidikan');
+    $route->post('jenis_workshop', 'AjaxSelect2::jenis_workshop');
+    $route->post('rumpun_diklat', 'AjaxSelect2::rumpun_diklat');
+});
+
+$routes->group('cetak', function($route) {
+    $route->get('profile/(:any)', 'Pdf::index/$1');
+});
+
+$routes->group('pembayaran', function($route) {
+    
+    $route->get('tunjangan', 'Pembayaran::tunjangan');
+    $route->post('tunjangan/filter', 'Pembayaran::filter');
+
+    $route->get('hitung', 'Pembayaran::hitung');
+    $route->post('hitung', 'Pembayaran::hitung');
+    $route->delete('hitung', 'Pembayaran::hitung');
 });

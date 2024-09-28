@@ -25,7 +25,7 @@
                             <th>NIPD</th>
                             <th>Photo</th>
                             <th>Nama Lengkap</th>
-                            <th>Unit Kerja</th>
+                            <th>Unit Kerja / Jabatan</th>
                             <th>Status</th>
                             <th>Aksi</th>
                         </tr>

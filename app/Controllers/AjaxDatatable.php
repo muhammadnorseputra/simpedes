@@ -141,8 +141,9 @@ class AjaxDatatable extends BaseController
         helper(["hash", "pegawai"]);
 
         $builder = $this->db->table('pegawai')
-        ->select('nik,nipd,nama,gelar_depan,gelar_blk,jns_kelamin,fid_unit_kerja,photo,status,nama_unit_kerja')
+        ->select('nik,nipd,nama,gelar_depan,gelar_blk,jns_kelamin,fid_unit_kerja,photo,status,nama_unit_kerja,nama_jabatan')
         ->join('ref_unit_kerja', 'pegawai.fid_unit_kerja=ref_unit_kerja.id_unit_kerja', 'left')
+        ->join('ref_jabatan', 'pegawai.fid_jabatan=ref_jabatan.id','left')
         ->whereNotIn('status', ['ENTRI','ENTRI_ULANG']);
         
         return DataTable::of($builder)
@@ -160,6 +161,9 @@ class AjaxDatatable extends BaseController
         })
         ->edit('nama', function($row) {
             return namalengkap($row->gelar_depan, $row->nama, $row->gelar_blk);
+        })
+        ->edit('nama_unit_kerja', function($row) {
+            return $row->nama_unit_kerja."<br><b>".isNull(ucwords(strtolower($row->nama_jabatan)))."</b>";
         })
         ->format('photo', function($value) {
             return '<a href="'.base_url("assets/images/users/".$value).'" target="_blank"><img src="'.base_url("assets/images/users/".$value).'" class="user-img" alt="'.$value.'"></a>';
@@ -353,6 +357,7 @@ class AjaxDatatable extends BaseController
             return '<div class="dropdown">
                         <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="true"><i class="bx bx-edit"></i></button>
                         <ul class="dropdown-menu" data-popper-placement="bottom-start">
+                            <li><button type="button" class="dropdown-item text-primary d-flex justify-content-between align-items-center" id="edit" data-uid="'.dohash($row->id).'" data-nik="'.dohash($row->nik).'">Edit <i class="bx bx-edit-alt"></i></button></li>
                             <li><button type="button" class="dropdown-item text-secondary d-flex justify-content-between align-items-center" id="status-cerai" data-uid="'.dohash($row->id).'" data-nik="'.dohash($row->nik).'" data-detail=\''.json_encode($row).'\'>Cerai <i class="bx bx-user-minus"></i></button></li>
                             <li><button type="button" class="dropdown-item text-danger d-flex justify-content-between align-items-center" id="status-meninggal" data-uid="'.dohash($row->id).'" data-nik="'.dohash($row->nik).'" data-detail=\''.json_encode($row).'\'>Meninggal <i class="bx bx-user-minus"></i></button></li>
                             <li><button type="button" class="dropdown-item text-danger d-flex justify-content-between align-items-center" id="hapus" data-uid="'.dohash($row->id).'" data-nik="'.dohash($row->nik).'" data-sutrike="'.$row->sutri_ke.'">Hapus <i class="bx bx-trash"></i></button></li>
@@ -396,7 +401,118 @@ class AjaxDatatable extends BaseController
             return '<div class="dropdown">
                         <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="true"><i class="bx bx-edit"></i></button>
                         <ul class="dropdown-menu" data-popper-placement="bottom-start">
+                            <li><button type="button" class="dropdown-item text-primary d-flex justify-content-between align-items-center" id="edit" data-uid="'.dohash($row->id).'" data-nik="'.dohash($row->nik).'">Edit <i class="bx bx-edit-alt"></i></button></li>
                             <li><button type="button" class="dropdown-item text-danger d-flex justify-content-between align-items-center" id="hapus" data-uid="'.dohash($row->id).'" data-nik="'.dohash($row->nik).'">Hapus <i class="bx bx-trash"></i></button></li>
+                        </ul>
+                    </div>';
+        })
+        ->toJson(true);
+    }
+
+    public function riwayat_workshop()
+    {
+        helper(["hash","tgl_indo","pegawai"]);
+
+        $builder = $this->db->table('riwayat_workshop rw')
+        ->select('rw.no,rw.nik,rw.nama_workshop,rw.tahun,rw.instansi_penyelenggara,rw.tempat,rw.tanggal,rw.pejabat_sk,rw.no_sk,rw.tgl_sk,
+        jw.nama_jenis_workshop,rd.nama_rumpun_diklat,rw.lama_bulan,rw.lama_hari,rw.lama_jam')
+        ->select('CONCAT_WS(" ",rw.lama_bulan,rw.lama_hari,rw.lama_jam) as lama', false)
+        ->join('ref_rumpun_diklat rd', 'rw.fid_rumpun_diklat=rd.id_rumpun_diklat')
+        ->join('ref_jenis_workshop jw', 'rw.fid_jenis_workshop=jw.id_jenis_workshop')
+        ->where('rw.nik', $this->request->getPost('nik'));
+        
+        return DataTable::of($builder)
+        ->addNumbering('no_urut')
+        ->postQuery(function($query){
+            $query->orderBy('rw.created_at', 'desc');
+        })
+        ->edit('nama_workshop', function($row) {
+            return "<span class='text-primary'>".$row->nama_jenis_workshop."</span><br>".$row->nama_workshop."<br><span class='text-success'>Rumpun : ".$row->nama_rumpun_diklat."</span>";
+        })
+        ->edit('instansi_penyelenggara', function($row) {
+            return "<u>".$row->instansi_penyelenggara."</u><br>".$row->tempat;
+        })
+        ->edit('tanggal', function($row) {
+            return $row->lama." ".satuanWorkshop($row->lama_jam,$row->lama_hari,$row->lama_bulan)." / ".date_indo($row->tanggal);
+        })
+        ->edit('no_sk', function($row) {
+            return "No : ".$row->no_sk." <br> Tanggal : ".date_indo($row->tgl_sk)." <br> Pejabat : ".$row->pejabat_sk;
+        })
+        ->add('action', function($row) {
+            return '<div class="dropdown">
+                        <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="true"><i class="bx bx-edit"></i></button>
+                        <ul class="dropdown-menu" data-popper-placement="bottom-start">
+                            <li><button type="button" class="dropdown-item text-primary d-flex justify-content-between align-items-center" id="edit" data-uid="'.dohash($row->no).'" data-nik="'.dohash($row->nik).'">Edit <i class="bx bx-edit-alt"></i></button></li>
+                            <li><button type="button" class="dropdown-item text-danger d-flex justify-content-between align-items-center" id="hapus" data-uid="'.dohash($row->no).'" data-nik="'.dohash($row->nik).'">Hapus <i class="bx bx-trash"></i></button></li>
+                        </ul>
+                    </div>';
+        })
+        ->toJson(true);
+    }
+
+    public function riwayat_lhkpn()
+    {
+        helper(["hash","tgl_indo","pegawai"]);
+        $builder = $this->db->table('riwayat_lhkpn')
+        ->where('nik', $this->request->getPost('nik'));
+        
+        return DataTable::of($builder)
+        ->addNumbering('no')
+        ->postQuery(function($query){
+            $query->orderBy('created_at', 'desc');
+        })
+        ->edit('tahun_wajib', function($row) {
+            return "<b>".$row->tahun_wajib."</b> <br> <span class='text-secondary'> Disampaikan tanggal : ".date_indo($row->tgl_penyampaian)."</span>";
+        })
+        ->format('file_tbn', function($value) {
+            return $value === "" ? "<span class='text-secondary'>Belum ada</span>" : "<a href='".base_url("assets/file_lhkpn/".$value)."' target='_blank'><i class='bx bx-file'></i> $value </a>"; 
+        })
+        ->add('action', function($row) {
+            return '<div class="dropdown">
+                        <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="true"><i class="bx bx-edit"></i></button>
+                        <ul class="dropdown-menu" data-popper-placement="bottom-start">
+                            <li><button type="button" class="dropdown-item text-secondary d-flex justify-content-between align-items-center" id="upload-berkas" data-uid="'.dohash($row->id).'" data-nik="'.dohash($row->nik).'" data-tahun="'.$row->tahun_wajib.'">Upload Berkas <i class="bx bx-upload"></i></button></li>
+                            <li><button type="button" class="dropdown-item text-primary d-flex justify-content-between align-items-center" id="edit" data-uid="'.dohash($row->id).'" data-nik="'.dohash($row->nik).'">Edit <i class="bx bx-edit-alt"></i></button></li>
+                            <li><button type="button" class="dropdown-item text-danger d-flex justify-content-between align-items-center" id="hapus" data-uid="'.dohash($row->id).'" data-nik="'.dohash($row->nik).'" data-file="'.$row->file_tbn.'">Hapus <i class="bx bx-trash"></i></button></li>
+                        </ul>
+                    </div>';
+        })
+        ->toJson(true);
+    }
+
+    public function hitung_tunjangan()
+    {
+        helper(["number","pegawai","tgl_indo","hash"]);
+        $builder = $this->db->table('riwayat_tunjangan rt')
+        ->select('rt.nik,rt.id,rt.nama_unit_kerja,rt.nama_desa,rt.nama_jabatan,rt.bulan,rt.tahun,rt.jumlah_bulan,rt.jumlah_uang,rt.pph21,
+        p.nama,p.gelar_depan,p.gelar_blk')
+        ->join('pegawai p', 'rt.nik=p.nik')
+        ->where('p.fid_unit_kerja', $this->request->getPost('id'))
+        ->where('bulan', date('m'))
+        ->where('tahun', date('Y'));
+        
+        return DataTable::of($builder)
+        ->addNumbering('no')
+        ->postQuery(function($query){
+            $query->orderBy('rt.created_at', 'desc');
+        })
+        ->edit('bulan', function($row) {
+            return bulan($row->bulan)." ".$row->tahun;
+        })
+        ->edit('nama', function($row) {
+            return namalengkap($row->gelar_depan,$row->nama,$row->gelar_blk);
+        })
+        ->format('jumlah_uang', function($value) {
+            return number_to_currency($value, "IDR", "id_ID");
+        })
+        ->format('pph21', function($value) {
+            return number_to_currency($value, "IDR", "id_ID");
+        })
+        ->add('action', function($row) {
+            return '<div class="dropdown">
+                        <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="true"><i class="bx bx-edit"></i></button>
+                        <ul class="dropdown-menu" data-popper-placement="bottom-start">
+                            <li><button type="button" class="dropdown-item text-danger d-flex justify-content-between align-items-center" id="hapus" data-uid="'.dohash($row->id).'">Batalkan Perhitungan <i class="bx bx-trash"></i></button></li>
                         </ul>
                     </div>';
         })

@@ -80,7 +80,6 @@
 <script src="<?= base_url("template/vertical/plugins/parsley/parsley.min.js") ?>"></script>
 <script src="<?= base_url("template/vertical/plugins/parsley/i18n/id.js") ?>"></script>
 <script src="<?= base_url("template/vertical/plugins/parsley/default.js") ?>"></script>
-<script src="<?= base_url("template/vertical/plugins/datatable/js/datatables.min.js") ?>"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://npmcdn.com/flatpickr/dist/l10n/id.js"></script>
 <script type="text/javascript">

@@ -52,17 +52,19 @@ class AjaxSelect2 extends BaseController
         $response[csrf_token()] = csrf_hash();
         $q = @$postData['searchTerm'];
         // Fetch record
-        if($q === "" || empty($q)) {
-            $response['data'] = [[
-                "id" => 0,
-                "text" => 'Silahkan ketikan kata kunci yang benar',
-                'disabled' => true
-            ]];
-            return $this->response->setJSON($response);
-        }
-
-        $desa = $this->db->table('ref_desa')->like('nama_desa', $q)->orderBy('id_desa', 'desc')->get();
-        
+        // if($q === "" || empty($q) && sesssion()->role === 'ADMIN') {
+        //     $response['data'] = [[
+        //         "id" => 0,
+        //         "text" => 'Silahkan ketikan kata kunci yang benar',
+        //         'disabled' => true
+        //     ]];
+        //     return $this->response->setJSON($response);
+        // }
+        if(session()->role === 'OPERATOR' || session()->role === 'USER'):
+            $desa = $this->db->table('ref_desa')->where('id_desa', session()->id_desa)->orderBy('id_desa', 'desc')->get();
+        else:
+            $desa = $this->db->table('ref_desa')->like('nama_desa', $q)->orderBy('id_desa', 'desc')->get();
+        endif;
         if(count($desa->getResultArray()) > 0):
             $data = array();
             foreach($desa->getResult() as $list){
@@ -99,17 +101,19 @@ class AjaxSelect2 extends BaseController
         $response[csrf_token()] = csrf_hash();
         $q = @$postData['searchTerm'];
         // Fetch record
-        if($q === "" || empty($q)) {
-            $response['data'] = [[
-                "id" => 0,
-                "text" => 'Silahkan ketikan kata kunci yang benar',
-                'disabled' => true
-            ]];
-            return $this->response->setJSON($response);
-        }
-
-        $unor = $this->db->table('ref_unit_kerja')->where('aktif', 'Y')->like('nama_unit_kerja', $q)->orderBy('id_unit_kerja', 'desc')->get();
-        
+        // if($q === "" || empty($q)) {
+        //     $response['data'] = [[
+        //         "id" => 0,
+        //         "text" => 'Silahkan ketikan kata kunci yang benar',
+        //         'disabled' => true
+        //     ]];
+        //     return $this->response->setJSON($response);
+        // }
+        if(session()->role === 'OPERATOR' || session()->role === 'USER'):
+            $unor = $this->db->table('ref_unit_kerja')->where('aktif', 'Y')->where('id_unit_kerja', session()->id_unit_kerja)->orderBy('id_unit_kerja', 'desc')->get();
+        else:
+            $unor = $this->db->table('ref_unit_kerja')->where('aktif', 'Y')->like('nama_unit_kerja', $q)->orderBy('id_unit_kerja', 'desc')->get();
+        endif;
         if(count($unor->getResultArray()) > 0):
             $data = array();
             foreach($unor->getResult() as $list){
@@ -234,8 +238,25 @@ class AjaxSelect2 extends BaseController
             return $this->response->setJSON($response);
         }
 
-        $pegawai = $this->db->table('pegawai')->like('nama', $q)->orLike('nik', $q)->where('status', 'AKTIF')->orderBy('created_at', 'desc')->get();
-        
+        if(session()->role === 'OPERATOR' || session()->role === 'USER'):
+        $pegawai = $this->db->table('pegawai')
+            ->where('status', 'AKTIF')
+            ->where('fid_unit_kerja', session()->id_unit_kerja)
+            ->groupStart()
+                ->like('nama', $q)
+                ->orLike('nik', $q)
+            ->groupEnd()
+            ->orderBy('created_at', 'desc')->get();
+        else:
+            $pegawai = $this->db->table('pegawai')
+            ->where('status', 'AKTIF')
+            ->groupStart()
+                ->like('nama', $q)
+                ->orLike('nik', $q)
+            ->groupEnd()
+            ->orderBy('created_at', 'desc')->get();
+        endif;
+
         if(count($pegawai->getResultArray()) > 0):
             $data = array();
             foreach($pegawai->getResult() as $list){
@@ -379,6 +400,80 @@ class AjaxSelect2 extends BaseController
             "text" => 'Data tidak ditemukan, silahkan ketikan kata kunci yang benar',
             'disabled' => true
         ]];
+
+        return $this->response->setJSON($response);
+    }
+
+    public function jenis_workshop()
+    {
+        $postData = $this->request->getPost();
+
+        $response = array();
+
+        // Read new token and assign in $response['token']
+        $response[csrf_token()] = csrf_hash();
+
+        if(!isset($postData['searchTerm'])){
+            // Fetch record
+            $query = $this->db->table('ref_jenis_workshop')->orderBy('id_jenis_workshop', 'desc')->get();
+        }else{
+            $searchTerm = $postData['searchTerm'];
+            // Fetch record
+            $query = $this->db->table('ref_jenis_workshop')->like('nama_jenis_workshop',$searchTerm)
+            ->orderBy('id_jenis_workshop', 'desc')
+            ->get();
+        } 
+        $data = array();
+        foreach($query->getResult() as $list){
+            $data[] = array(
+                "id" => $list->id_jenis_workshop,
+                "text" => ucwords($list->nama_jenis_workshop),
+            );
+        }
+
+        $response['data'] = $data;
+
+        return $this->response->setJSON($response);
+    }
+
+    public function rumpun_diklat()
+    {
+        $postData = $this->request->getPost();
+
+        $response = array();
+
+        $page = $postData['page'];
+        $resultCount = 10;
+        $offset = ($page - 1) * $resultCount;
+
+        // Read new token and assign in $response['token']
+        $response[csrf_token()] = csrf_hash();
+        $searchTerm = $postData['searchTerm'];
+        // Fetch record
+        $query = $this->db->table('ref_rumpun_diklat')
+        ->like('nama_rumpun_diklat', $searchTerm)
+        ->orderBy('id_rumpun_diklat', 'desc')
+        ->limit($resultCount)
+        ->offset($offset);
+
+        $data = array();
+        foreach($query->get()->getResult() as $list){
+            $data[] = array(
+                "id" => $list->id_rumpun_diklat,
+                "text" => ucwords($list->nama_rumpun_diklat)
+            );
+        }
+
+        $count = count($data) === $resultCount ? $query->countAllResults() : count($data);
+        $endCount = $offset + $resultCount;
+        $morePages = $count > $endCount;
+
+        $response["pagination"] = [
+            "more" => $morePages,
+            "count" => $count
+        ];
+
+        $response['results'] = $data;
 
         return $this->response->setJSON($response);
     }
