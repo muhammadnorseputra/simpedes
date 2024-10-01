@@ -151,7 +151,7 @@ class Master extends BaseController
                 // jika data belum ada
                 if($ceknik->countAllResults() === 0) {
                     // upload photo
-                    $newName = rehash($request->getPost('nik')).".".$imageFile->getClientExtension();
+                    $newName = $request->getPost('nik').".".$imageFile->getClientExtension();
                     $imageFile->move("assets/images/users/", $newName, true);
 
                     $akun = [
