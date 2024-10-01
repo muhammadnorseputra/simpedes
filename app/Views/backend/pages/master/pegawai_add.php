@@ -240,21 +240,21 @@
                 <div class="card-body">
                     <h6 class="card-title cursor-pointer">Upload Gambar</h6>
                     <div class="clearfix">
-                        <label for="formFile" class="form-label">Pilih File (.jpg) Max: 300kb</label>
+                        <label for="formFile" class="form-label">Pilih File (jpg/jpeg) Max: 300kb</label>
                         <?php if(!isset($default->photo)): ?>
                         <input class="form-control" name="photo" type="file" id="formFile"
                         oninput="preview.src=window.URL.createObjectURL(this.files[0])"
-                        accept="image/jpg" 
+                        accept="image/jpg,image/jpeg" 
                         data-parsley-max-file-size="300" 
-                        data-parsley-mime-type="image/jpg"
+                        data-parsley-mime-type="image/jpg,image/jpeg"
                         data-parsley-image-dimensions="150x150"
                         required>
                         <?php else: ?>
                         <input class="form-control" name="photo" type="file" id="formFile"
                         oninput="preview.src=window.URL.createObjectURL(this.files[0])"
-                        accept="image/jpg" 
+                        accept="image/jpg,image/jpeg" 
                         data-parsley-max-file-size="300" 
-                        data-parsley-mime-type="image/jpg"
+                        data-parsley-mime-type="image/jpg,image/jpeg"
                         data-parsley-image-dimensions="150x150">
                         <?php endif; ?>
                     </div>
