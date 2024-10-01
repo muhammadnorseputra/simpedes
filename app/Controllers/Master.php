@@ -200,7 +200,7 @@ class Master extends BaseController
                 }
 
                 // upload photo
-                $updatePhotoNewName = rehash($request->getPost('nik')).".".$imageFile->getClientExtension();
+                $updatePhotoNewName = $request->getPost('nik').".".$imageFile->getClientExtension();
                 if($imageFile->isValid() === true) {
                     $imageFile->move("assets/images/users", $updatePhotoNewName, true);
                 }
