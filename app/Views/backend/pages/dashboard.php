@@ -1,7 +1,5 @@
 <?= $this->extend('backend/layouts/app'); ?>
 <?= $this->section('content'); ?>
-
-
 <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-4 flex-lg-nowrap overflow-y-auto">
     <div class="col">
         <div class="card radius-10 border-start border-0 border-4 border-info">
@@ -94,6 +92,26 @@
         </div>
     </div> 
 </div><!--end row-->
+<div class="row">
+    <!-- Chart Pengeluaran Tunjangan Bulanan -->
+    <div class="col-12 col-ld-12 d-flex">
+        <div class="card radius-10 w-100">
+            <div class="card-header">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bx bx-chart bx-md"></i>
+                    <div>
+                        <h6 class="mb-0">Trend Tunjangan</h6>
+                        <p class="mb-0 text-secondary">Jumlah Pengeluaran Tunjangan Bulanan</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="tunjangan">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- Chart Lokasi -->
 <!-- <div class="row">
     <div class="col-12 col-lg-12 d-flex">
@@ -203,7 +221,7 @@
             </div>
         </div>
     </div>
-    <!-- Chart Status Kawin -->
+    <!-- Chart Jenis Pegawai -->
     <div class="col-12 col-lg-6 d-flex">
         <div class="card radius-10 w-100">
             <div class="card-header">
@@ -220,6 +238,7 @@
             </div>
         </div>
     </div>
+    
 </div>  
 <?= $this->endSection(); ?>
 <?= $this->section('script'); ?>
@@ -230,6 +249,103 @@
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 <script>
 $(function() {
+    // Trend Tunjangan
+    // Data dari PHP (CI4 Query Builder)
+    var TUNJANGAN = <?= json_encode($charts['tunjangan']); ?>;
+
+    // Konversi data untuk Highcharts
+    var TUNJANGAN_CATEGORIES = [];
+    var TUNJANGAN_DATA = [];
+
+    TUNJANGAN.forEach(function(item) {
+        TUNJANGAN_CATEGORIES.push(item.bulan);
+        TUNJANGAN_DATA.push(parseInt(item.jumlah_uang));
+    });
+    console.log(TUNJANGAN_CATEGORIES)
+    Highcharts.chart('tunjangan', {
+        chart: {
+            type: 'line',
+            scrollablePlotArea: {
+                minWidth: 600,
+                scrollPositionX: 1
+            }
+        },
+        title: {
+            text: ''
+        },
+        credits: {
+            enabled: false
+        },
+        legend: {
+            enabled: false
+        },
+        xAxis: {
+            categories: TUNJANGAN_CATEGORIES,
+            title: {
+                text: 'Tahun <?= date("Y") ?>'
+            },
+            labels: {
+                style: {
+                    fontWeight: 'bold', // Mengatur teks menjadi tebal
+                    fontSize: 12
+                }
+            },
+            gridLineWidth: 1
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: 'Jumlah Uang'
+            },
+            labels: {
+                format: 'Rp. {value:,.0f}', // Format untuk menampilkan nilai dalam Rupiah
+                style: {
+                    fontWeight: 'bold', // Mengatur teks menjadi tebal
+                    fontSize: 12
+                }
+            },
+            stackLabels: {
+                enabled: true
+            },
+            gridLineWidth: 0
+        },
+        tooltip: {
+            headerFormat: 'Bulan <b>{point.x}</b><br/>',
+            pointFormat: 'Jumlah: <b>{point.y}</b>',
+            crosshairs: true,
+            shared: true
+        },
+        plotOptions: {
+            dataLabels: true,
+            lseries: {
+                states: {
+                    hover: {
+                        enabled: true,
+                        lineWidth: 6,
+                        fillColor: 'rgba(255, 255, 0, 0.2)' // Background color on hover
+                    }
+                }
+            }
+        },
+        series: [{
+            colorByPoint: false,
+            name: "Tunjangan Bulanan",
+            data: TUNJANGAN_DATA,
+            color: {
+                linearGradient: {
+                    x1: 0,
+                    x2: 0,
+                    y1: 1,
+                    y2: 0
+                },
+                stops: [
+                    [0, '#0000ff'],
+                    [1, '#ff0000']
+                ]
+            }
+        }]
+    });
+
     // Lokasi MAP
     // let LOKASI = <?= json_encode($charts['lokasi']); ?>;
     // let LOKASI_DATA = [];
@@ -516,7 +632,6 @@ $(function() {
     JENIS_PEGAWAI.forEach(function(item) {
         JENIS_PEGAWAI_DATA.push({'name': item.jenis,'y':parseInt(item.total), 'z':parseInt(item.total)});
     });
-    console.log("🚀 ~ JENIS_PEGAWAI.forEach ~ JENIS_PEGAWAI_DATA:", JENIS_PEGAWAI_DATA)
     
     Highcharts.chart('jenis_pegawai', {
         chart: {

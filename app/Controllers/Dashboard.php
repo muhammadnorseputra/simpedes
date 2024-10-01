@@ -91,6 +91,27 @@ class Dashboard extends BaseController
         return $data;
     }
 
+    private function trendsTunjanganBulanan()
+    {
+        helper(["tgl_indo"]);
+
+        $builder = $this->db->table('riwayat_tunjangan');
+        $builder->select('bulan');
+        $builder->selectSum('jumlah_uang');
+        $builder->where('tahun', date("Y"));
+        $builder->groupBy('bulan');
+        $query = $builder->get();
+        $result = $query->getResult();
+        $data = [];
+        foreach ($result as $query) {
+            $data[] = [
+                'bulan' => bulan($query->bulan),
+                'jumlah_uang' => $query->jumlah_uang
+            ];
+        }
+        return $data;
+    }
+
     private function locationMaps()
     {
         $tbl = $this->db->table('ref_unit_kerja')->select('latitude,longitude,nama_unit_kerja')->get();
@@ -144,7 +165,8 @@ class Dashboard extends BaseController
                 'agama' => $this->trendsPegawaiByAgama(),
                 'status_kawin' => $this->trendsPegawaiByStatusKawin(),
                 'lokasi' => $this->locationMaps(),
-                'jenis_pegawai' => $this->trendsPegawaiByJenis()
+                'jenis_pegawai' => $this->trendsPegawaiByJenis(),
+                'tunjangan' => $this->trendsTunjanganBulanan()
             ]
         ];
         return view('backend/pages/dashboard', $data);
