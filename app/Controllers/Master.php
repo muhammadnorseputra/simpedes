@@ -34,7 +34,7 @@ class Master extends BaseController
             $data = [
                 'row' => count($db->getResultArray()),
                 'data' => $db->getRow(),
-                'title' => 'Master Jabatan '.$paramsId.' - Simpedes Kab. Balangan',
+                'title' => 'Master Jabatan '.$paramsId,
                 'getAtasan' => $atasanId->getFirstRow()
             ];
 
@@ -125,7 +125,7 @@ class Master extends BaseController
         }
 
         $data = [
-            'title' => 'Master Jabatan - Simpedes Kab. Balangan',
+            'title' => 'Master Jabatan ',
         ];
         return view('backend/pages/master/jabatan', $data);
     }
@@ -313,14 +313,14 @@ class Master extends BaseController
             && $session->get('role') !== 'ADMIN'
             && isset($defaultData->getRow()->status)):
                 $data = [
-                    'title' => 'Verifikasi Usulan Pegawai - Simpedes Kab. Balangan',
+                    'title' => 'Verifikasi Usulan Pegawai',
                     'status' => @$defaultData->getRow()
                 ];
                 return view('backend/pages/master/pegawai_status', $data);
             endif;
             // jika halaman tambah pegawai
             $data = [
-                'title' => 'Master Tambah Pegawai - Simpedes Kab. Balangan',
+                'title' => 'Master Tambah Pegawai',
                 'default' => $defaultData->getRow(),
                 'db' => $this->db,
                 'desa' => $defaultDesa,
@@ -334,7 +334,7 @@ class Master extends BaseController
         }
 
         $data = [
-            'title' => 'Master Pegawai - Simpedes Kab. Balangan',
+            'title' => 'Master Pegawai',
         ];
         return view('backend/pages/master/pegawai', $data);
     }
@@ -445,14 +445,14 @@ class Master extends BaseController
         if($request->is('get') && $paramsType === 'ganti-password')
         {
             $data = [
-                'title' => 'Ganti Password - Simpedes Kab. Balangan ',
+                'title' => 'Ganti Password ',
                 'nik' => dohash(session()->nik)
             ];
             return view('backend/pages/master/ganti_password', $data);
         }
 
         $data = [
-            'title' => 'Userportal - Simpedes Kab. Balangan '
+            'title' => 'Userportal '
         ];
         return view('backend/pages/master/users', $data);
     }

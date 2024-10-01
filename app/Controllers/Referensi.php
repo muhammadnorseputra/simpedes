@@ -14,7 +14,7 @@ class Referensi extends BaseController
     public function agama(): string
     {
         $data = [
-            'title' => 'Referensi Agama - Simpedes Kab. Balangan',
+            'title' => 'Referensi Agama',
         ];
         return view('backend/pages/referensi/agama', $data);
     }
@@ -22,7 +22,7 @@ class Referensi extends BaseController
     public function kecamatan(): string
     {
         $data = [
-            'title' => 'Referensi Kecamatan - Simpedes Kab. Balangan',
+            'title' => 'Referensi Kecamatan',
         ];
         return view('backend/pages/referensi/kecamatan', $data);
     }
@@ -30,7 +30,7 @@ class Referensi extends BaseController
     public function desa(): string
     {
         $data = [
-            'title' => 'Referensi Desa - Simpedes Kab. Balangan',
+            'title' => 'Referensi Desa',
         ];
         return view('backend/pages/referensi/desa', $data);
     }
@@ -38,7 +38,7 @@ class Referensi extends BaseController
     public function jenis_workshop(): string
     {
         $data = [
-            'title' => 'Referensi Jenis Workshop - Simpedes Kab. Balangan',
+            'title' => 'Referensi Jenis Workshop',
         ];
         return view('backend/pages/referensi/jenis_workshop', $data);
     }
@@ -46,7 +46,7 @@ class Referensi extends BaseController
     public function tingkat_pendidikan(): string
     {
         $data = [
-            'title' => 'Referensi Tingkat Pendidikan - Simpedes Kab. Balangan',
+            'title' => 'Referensi Tingkat Pendidikan',
         ];
         return view('backend/pages/referensi/tingkat_pendidikan', $data);
     }
@@ -54,7 +54,7 @@ class Referensi extends BaseController
     public function jurusan_pendidikan(): string
     {
         $data = [
-            'title' => 'Referensi Jurusan Pendidikan - Simpedes Kab. Balangan',
+            'title' => 'Referensi Jurusan Pendidikan',
         ];
         return view('backend/pages/referensi/jurusan_pendidikan', $data);
     }
@@ -62,7 +62,7 @@ class Referensi extends BaseController
     public function rumpun_diklat(): string
     {
         $data = [
-            'title' => 'Referensi Rumpun Diklat - Simpedes Kab. Balangan',
+            'title' => 'Referensi Rumpun Diklat',
         ];
         return view('backend/pages/referensi/rumpun_diklat', $data);
     }
@@ -78,7 +78,7 @@ class Referensi extends BaseController
             }
 
             $data = [
-                'title' => $row->getRow()->nama_unit_kerja.' - Simpedes Kab. Balangan',
+                'title' => $row->getRow()->nama_unit_kerja.'',
                 'id' => $id,
                 'row' => $row->getRow(),
                 'kecamatan' => $kecamatan->getResult()
@@ -88,7 +88,7 @@ class Referensi extends BaseController
         };
 
         $data = [
-            'title' => 'Referensi Satuan Unit Kerja - Simpedes Kab. Balangan',
+            'title' => 'Referensi Satuan Unit Kerja',
         ];
         return view('backend/pages/referensi/satuan_unit_kerja', $data);
     }

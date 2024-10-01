@@ -78,7 +78,7 @@ class Pdf extends BaseController
         ->getResult();
 
         $data = [
-            'title' => 'Cetak Tanda Terima - Simpedes Kab. Balangan',
+            'title' => 'Cetak Tanda Terima',
             'req' => $req->getPost(),
             'data' => $pegawai,
             'unor' => $unor,
@@ -118,7 +118,7 @@ class Pdf extends BaseController
         ->getResult();
 
         $data = [
-            'title' => 'Nominatif - Simpedes Kab. Balangan',
+            'title' => 'Nominatif',
             'req' => $req->getPost(),
             'pegawai' => $pegawai,
             'unor' => $unor

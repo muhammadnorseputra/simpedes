@@ -148,7 +148,7 @@ class Dashboard extends BaseController
 
         $config = config('SiteConfig');
         $data = [
-            'title' => 'Dashboard - Simpedes Kab. Balangan',
+            'title' => 'Dashboard',
             'config' => $config,
             'total_pegawai_bpd_aktif' => $total_pegawai_bpd_aktif->countAllResults(),
             'total_pegawai_pemdes_aktif' => $total_pegawai_pemdes_aktif->countAllResults(),

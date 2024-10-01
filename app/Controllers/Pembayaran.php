@@ -13,7 +13,7 @@ class Pembayaran extends BaseController
         helper(["tgl_indo"]);
 
         $data = [
-            'title' => 'Pembayaran Tunjangan - Simpedes Kab. Balangan',
+            'title' => 'Pembayaran Tunjangan',
         ];
         return view('backend/pages/pembayaran/tunjangan', $data);
     }
@@ -105,7 +105,7 @@ class Pembayaran extends BaseController
             return $this->response->setJSON($msg);
         }
         $data = [
-            'title' => 'Hitung Tunjangan - Simpedes Kab. Balangan',
+            'title' => 'Hitung Tunjangan',
         ];
         return view('backend/pages/pembayaran/tunjangan_hitung', $data);
     }
@@ -134,7 +134,7 @@ class Pembayaran extends BaseController
         ->getResult();
 
         $data = [
-            'title' => 'Review Tunjangan - Simpedes Kab. Balangan',
+            'title' => 'Review Tunjangan',
             'unor' => $unor,
             'pegawai' => $pegawai,
             'request' => [

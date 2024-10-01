@@ -38,7 +38,7 @@ $colorScheme = implode(" ", [$theme, $color, $sidebarColor])
 	<link rel="stylesheet" href="<?= base_url("template/vertical/css/header-colors.css") ?>" />
 	<!-- Custom CSS -->
 	 <?= $this->renderSection('style'); ?>
-	<title><?= esc($title) ?? 'Administrasi Pemerintahan Desa' ?></title>
+	<title><?= esc($title." - ".config('SiteConfig')->siteName) ?? 'Administrasi Pemerintahan Desa' ?></title>
 </head>
 
 <body>

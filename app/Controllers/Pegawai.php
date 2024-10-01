@@ -39,7 +39,7 @@ class Pegawai extends BaseController
             ->orderBy('p.created_at', 'desc')->get();
 
             $data = [
-                'title' => 'Pegawai Satuan Unit Kerja - Simpedes Kab. Balangan',
+                'title' => 'Pegawai Satuan Unit Kerja',
                 'pegawai' => $pegawai->getResult(),
                 'unit' => @$pegawai->getRow()->nama_unit_kerja
             ];
@@ -54,7 +54,7 @@ class Pegawai extends BaseController
             ->orderBy('p.created_at', 'desc')->get();
 
         $data = [
-            'title' => 'Pegawai Satuan Unit Kerja - Simpedes Kab. Balangan',
+            'title' => 'Pegawai Satuan Unit Kerja',
             'pegawai' => $pegawai->getResult(),
             'unit' => session()->nama_unit_kerja
         ];
@@ -132,7 +132,7 @@ class Pegawai extends BaseController
         $namalengkap = @namalengkap($row->gelar_depan, $row->nama, $row->gelar_blk);
 
         $data = [
-            'title' => "{$namalengkap} - Simpedes Kab. Balangan",
+            'title' => "{$namalengkap}",
             'nik' => $nik,
             'row' => $row,
             'pendidikan' => $pendidikan_terakhir,
@@ -319,7 +319,7 @@ class Pegawai extends BaseController
             $getRiwayat = $rwy_pendidikan->getPendidikanTerakhirById(rehash($id));
 
             $data = [
-                'title' => "{$getRiwayat->nama_sekolah} - Simpedes Kab. Balangan",
+                'title' => "{$getRiwayat->nama_sekolah}",
                 'row' => $getRiwayat,
             ];
 
@@ -332,7 +332,7 @@ class Pegawai extends BaseController
         $row = $profile->getRow();
         $namalengkap = namalengkap($row->gelar_depan, $row->nama, $row->gelar_blk);
         $data = [
-            'title' => "Riwayat Pendidikan - {$namalengkap} - Simpedes Kab. Balangan",
+            'title' => "Riwayat Pendidikan - {$namalengkap}",
             'nik' => $nik,
             'row' => $row,
         ];
@@ -514,7 +514,7 @@ class Pegawai extends BaseController
             $getRiwayat = $rwy_jabatan->getJabatanTerakhirById(rehash($id));
 
             $data = [
-                'title' => "{$getRiwayat->nama_jabatan} - Simpedes Kab. Balangan",
+                'title' => "{$getRiwayat->nama_jabatan}",
                 // 'nik' => $nik,
                 'row' => $getRiwayat,
             ];
@@ -525,7 +525,7 @@ class Pegawai extends BaseController
         $row = $profile->getRow();
         $namalengkap = namalengkap($row->gelar_depan, $row->nama, $row->gelar_blk);
         $data = [
-            'title' => "Riwayat Jabatan - {$namalengkap} - Simpedes Kab. Balangan",
+            'title' => "Riwayat Jabatan - {$namalengkap}",
             'nik' => rehash($id),
             'row' => $row,
         ];
@@ -808,7 +808,7 @@ class Pegawai extends BaseController
             $getRiwayat = $rwy_workshop->getSutriById(rehash($uid));
 
             $data = [
-                'title' => "{$getRiwayat->nama_sutri} - Simpedes Kab. Balangan",
+                'title' => "{$getRiwayat->nama_sutri}",
                 'row' => $getRiwayat,
             ];
 
@@ -822,7 +822,7 @@ class Pegawai extends BaseController
             $getRiwayat = $rwy_workshop->getAnakById(rehash($uid));
 
             $data = [
-                'title' => "{$getRiwayat->nama_anak} - Simpedes Kab. Balangan",
+                'title' => "{$getRiwayat->nama_anak}",
                 'row' => $getRiwayat,
             ];
 
@@ -831,7 +831,7 @@ class Pegawai extends BaseController
 
         $namalengkap = namalengkap($row->gelar_depan, $row->nama, $row->gelar_blk);
         $data = [
-            'title' => "Riwayat Keluarga - {$namalengkap} - Simpedes Kab. Balangan",
+            'title' => "Riwayat Keluarga - {$namalengkap}",
             'nik' => rehash($id),
             'row' => $row,
         ];
@@ -965,7 +965,7 @@ class Pegawai extends BaseController
             $getRiwayat = $rwy_workshop->getWorkshopById(rehash($id));
 
             $data = [
-                'title' => "{$getRiwayat->nama_jenis_workshop} - {$getRiwayat->nama_workshop} - {$getRiwayat->nama_rumpun_diklat} - Simpedes Kab. Balangan",
+                'title' => "{$getRiwayat->nama_jenis_workshop} - {$getRiwayat->nama_workshop} - {$getRiwayat->nama_rumpun_diklat}",
                 'row' => $getRiwayat,
             ];
 
@@ -974,7 +974,7 @@ class Pegawai extends BaseController
 
         $namalengkap = namalengkap($row->gelar_depan, $row->nama, $row->gelar_blk);
         $data = [
-            'title' => "Riwayat Workshop - {$namalengkap} - Simpedes Kab. Balangan",
+            'title' => "Riwayat Workshop - {$namalengkap}",
             'nik' => rehash($id),
             'row' => $row,
         ];
@@ -1133,7 +1133,7 @@ class Pegawai extends BaseController
             $getRiwayat = $rwy_lhkpn->getLHKPNById(rehash($id));
 
             $data = [
-                'title' => "{$getRiwayat->jabatan} - Simpedes Kab. Balangan",
+                'title' => "{$getRiwayat->jabatan}",
                 'row' => $getRiwayat,
             ];
 
@@ -1142,7 +1142,7 @@ class Pegawai extends BaseController
 
         $namalengkap = namalengkap($row->gelar_depan, $row->nama, $row->gelar_blk);
         $data = [
-            'title' => "Riwayat LHKPN - {$namalengkap} - Simpedes Kab. Balangan",
+            'title' => "Riwayat LHKPN - {$namalengkap}",
             'nik' => rehash($id),
             'row' => $row,
         ];
