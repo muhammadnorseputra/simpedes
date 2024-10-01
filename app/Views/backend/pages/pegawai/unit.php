@@ -1,20 +1,21 @@
 <?= $this->extend('backend/layouts/app'); ?>
 
 <?= $this->section('content'); ?>
-    <!--breadcrumb-->
-    <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-        <div class="breadcrumb-title pe-3">Pegawai</div>
-        <div class="ps-3">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb mb-0 p-0">
-                    <li class="breadcrumb-item"><a href="<?= base_url('/') ?>"><i class="bx bx-home-alt"></i></a>
-                    </li>
-                    <li class="breadcrumb-item active" aria-current="page"><?= $unit ?></li>
-                </ol>
-            </nav>
-        </div>
+<!--breadcrumb-->
+<div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+    <div class="breadcrumb-title pe-3">Pegawai</div>
+    <div class="ps-3">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 p-0">
+                <li class="breadcrumb-item"><a href="<?= base_url('/') ?>"><i class="bx bx-home-alt"></i></a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page"><?= $unit ?></li>
+            </ol>
+        </nav>
     </div>
-    <!--end breadcrumb-->
+    <button class="btn btn-success btn-sm ms-auto d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#cetak-nominatif">Cetak Nominatif <i class="bx bx-printer pe-0 me-0"></i></button>
+</div>
+<!--end breadcrumb-->
 <div id="pegawai">
     <div class="row">
         <div class="col-12">
@@ -101,6 +102,57 @@
         </p>
     </div>
     <?php endif; ?>
+</div>
+<?= $this->endSection(); ?>
+
+<?= $this->section('modal'); ?>
+<!-- Modal Cetak Perhitungan Tunjangan-->
+<div class="modal fade" id="cetak-nominatif" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <?= form_open(base_url('nominatif/cetak'), 
+        ['class' => 'modal-content needs-validation',"target"=>"_blank", "data-parsley-validate" => "", 'id' => 'FormAdd', 'novalidate' => '', 'autocomplete' => 'off'],
+        ['id_unit_kerja' => isset($_GET['id']) ? $_GET['id'] : dohash(session()->id_unit_kerja)]); ?>
+            <div class="modal-header">
+                <h5 class="modal-title">CETAK NOMINATIF</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body d-flex flex-column justify-content-start align-items-start gap-3">
+                <div class="col-12">
+                    <?php  
+                    $tahun = db_connect()->table('pegawai')
+                    ->select('YEAR(created_at) as year')
+                    ->where('fid_unit_kerja', isset($_GET['id']) ? rehash($_GET['id']) : session()->id_unit_kerja)
+                    ->groupBy('year')
+                    ->get()
+                    ->getResult();
+                    ?>
+                    <label for="tahun" class="form-label fw-bold">Pilih Tahun <span class="text-danger">*</span></label>
+                    <select class="form-select" name="tahun" id="tahun"
+                        required>
+                        <option value="">-- Pilih Tahun --</option>
+                        <?php 
+                            foreach($tahun as $k => $thn): 
+                        ?>
+                            <option value="<?= $thn->year; ?>"><?= $thn->year; ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="col-12">
+                <label for="jenis" class="form-label fw-bold">Pilih Jenis Pegawai <span class="text-danger">*</span></label>
+                    <select class="form-select" name="jenis" id="jenis"
+                        required>
+                        <option value="">-- Pilih Jenis --</option>
+                        <option value="BPD">BPD</option>
+                        <option value="PEMDES">PEMDES</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batal</button>
+                <button type="submit" class="btn btn-primary"><i class="bx bx-printer"></i> CETAK</button>
+            </div>
+        <?= form_close(); ?>
+    </div>
 </div>
 <?= $this->endSection(); ?>
 

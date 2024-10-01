@@ -168,9 +168,9 @@
         </tr>
         <tr>
             <td>Gelar Depan</td>
-            <td>: <?= $row->gelar_depan; ?></td>
+            <td>: <?= isNull(@$row->gelar_depan); ?></td>
             <td width="20%">Gelar Belakang</td>
-            <td width="auto">: <?= $row->gelar_blk; ?></td>
+            <td width="auto">: <?= isNull(@$row->gelar_blk); ?></td>
         </tr>
         <tr>
             <td>Tempat, Tanggal Lahir</td>
@@ -418,9 +418,9 @@
                 <br>
                 Mengesahkan, <br><span class="font-weight-bold"> KEPALA DESA</span>
                 <p></p>
-                <u class="font-weight-bold"><?= namalengkap($kades->gelar_depan,$kades->nama,$kades->gelar_blk); ?></u>
+                <u class="font-weight-bold"><?= namalengkap(@$kades->gelar_depan,@$kades->nama,@$kades->gelar_blk); ?></u>
                 <br>
-                NIPD. <?= $kades->nipd; ?>
+                NIPD. <?= isNull(@$kades->nipd); ?>
             </div>
             <?php endif; ?>
             </td>

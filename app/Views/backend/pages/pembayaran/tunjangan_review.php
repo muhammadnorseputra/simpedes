@@ -102,7 +102,9 @@
 <!-- Modal Cetak Perhitungan Tunjangan-->
 <div class="modal fade" id="cetak-tunjangan" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <?= form_open(base_url('pembayaran/cetak'), ['class' => 'modal-content needs-validation', "data-parsley-validate" => "", 'id' => 'FormAdd', 'novalidate' => '', 'autocomplete' => 'off', 'method' => 'GET']); ?>
+        <?= form_open(base_url('pembayaran/cetak'), 
+        ['class' => 'modal-content needs-validation',"target"=>"_blank","data-parsley-validate" => "", 'id' => 'FormAdd', 'novalidate' => '', 'autocomplete' => 'off'],
+        ['unit' => $unor->id_unit_kerja, 'bulan' => $request['bulan'], 'jns_pegawai' => $request['jenis_pegawai']]); ?>
             <div class="modal-header">
                 <h5 class="modal-title">CETAK TANDA TERIMA</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -114,6 +116,7 @@
                     ->join('ref_jabatan j', 'p.fid_jabatan=j.id')
                     ->where('p.fid_unit_kerja', session()->id_unit_kerja)
                     ->whereIn('j.nama_jabatan', ['KETUA','WAKIL KETUA','KEPALA DESA','SEKRETARIS DESA'])
+                    ->orderBy('j.id_atasan', 'asc')
                     ->get()
                     ->getResult();
                     ?>
@@ -122,7 +125,7 @@
                         required>
                         <option value="">-- Pilih Kepala --</option>
                         <?php foreach($ttd_kepala as $kepala): ?>
-                            <option value="<?= $kepala->nik; ?>"><?= $kepala->nipd; ?> - <?= $kepala->nama; ?></option>
+                            <option value="<?= $kepala->nik; ?>"><?= $kepala->nipd; ?> - <?= $kepala->nama; ?> - <?= $kepala->nama_jabatan; ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -140,9 +143,13 @@
                         required>
                         <option value="">-- Pilih Bendahara --</option>
                         <?php foreach($ttd_bendahara as $kepala): ?>
-                            <option value="<?= $kepala->nik; ?>"><?= $kepala->nipd; ?> - <?= $kepala->nama; ?></option>
+                            <option value="<?= $kepala->nik; ?>"><?= $kepala->nipd; ?> - <?= $kepala->nama; ?> - <?= $kepala->nama_jabatan; ?></option>
                         <?php endforeach; ?>
                     </select>
+                </div>
+                <div class="col-12">
+                    <label for="tgl_cetak">Tanggal Cetak <span class="text-danger">*</span></label>
+                    <input type="date" name="tgl_cetak" class="form-control datepicker" value="<?= date("Y-m-d"); ?>" id="tgl_cetak" placeholder="Tanggal Cetak" required/>
                 </div>
             </div>
             <div class="modal-footer">
@@ -158,4 +165,23 @@
 <script src="<?= base_url("template/vertical/plugins/parsley/parsley.min.js") ?>"></script>
 <script src="<?= base_url("template/vertical/plugins/parsley/i18n/id.js") ?>"></script>
 <script src="<?= base_url("template/vertical/plugins/parsley/default.js") ?>"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://npmcdn.com/flatpickr/dist/l10n/id.js"></script>
+<?= $this->endSection(); ?>
+<!-- Ex: css -->
+<?= $this->section('style'); ?>
+<link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet" />
+<?= $this->endSection(); ?>
+
+<?= $this->section('script'); ?>
+<script>
+    $(function(){
+        $(".datepicker").flatpickr({
+            altInput: true,
+            altFormat: "j F Y",
+            dateFormat: "Y-m-d",
+            "locale": "id",
+        });
+    })
+</script>
 <?= $this->endSection(); ?>

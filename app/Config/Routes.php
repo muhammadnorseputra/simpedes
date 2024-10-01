@@ -150,4 +150,10 @@ $routes->group('pembayaran', function($route) {
     $route->get('hitung', 'Pembayaran::hitung');
     $route->post('hitung', 'Pembayaran::hitung');
     $route->delete('hitung', 'Pembayaran::hitung');
+
+    $route->post('cetak', 'Pdf::cetak_tt_tunjangan');
+});
+
+$routes->group('nominatif', function($route) {
+    $route->post('cetak', 'Pdf::cetak_nomperunker');
 });
