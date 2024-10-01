@@ -244,17 +244,17 @@
                         <?php if(!isset($default->photo)): ?>
                         <input class="form-control" name="photo" type="file" id="formFile"
                         oninput="preview.src=window.URL.createObjectURL(this.files[0])"
-                        accept="image/jpg,image/jpeg" 
+                        accept="image/jpg" 
                         data-parsley-max-file-size="300" 
-                        data-parsley-mime-type="image/jpg,image/jpeg"
+                        data-parsley-mime-type="image/jpg"
                         data-parsley-image-dimensions="150x150"
                         required>
                         <?php else: ?>
                         <input class="form-control" name="photo" type="file" id="formFile"
                         oninput="preview.src=window.URL.createObjectURL(this.files[0])"
-                        accept="image/jpg,image/jpeg" 
+                        accept="image/jpg" 
                         data-parsley-max-file-size="300" 
-                        data-parsley-mime-type="image/jpg,image/jpeg"
+                        data-parsley-mime-type="image/jpg"
                         data-parsley-image-dimensions="150x150">
                         <?php endif; ?>
                     </div>
