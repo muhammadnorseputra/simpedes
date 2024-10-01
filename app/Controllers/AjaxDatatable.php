@@ -143,8 +143,8 @@ class AjaxDatatable extends BaseController
         $builder = $this->db->table('pegawai')
         ->select('nik,nipd,nama,gelar_depan,gelar_blk,jns_kelamin,fid_unit_kerja,photo,status,nama_unit_kerja,nama_jabatan')
         ->join('ref_unit_kerja', 'pegawai.fid_unit_kerja=ref_unit_kerja.id_unit_kerja', 'left')
-        ->join('ref_jabatan', 'pegawai.fid_jabatan=ref_jabatan.id','left')
-        ->whereNotIn('status', ['ENTRI','ENTRI_ULANG']);
+        ->join('ref_jabatan', 'pegawai.fid_jabatan=ref_jabatan.id','left');
+        // ->whereNotIn('status', ['ENTRI','ENTRI_ULANG']);
         
         return DataTable::of($builder)
         ->setSearchableColumns(['pegawai.nik', 'pegawai.nipd', 'pegawai.nama', 'pegawai.status'])
