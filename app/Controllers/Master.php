@@ -145,7 +145,7 @@ class Master extends BaseController
             $defaultData = $this->db->table('pegawai')->where('nik', rehash($request->getGet('token')))->get(); 
                             
             if($request->is("post") && $request->is("ajax")) {
-                $ceknik = $this->db->table('pegawai')->where('nik', rehash($request->getPost('nik')));
+                $ceknik = $this->db->table('pegawai')->where('nik', $request->getPost('nik'));
                 $imageFile = $request->getFile('photo');
 
                 // jika data belum ada
