@@ -236,7 +236,7 @@ class Master extends BaseController
                     unset($update["photo"]);
                 }
 
-                $SaveUpdate = $this->db->table('pegawai')->where('nik', rehash($request->getPost('nik')))->update($update);
+                $SaveUpdate = $this->db->table('pegawai')->where('nik', $request->getPost('nik'))->update($update);
 
                 if($SaveUpdate) {
                     $msg = [
