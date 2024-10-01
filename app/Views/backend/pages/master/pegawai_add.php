@@ -54,8 +54,7 @@
             <div class="row mb-4 gap-md-0 gap-3 border border-2 border-danger p-2 p-md-3 mx-0 shadow rounded">
                 <div class="col-md-4">
                     <div class="form-floating">
-                        <?php $disableNIK = @$default->nik !== null ? "disabled" : ""; ?>
-                        <?= @$default->nik !== null ? '<input name="nik" value="'.@$default->nik.'" type="hidden"/>' : ""; ?>
+                        <?php $disableNIK = @$default->nik !== null ? "readonly" : ""; ?>
                         <input type="number" name="nik" class="form-control" id="nik" placeholder="NIK" value="<?= @$default->nik ?>" <?= $disableNIK ?> required>
                         <label for="nik">Nomor Induk Kependudukan <span class="text-danger">*</span></label>
                     </div>
