@@ -72,7 +72,7 @@ $colorScheme = implode(" ", [$theme, $color, $sidebarColor])
 		  <div class="modal-content">
 			<div class="modal-header gap-2">
 			<?= form_open(base_url('app/pegawai/search'), ['id' => 'FormSearchPegawai', 'class' => 'position-relative popup-search w-100 needs-validation', 'autocomplete' => 'off']); ?>
-				<input name="search" class="form-control form-control-lg ps-5 border border-3 border-primary" type="search" placeholder="Search" autocomplete="off">
+				<input name="search" class="form-control form-control-lg ps-5 border border-3 border-primary" type="search" placeholder="Masukan NIK atau Nama" autocomplete="off">
 				<span class="position-absolute top-50 search-show ms-3 translate-middle-y start-0 top-50 fs-4"><i class='bx bx-search'></i></span>
 			<?= form_close(); ?>
 			  <button type="button" class="btn-close d-md-none" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -214,7 +214,11 @@ $colorScheme = implode(" ", [$theme, $color, $sidebarColor])
 		<div class="offcanvas-body shadow-lg rounded">
 			<div class="d-flex flex-column justify-content-between align-items-start gap-3">
 				<div class="w-100 text-center">
-					<img src="<?= base_url("assets/images/users/".session()->get('photo')) ?>" class="user-img w-25 h-25" alt="<?= session()->name ?>">
+					<?php if(session()->photo === null): ?>
+						<img src="<?= base_url("assets/images/users/default.png") ?>" class="user-img w-25 h-25" alt="default">
+					<?php else: ?>
+						<img src="<?= base_url("assets/images/users/".session()->get('photo')) ?>" class="user-img w-25 h-25" alt="<?= session()->name ?>">
+					<?php endif; ?>
 				</div>
 				<div class="d-inline-flex flex-column gap-1 w-100 border-bottom pb-3">
 					<div class="text-uppercase">Level</div>
@@ -226,16 +230,16 @@ $colorScheme = implode(" ", [$theme, $color, $sidebarColor])
 				</div>
 				<div class="d-inline-flex flex-column gap-1 w-100 border-bottom pb-3">
 					<div class="text-uppercase">Nama Lengkap</div>
-					<div class="fw-bold "><?= session()->fullname ?></div>
+					<div class="fw-bold "><?= isNull(session()->fullname) ?></div>
 				</div>
 				<div class="d-inline-flex flex-column gap-1 w-100 border-bottom pb-3">
 					<div class="text-uppercase">Email</div>
-					<div class="fw-bold "><?= session()->email ?></div>
+					<div class="fw-bold "><?= isNull(session()->email) ?></div>
 				</div>
 				<div class="d-flex justify-content-start align-items-center gap-1  w-100 border-bottom pb-3">
 					<div class="d-inline-flex flex-column gap-1">
 						<div class="text-uppercase">Jabatan</div>
-						<div class="fw-bold "><?= session()->nama_jabatan ?></div>
+						<div class="fw-bold "><?= isNull(session()->nama_jabatan) ?></div>
 					</div>
 					<div class="d-inline-flex flex-column gap-1">
 						<div class="text-uppercase">&nbsp;</div>
@@ -248,7 +252,7 @@ $colorScheme = implode(" ", [$theme, $color, $sidebarColor])
 				</div>
 				<div class="d-inline-flex flex-column gap-1 w-100 border-bottom pb-3">
 					<div class="text-uppercase">Desa / Kelurahan</div>
-					<div class="fw-bold "><?= session()->nama_desa ?></div>
+					<div class="fw-bold "><?= isNull(session()->nama_desa) ?></div>
 				</div>
 				<div class="d-grid gap-3 w-100">
 					<button type="button" class="btn btn-primary" onClick="window.location.href= '<?= base_url('app/password') ?>';">Ganti Password <i class="bx bx-lock"></i></button>

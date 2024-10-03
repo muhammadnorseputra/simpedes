@@ -178,7 +178,7 @@ class MYPDF extends TCPDF {
         $this->SetFont('helvetica', 'N', 8);
         // Page number
         $now = new Time('now', 'Asia/Jakarta', 'id_ID');
-        $this->Cell(130, 10, 'Copyright ::: '.config('SiteConfig')->siteSortName." | Dicetak oleh : ".session()->fullname." / ".date_indo(date("Y-m-d"))." ".substr($now->addHours(1),10), 0, false, 'L', 0, '', 0, false, 'T', 'M');
+        $this->Cell(130, 10, 'Copyright ::: '.config('SiteConfig')->siteSortName." | Dicetak oleh : ".(session()->fullname ? session()->fullname : session()->nik)." / ".date_indo(date("Y-m-d"))." ".substr($now->addHours(1),10), 0, false, 'L', 0, '', 0, false, 'T', 'M');
         $this->setX(-32);
         // $this->SetTextColor(245,245,245);
         $this->Cell(20, 10, 'Halaman '.$this->getAliasNumPage().' / '.$this->getAliasNbPages(), 0, 1, 'L', 0, '', 0, false, 'T', 'M');

@@ -90,6 +90,8 @@ $routes->group('app', function($route) {
         $route->get('(:any)/lhkpn/(:any)', 'Pegawai::riwayat_lhkpn/$1/$2');
         $route->post('(:any)/lhkpn/(:any)', 'Pegawai::riwayat_lhkpn/$1/$2');
         $route->delete('(:any)/lhkpn/(:any)', 'Pegawai::riwayat_lhkpn/$1/$2');
+        // Riwayat Tunjangan
+        $route->get('(:any)/tunjangan', 'Pegawai::riwayat_tunjangan/$1');
     });
 
 });
@@ -117,6 +119,7 @@ $routes->group('datatable', function($route) {
         $route->post('keluarga/anak', 'AjaxDatatable::riwayat_keluarga_anak');
         $route->post('workshop', 'AjaxDatatable::riwayat_workshop');
         $route->post('lhkpn', 'AjaxDatatable::riwayat_lhkpn');
+        $route->post('tunjangan', 'AjaxDatatable::riwayat_tunjangan');
     });
     // Nested router group /datatable/tunjangan
     $route->group('tunjangan', function($route) {

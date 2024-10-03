@@ -10,7 +10,7 @@ class Pdf extends BaseController
 {
     public function index($string)
     {   
-        helper(["hash","pegawai","tgl_indo"]);
+        helper(["hash","tgl_indo"]);
 
         $pdf = new TCPDF('P', 'mm', 'LEGAL', true, 'UTF-8', false);
 
@@ -18,11 +18,11 @@ class Pdf extends BaseController
         $NIK = $uri->getSegment(3); // NIK
         $nik = rehash($NIK);
         $pegawai = model('PegawaiModel');
-        $profile = $pegawai->getDetailPegawai($nik)->getRow();
+        $profile = $pegawai->getDetailPegawai($nik)->asObject()->first();
         // dd($profile);
         
         if($profile === null) {
-            return throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+            return throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound('Pegawai tidak ditemukan');
         }
 
         $data = [
@@ -55,7 +55,7 @@ class Pdf extends BaseController
 
     public function cetak_tt_tunjangan()
     {
-        helper(["pegawai","number","tgl_indo","time"]);
+        helper(["number","tgl_indo","time"]);
         $req = $this->request;
 
         $id_unit_kerja = $req->getPost('unit');
@@ -92,7 +92,7 @@ class Pdf extends BaseController
 
     public function cetak_nomperunker()
     {
-        helper(["pegawai","number","tgl_indo","time","hash"]);
+        helper(["number","tgl_indo","time","hash"]);
         $req = $this->request;
 
         $unor = db_connect()->table('ref_unit_kerja u')

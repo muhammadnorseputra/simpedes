@@ -17,7 +17,6 @@ class Auth extends BaseController
     }
 
     public function action() {
-        helper("pegawai");
         $session = session();
         $db = new UserModel();
 
@@ -41,7 +40,7 @@ class Auth extends BaseController
                 $profile = $builder->select('users.*,p.gelar_depan,p.gelar_blk,p.nama,p.email,p.photo,u.id_unit_kerja,
                 u.nama_unit_kerja,rj.id as id_jabatan,rj.nama_jabatan,rj.jenis as jenis_jabatan,rd.id_desa,rd.nama_desa')
                 ->join('pegawai p', 'users.nik=p.nik', 'left')
-                ->join('ref_unit_kerja u', 'p.fid_unit_kerja=u.id_unit_kerja', 'left')
+                ->join('ref_unit_kerja u', 'users.fid_unit_kerja=u.id_unit_kerja', 'left')
                 ->join('ref_jabatan rj', 'p.fid_jabatan=rj.id', 'left')
                 ->join('ref_desa rd', 'p.fid_keldesa=rd.id_desa', 'left')
                 ->groupStart()
@@ -50,7 +49,7 @@ class Auth extends BaseController
                     ->orWhere('p.email', $username)
                 ->groupEnd()
                 ->where('users.is_disabled', 'N')
-                ->where('p.status', 'AKTIF')
+                // ->where('p.status', 'AKTIF')
                 ->get()
                 ->getFirstRow();
                 // dd($profile);

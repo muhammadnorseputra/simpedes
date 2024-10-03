@@ -88,69 +88,170 @@
 <!-- Modal Add User-->
 <div class="modal fade" id="add-user" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <?= form_open(base_url('app/master/users'), ['class' => 'modal-content needs-validation', 'id' => 'FormAddUser', 'novalidate' => '', 'autocomplete' => 'off'], ['token' => '']); ?>
+        <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Tambah Userportal</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body d-flex flex-column justify-content-start align-items-start gap-3">
-                <div class="alert alert-warning mb-0 border-0 w-100">
+            <div class="modal-body">
+            <ul class="nav nav-tabs nav-primary" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a
+                    class="nav-link active"
+                    data-bs-toggle="tab"
+                    href="#primary"
+                    role="tab"
+                    aria-selected="true">
                     <div class="d-flex align-items-center">
-                        <div class="font-24 text-dark"><i class="bx bx-info-circle"></i>
+                        <div class="tab-icon">
+                        <i class="bx bx-home font-18 me-1"></i>
                         </div>
-                        <div class="ms-3">
-                            <h6 class="mb-0 text-dark">Perhatian</h6>
-                            <div class="text-dark">Pastikan NIK atau Pegawai bersatus <strong>AKTIF</strong></div>
+                        <div class="tab-title">Pegawai</div>
+                    </div>
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a
+                    class="nav-link"
+                    data-bs-toggle="tab"
+                    href="#secondary"
+                    role="tab"
+                    aria-selected="false">
+                    <div class="d-flex align-items-center">
+                        <div class="tab-icon">
+                        <i class="bx bx-user-pin font-18 me-1"></i>
+                        </div>
+                        <div class="tab-title">Manual</div>
+                    </div>
+                    </a>
+                </li>
+                </ul>
+                <div class="tab-content py-3">
+                <div
+                    class="tab-pane fade show active"
+                    id="primary"
+                    role="tabpanel">
+                    <?= form_open(base_url('app/master/users'), ['class' => 'needs-validation', 'id' => 'FormAddUser', 'novalidate' => '', 'autocomplete' => 'off'], ['token' => '', 'is_manual' => 'TIDAK','fid_unit_kerja' => '']); ?>
+                    <div class=" d-flex flex-column justify-content-start align-items-start gap-3">
+                        <div class="alert alert-warning mb-0 border-0 w-100">
+                            <div class="d-flex align-items-center">
+                                <div class="font-24 text-dark"><i class="bx bx-info-circle"></i>
+                                </div>
+                                <div class="ms-3">
+                                    <h6 class="mb-0 text-dark">Perhatian</h6>
+                                    <div class="text-dark">Pastikan NIK atau Pegawai bersatus <strong>AKTIF</strong></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label for="pegawai" class="form-label fw-bold">Cari Pegawai <span class="text-danger">*</span></label>
+                            <select class="form-select" name="pegawai" id="pegawai" multiple="multiple" data-placeholder="Cari Pegawai" 
+                            data-allow-clear="true"
+                            data-parsley-errors-container="#error-pegawai" 
+                            data-parsley-error-message="Tidak Boleh Kosong"
+                            required></select>
+                            <div id="error-pegawai"></div>
+                        </div>
+                        <div class="col-12 d-none" id="preview"></div>
+                        <div class="col-12">
+                            <label for="role" class="form-label fw-bold">Pilih Kewenangan (Role)</label>
+                            <select class="form-select" name="role" id="role" aria-label="Pilih role">
+                                <option value="ADMIN">ADMIN</option>
+                                <option value="USER">USER</option>
+                                <option value="OPERATOR" selected>OPERATOR</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label for="username" class="form-label fw-bold">Username <span class="text-danger">*</span></label>
+                            <div class="position-relative input-icon">
+                                <input type="text" name="username" class="form-control" id="username" placeholder="Username"
+                                data-parsley-type="alphanum"
+                                required>
+                                <span class="position-absolute top-0 pt-2"><i class="bx bx-user"></i></span>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label for="password" class="form-label fw-bold">Password <span class="text-danger">*</span></label>
+                            <div class="position-relative input-icon">
+                                <input type="text" name="password" minlength="8" class="form-control" id="password" placeholder="Password"
+                                data-parsley-errors-container="#errorPassword" 
+                                data-parsley-uppercase="1"
+                                data-parsley-lowercase="1"
+                                data-parsley-number="1"
+                                data-parsley-special="1"
+                                required>
+                                <span class="position-absolute top-0 pt-2"><i class="bx bx-key"></i></span>
+                            </div>
+                            <div id="errorPassword"></div>
+                        </div>
+                        <div class="input-group">
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-primary"><i class="bx bx-save"></i> Simpan Data</button>
                         </div>
                     </div>
+                    <?= form_close(); ?>
                 </div>
-                <div class="col-12">
-                    <label for="pegawai" class="form-label fw-bold">Cari Pegawai <span class="text-danger">*</span></label>
-                    <select class="form-select" name="pegawai" id="pegawai" multiple="multiple" data-placeholder="Cari Pegawai" 
-                    data-allow-clear="true"
-                    data-parsley-errors-container="#error-pegawai" 
-                    data-parsley-error-message="Tidak Boleh Kosong"
-                    required></select>
-                    <div id="error-pegawai"></div>
-                </div>
-                <div class="col-12 d-none" id="preview"></div>
-                <div class="col-12">
-                <label for="role">Pilih Kewenangan (Role)</label>
-                <select class="form-select" name="role" id="role" aria-label="Pilih role">
-                    <option value="ADMIN">ADMIN</option>
-                    <option value="USER">USER</option>
-                    <option value="OPERATOR" selected>OPERATOR</option>
-                </select>
-                </div>
-                <div class="col-12">
-                    <label for="username" class="form-label fw-bold">Username <span class="text-danger">*</span></label>
-                    <div class="position-relative input-icon">
-                        <input type="text" name="username" class="form-control" id="username" placeholder="Username"
-                        data-parsley-type="alphanum"
-                        required>
-                        <span class="position-absolute top-0 pt-2"><i class="bx bx-user"></i></span>
+                <div
+                    class="tab-pane fade"
+                    id="secondary"
+                    role="tabpanel">
+                    <?= form_open(base_url('app/master/users'), ['class' => 'needs-validation', 'id' => 'FormAddUserManual', 'novalidate' => '', 'autocomplete' => 'off'], ['is_manual' => 'YA']); ?>
+                    <div class="d-flex flex-column justify-content-start align-items-start gap-3">
+                        <div class="col-12">
+                            <label for="nik" class="form-label fw-bold">Nomor Induk Kependudukan <span class="text-danger">*</span></label>
+                            <div class="position-relative input-icon">
+                                <input type="text" name="nik" class="form-control" id="nik" placeholder="Masukan NIK"
+                                data-parsley-type="alphanum"
+                                required>
+                                <span class="position-absolute top-0 pt-2"><i class="bx bx-key"></i></span>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label for="nik" class="form-label fw-bold">Pilih Unit Kerja <span class="text-danger">*</span></label>
+                            <select class="form-select" name="fid_unit_kerja" id="unitkerja" data-placeholder="Pilih Unit Kerja" data-parsley-errors-container="#errorUNOR" required></select>
+                            <div id="errorUNOR"></div>
+                        </div>
+                        <div class="col-12">
+                            <label for="role-manual" class="form-label fw-bold">Pilih Kewenangan (Role)</label>
+                            <select class="form-select" name="role" id="role-manual" aria-label="Pilih role manual" required>
+                                <option value="ADMIN">ADMIN</option>
+                                <option value="USER">USER</option>
+                                <option value="OPERATOR" selected>OPERATOR</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label for="username-manual" class="form-label fw-bold">Username <span class="text-danger">*</span></label>
+                            <div class="position-relative input-icon">
+                                <input type="text" name="username" class="form-control" id="username-manual" placeholder="Username"
+                                data-parsley-type="alphanum"
+                                required>
+                                <span class="position-absolute top-0 pt-2"><i class="bx bx-user"></i></span>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label for="password-manual" class="form-label fw-bold">Password <span class="text-danger">*</span></label>
+                            <div class="position-relative input-icon">
+                                <input type="text" name="password" minlength="8" class="form-control" id="password-manual" placeholder="Password"
+                                data-parsley-errors-container="#errorPassword" 
+                                data-parsley-uppercase="1"
+                                data-parsley-lowercase="1"
+                                data-parsley-number="1"
+                                data-parsley-special="1"
+                                required>
+                                <span class="position-absolute top-0 pt-2"><i class="bx bx-key"></i></span>
+                            </div>
+                            <div id="errorPassword"></div>
+                        </div>
+                        <div class="input-group">
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-primary"><i class="bx bx-save"></i> Simpan Data</button>
+                        </div>
                     </div>
+                    <?= form_close(); ?>
                 </div>
-                <div class="col-12">
-                    <label for="password" class="form-label fw-bold">Password <span class="text-danger">*</span></label>
-                    <div class="position-relative input-icon">
-                        <input type="text" name="password" minlength="8" class="form-control" id="password" placeholder="Password"
-                        data-parsley-errors-container="#errorPassword" 
-                        data-parsley-uppercase="1"
-                        data-parsley-lowercase="1"
-                        data-parsley-number="1"
-                        data-parsley-special="1"
-                        required>
-                        <span class="position-absolute top-0 pt-2"><i class="bx bx-key"></i></span>
-                    </div>
-                    <div id="errorPassword"></div>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batal</button>
-                <button type="submit" class="btn btn-primary"><i class="bx bx-save"></i> Simpan Perubahan</button>
-            </div>
-        <?= form_close(); ?>
+        </div>
     </div>
 </div>
 <!-- Modal Setting Role User-->
@@ -192,6 +293,7 @@
 $(document).ready(function() {
     const FORM_RESET_PASSWORD  = $("form#FormReset");
     const FORM_ADD_USER  = $("form#FormAddUser");
+    const FORM_ADD_USER_MANUAL  = $("form#FormAddUserManual");
     const FORM_SET_ROLE  = $("form#FormSetRole");
 
     const MODAL_RESET_PASSWORD = new bootstrap.Modal("#reset-password", {
@@ -209,6 +311,38 @@ $(document).ready(function() {
 
 
     FORM_ADD_USER.on("submit", function(e) {
+        e.preventDefault();
+        let _ = $(this);
+        _.parsley({
+            trigger: 'change'
+        }).validate();
+        if(_.parsley().isValid()) {
+            $url = _.attr('action'),
+            $method = _.attr('method'),
+            $data = _.serializeArray();
+            $.post(`${origin}/app/master/users`, $data, function(res) {
+                if(res.status === true) {
+                    iziToast.success({
+                        message: res.message,
+                        position: 'topCenter',
+                    });
+                    datatable.ajax.reload();
+                    MODAL_ADD_USER.hide();
+                    return false;
+                }
+                iziToast.warning({
+                    message: res.message,
+                    position: 'topCenter',
+                });
+            }, 'json').fail((err) => {
+                iziToast.error({
+                    message: err.responseJSON.message || err.statusText,
+                    position: 'topCenter',
+                });
+            });
+        }
+    })
+    FORM_ADD_USER_MANUAL.on("submit", function(e) {
         e.preventDefault();
         let _ = $(this);
         _.parsley({
@@ -318,6 +452,10 @@ $(document).ready(function() {
        FORM_ADD_USER[0].reset();
        FORM_ADD_USER.find('select[name="pegawai"]').val('').trigger('change');
        FORM_ADD_USER.parsley().reset();
+
+       FORM_ADD_USER_MANUAL[0].reset();
+       FORM_ADD_USER_MANUAL.find('select[name="fid_unit_kerja"]').val('').trigger('change');
+       FORM_ADD_USER_MANUAL.parsley().reset();
     })
 
     $.fn.dataTable.ext.buttons.reload = {
@@ -527,7 +665,8 @@ $(document).ready(function() {
         if(nik !== '') {
             preview.html('Loading ...');
             $.getJSON(`${origin}/select2/pegawai`, { nik }, function(res) {
-                const { photo, nama, nama_unit_kerja } = res.data;
+                const { photo, nama, nama_unit_kerja, id_unit_kerja } = res.data;
+                FORM_ADD_USER.find("input[name='fid_unit_kerja']").val(id_unit_kerja);
                 preview.html(`
                     <div class="d-flex flex-row justify-content-start align-items-center gap-3">
                         <img src="${photo}" class="user-img" alt="${nama}">
@@ -544,6 +683,38 @@ $(document).ready(function() {
             return false;
         }
     })
+    
+    // options unit kerja
+    let unit_kerja = $( 'select#unitkerja' ).select2( {
+        theme: "bootstrap-5",
+        width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
+        placeholder: $( this ).data( 'placeholder' ),
+        allowClear: true,
+        // minimumInputLength: 2,
+        minimumResultsForSearch: 10,
+        ajax: { 
+          url: "<?= base_url('select2/unit_kerja_list')?>",
+          type: "POST",
+          dataType: 'json',
+          delay: 450,
+          data: function (params) {
+             // CSRF Hash
+             var csrfName = '<?= csrf_token() ?>'; // CSRF Token name
+             var csrfHash = '<?= csrf_hash() ?>'; // CSRF hash
+
+             return {
+                searchTerm: params.term, // search term
+                [csrfName]: csrfHash // CSRF Token
+             };
+          },
+          processResults: function (response) {
+             return {
+                results: response.data
+             };
+          },
+          cache: false
+        }
+    });
 });
 </script>
 <?= $this->endSection(); ?>

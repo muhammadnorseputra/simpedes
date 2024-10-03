@@ -243,6 +243,7 @@
             <a href="<?= base_url("app/pegawai/".dohash($row->nik)."/lhkpn") ?>" class="btn btn-outline-primary"> <i class="bx bx-task"></i> Riwayat LHKPN</a>
             <a href="<?= base_url("app/pegawai/".dohash($row->nik)."/pendidikan") ?>" class="btn btn-outline-primary"> <i class="lni lni-graduation"></i> Riwayat Pendidikan</a>
             <a href="<?= base_url("app/pegawai/".dohash($row->nik)."/workshop") ?>" class="btn btn-outline-primary"> <i class="lni lni-network"></i> Riwayat Workshop</a>
+            <a href="<?= base_url("app/pegawai/".dohash($row->nik)."/tunjangan") ?>" class="btn btn-outline-primary"> <i class="lni lni-wallet"></i> Riwayat Tunjangan</a>
         </div>
     </div>
 </div>

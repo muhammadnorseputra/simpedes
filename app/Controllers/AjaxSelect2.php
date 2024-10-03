@@ -52,19 +52,19 @@ class AjaxSelect2 extends BaseController
         $response[csrf_token()] = csrf_hash();
         $q = @$postData['searchTerm'];
         // Fetch record
-        // if($q === "" || empty($q) && sesssion()->role === 'ADMIN') {
-        //     $response['data'] = [[
-        //         "id" => 0,
-        //         "text" => 'Silahkan ketikan kata kunci yang benar',
-        //         'disabled' => true
-        //     ]];
-        //     return $this->response->setJSON($response);
-        // }
-        if(session()->role === 'OPERATOR' || session()->role === 'USER'):
-            $desa = $this->db->table('ref_desa')->where('id_desa', session()->id_desa)->orderBy('id_desa', 'desc')->get();
-        else:
-            $desa = $this->db->table('ref_desa')->like('nama_desa', $q)->orderBy('id_desa', 'desc')->get();
-        endif;
+        if($q === "" || empty($q)) {
+            $response['data'] = [[
+                "id" => 0,
+                "text" => 'Silahkan ketikan kata kunci yang benar',
+                'disabled' => true
+            ]];
+            return $this->response->setJSON($response);
+        }
+        // if(session()->role === 'OPERATOR' || session()->role === 'USER'):
+            // $desa = $this->db->table('ref_desa')->where('id_desa', session()->id_desa)->orderBy('id_desa', 'desc')->get();
+        // else:
+        $desa = $this->db->table('ref_desa')->like('nama_desa', $q)->orderBy('id_desa', 'desc')->get();
+        // endif;
         if(count($desa->getResultArray()) > 0):
             $data = array();
             foreach($desa->getResult() as $list){
@@ -218,7 +218,6 @@ class AjaxSelect2 extends BaseController
 
     public function pegawai()
     {
-        helper("pegawai");
 
         $request = service('request');
         $postData = $request->getPost();
@@ -282,12 +281,11 @@ class AjaxSelect2 extends BaseController
 
     public function show_pegawai()
     {
-        helper("pegawai");
 
         $nik = $this->request->getGet('nik');
         if($this->request->is('ajax')):
             $builder = $this->db->table('pegawai p')
-            ->select('p.nik,p.photo,p.gelar_depan,p.gelar_blk,p.nama,p.photo,u.nama_unit_kerja')
+            ->select('p.nik,p.photo,p.gelar_depan,p.gelar_blk,p.nama,p.photo,u.nama_unit_kerja,u.id_unit_kerja')
             ->join('ref_unit_kerja u', 'p.fid_unit_kerja=u.id_unit_kerja')
             ->where('p.nik', $nik);
 
@@ -300,7 +298,8 @@ class AjaxSelect2 extends BaseController
                         'nik' => $row->nik,
                         'photo' => base_url("assets/images/users/".$row->photo),
                         'nama' => namalengkap($row->gelar_depan, $row->nama, $row->gelar_blk),
-                        'nama_unit_kerja' => $row->nama_unit_kerja
+                        'nama_unit_kerja' => $row->nama_unit_kerja,
+                        'id_unit_kerja' => $row->id_unit_kerja
                     ]
                 ]; 
                 return $this->response->setJson($data);

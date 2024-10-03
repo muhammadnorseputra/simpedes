@@ -12,14 +12,16 @@ class PegawaiModel extends Model
 
     public function getDetailPegawai($nik) 
     {
-        $builder = $this->where('p.status', 'AKTIF')
-        ->join('ref_unit_kerja u', 'p.fid_unit_kerja=u.id_unit_kerja', 'left')
-        ->join('ref_agama a', 'p.fid_agama=a.id_agama')
-        ->join('ref_desa d', 'p.fid_keldesa=d.id_desa')
-        ->join('ref_status_kawin rsk', 'p.fid_status_kawin=rsk.id_status_kawin')
-        ->join('ref_jabatan j', 'p.fid_jabatan=j.id', 'left')
-        ->where('p.nik', $nik)
-        ->get();
+        $builder = $this->where('p.status', 'AKTIF');
+        $builder->join('ref_unit_kerja u', 'p.fid_unit_kerja=u.id_unit_kerja', 'left');
+        $builder->join('ref_agama a', 'p.fid_agama=a.id_agama');
+        $builder->join('ref_desa d', 'p.fid_keldesa=d.id_desa');
+        $builder->join('ref_status_kawin rsk', 'p.fid_status_kawin=rsk.id_status_kawin');
+        $builder->join('ref_jabatan j', 'p.fid_jabatan=j.id', 'left');
+        $builder->where('p.nik', $nik);
+        if(session()->role !== 'ADMIN') {
+            $builder->where('p.fid_unit_kerja', session()->id_unit_kerja);
+        }
         return $builder;
     }
 

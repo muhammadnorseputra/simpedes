@@ -138,18 +138,20 @@ class AjaxDatatable extends BaseController
     public function pegawai() 
     {
     
-        helper(["hash", "pegawai"]);
+        helper(["hash"]);
 
-        $builder = $this->db->table('pegawai')
-        ->select('nik,nipd,nama,gelar_depan,gelar_blk,jns_kelamin,fid_unit_kerja,photo,status,nama_unit_kerja,nama_jabatan')
-        ->join('ref_unit_kerja', 'pegawai.fid_unit_kerja=ref_unit_kerja.id_unit_kerja', 'left')
-        ->join('ref_jabatan', 'pegawai.fid_jabatan=ref_jabatan.id','left');
-        // ->whereNotIn('status', ['ENTRI','ENTRI_ULANG']);
+        $builder = $this->db->table('pegawai p')
+        ->select('p.nik,p.nipd,p.nama,p.gelar_depan,p.gelar_blk,p.jns_kelamin,p.fid_unit_kerja,p.photo,p.status,
+        u.nama_unit_kerja,j.nama_jabatan,s.role')
+        ->join('ref_unit_kerja u', 'p.fid_unit_kerja=u.id_unit_kerja', 'left')
+        ->join('ref_jabatan j', 'p.fid_jabatan=j.id','left')
+        ->join('users s', 'p.nik=s.nik', 'left')
+        ->whereNotIn('status', ['ENTRI','ENTRI_ULANG']);
         
         return DataTable::of($builder)
-        ->setSearchableColumns(['pegawai.nik', 'pegawai.nipd', 'pegawai.nama', 'pegawai.status'])
+        ->setSearchableColumns(['p.nik', 'p.nipd', 'p.nama', 'p.status'])
         ->postQuery(function($query){
-            $query->orderBy('pegawai.created_at', 'desc');
+            $query->orderBy('p.created_at', 'desc');
         })
         ->format('status', function($value){
             if($value === 'ENTRI') return "<span class='badge rounded-pill text-white bg-secondary p-2 text-uppercase px-3'><i class='bx bxs-circle me-1'></i> entri</span>";
@@ -167,6 +169,12 @@ class AjaxDatatable extends BaseController
         })
         ->format('photo', function($value) {
             return '<a href="'.base_url("assets/images/users/".$value).'" target="_blank"><img src="'.base_url("assets/images/users/".$value).'" class="user-img" alt="'.$value.'"></a>';
+        })
+        ->format('role', function($value) {
+            if ($value && $value === "OPERATOR") return "<span class='badge rounded-pill text-white bg-secondary p-2 text-uppercase px-3'><i class='bx bxs-user me-1'></i> ".$value."</span>";
+            if ($value && $value === "USER") return "<span class='badge rounded-pill text-white bg-success p-2 text-uppercase px-3'><i class='bx bxs-user me-1'></i> ".$value."</span>";
+            if ($value && $value === "ADMIN") return "<span class='badge rounded-pill text-white bg-primary p-2 text-uppercase px-3'><i class='bx bxs-user me-1'></i> ".$value."</span>";
+            return "";
         })
         ->add('action', function($row) {
             $verif = $row->status === 'VERIFIKASI' || $row->status === 'AKTIF' || $row->status === 'NON_AKTIF' || $row->status === 'NON_AKTIF_NIK_DITOLAK' ? 
@@ -187,7 +195,7 @@ class AjaxDatatable extends BaseController
         helper(["hash", "pegawai"]);
 
         $builder = $this->db->table('users s')
-        ->select('p.nik,p.nipd,p.nama,s.username,s.is_disabled,s.role,p.gelar_depan,p.gelar_blk,p.jns_kelamin,p.fid_unit_kerja,p.photo,u.nama_unit_kerja')
+        ->select('s.nik,p.nipd,p.nama,s.username,s.is_disabled,s.role,p.gelar_depan,p.gelar_blk,p.jns_kelamin,p.fid_unit_kerja,p.photo,u.nama_unit_kerja')
         ->join('pegawai p','s.nik=p.nik', 'left')
         ->join('ref_unit_kerja u', 'p.fid_unit_kerja=u.id_unit_kerja', 'left');
         
@@ -197,9 +205,15 @@ class AjaxDatatable extends BaseController
             $query->orderBy('p.created_at', 'desc');
         })
         ->edit('nama', function($row) {
+            if($row->nama === null) {
+                return "- <br/><span class='badge bg-light-primary text-primary'>".$row->role."</span>";
+            }
             return namalengkap($row->gelar_depan, $row->nama, $row->gelar_blk)."<br/><span class='badge bg-light-primary text-primary'>".$row->role."</span>";
         })
         ->format('photo', function($value) {
+            if($value === null) {
+                return '<a href="'.base_url("assets/images/users/default.png").'" target="_blank"><img src="'.base_url("assets/images/users/default.png").'" class="user-img" alt="default.png"></a>';
+            }
             return '<a href="'.base_url("assets/images/users/".$value).'" target="_blank"><img src="'.base_url("assets/images/users/".$value).'" class="user-img" alt="'.$value.'"></a>';
         })
         ->add('action', function($row) {
@@ -411,7 +425,7 @@ class AjaxDatatable extends BaseController
 
     public function riwayat_workshop()
     {
-        helper(["hash","tgl_indo","pegawai"]);
+        helper(["hash","tgl_indo"]);
 
         $builder = $this->db->table('riwayat_workshop rw')
         ->select('rw.no,rw.nik,rw.nama_workshop,rw.tahun,rw.instansi_penyelenggara,rw.tempat,rw.tanggal,rw.pejabat_sk,rw.no_sk,rw.tgl_sk,
@@ -452,7 +466,7 @@ class AjaxDatatable extends BaseController
 
     public function riwayat_lhkpn()
     {
-        helper(["hash","tgl_indo","pegawai"]);
+        helper(["hash","tgl_indo"]);
         $builder = $this->db->table('riwayat_lhkpn')
         ->where('nik', $this->request->getPost('nik'));
         
@@ -480,9 +494,31 @@ class AjaxDatatable extends BaseController
         ->toJson(true);
     }
 
+    public function riwayat_tunjangan()
+    {
+        helper(["number","tgl_indo"]);
+        $builder = $this->db->table('riwayat_tunjangan')
+        ->where('nik', $this->request->getPost('nik'));
+        return DataTable::of($builder)
+        ->addNumbering('no')
+        ->postQuery(function($query){
+            $query->orderBy('created_at', 'desc');
+        })
+        ->format('jumlah_uang', function($value) {
+            return number_to_currency($value, "IDR", "id_ID");
+        })
+        ->format('pph21', function($value) {
+            return number_to_currency($value, "IDR", "id_ID");
+        })
+        ->format('bulan', function($value) {
+            return bulan($value);
+        })
+        ->toJson(true);
+    }
+
     public function hitung_tunjangan()
     {
-        helper(["number","pegawai","tgl_indo","hash"]);
+        helper(["number","tgl_indo","hash"]);
         $builder = $this->db->table('riwayat_tunjangan rt')
         ->select('rt.nik,rt.id,rt.nama_unit_kerja,rt.nama_desa,rt.nama_jabatan,rt.bulan,rt.tahun,rt.jumlah_bulan,rt.jumlah_uang,rt.pph21,
         p.nama,p.gelar_depan,p.gelar_blk')

@@ -27,6 +27,7 @@
                             <th>Nama Lengkap</th>
                             <th>Unit Kerja / Jabatan</th>
                             <th>Status</th>
+                            <th>Role</th>
                             <th>Aksi</th>
                         </tr>
                         <tr>
@@ -36,6 +37,7 @@
                             <th class="filterhead"></th>
                             <th class="filterhead"></th>
                             <th class="filterhead"></th>
+                            <th></th>
                             <th></th>
                         </tr>
                     </thead>
@@ -54,7 +56,6 @@ $(document).ready(function() {
             dt.ajax.reload();
         },
         className: 'btn btn-secondary',
-        
     };
 
     $.fn.dataTable.ext.buttons.add = {
@@ -103,6 +104,7 @@ $(document).ready(function() {
             {data: 'nama',  className: 'align-middle'},
             {data: 'nama_unit_kerja', orderable: false},
             {data: 'status', width: '10%', orderable: false},
+            {data: 'role', width: '10%', orderable: false},
             {data: 'action', width: '10%',orderable: false, searchable: false}
         ],
         orderCellsTop: true,

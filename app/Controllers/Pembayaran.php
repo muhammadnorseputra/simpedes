@@ -20,7 +20,7 @@ class Pembayaran extends BaseController
 
     public function hitung()
     {
-        helper(["pegawai", "hash", "tgl_indo"]);
+        helper(["hash", "tgl_indo"]);
         $now = new Time('now', 'Asia/Jakarta', 'id_ID');
 
         $request = $this->request;
@@ -112,7 +112,7 @@ class Pembayaran extends BaseController
 
     public function filter()
     {
-        helper(["pegawai","number"]);
+        helper(["number"]);
         $request = $this->request;
         $id_unit_kerja = $request->getPost('unit');
         $bulan = $request->getPost('bulan');

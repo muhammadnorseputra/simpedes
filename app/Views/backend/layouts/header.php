@@ -20,9 +20,13 @@
 					</div>
 					<div class="user-box dropdown px-3">
 						<a class="d-flex align-items-center nav-link dropdown-toggle gap-3 dropdown-toggle-nocaret" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-							<img src="<?= base_url("assets/images/users/".session()->get('photo')) ?>" class="user-img" alt="user avatar">
-							<div class="user-info">
-								<p class="user-name mb-0"><?= session()->get('name') ?></p>
+							<?php if(session()->photo === null): ?>
+								<img src="<?= base_url("assets/images/users/default.png") ?>" class="user-img" alt="user default">
+							<?php else: ?>
+								<img src="<?= base_url("assets/images/users/".session()->get('photo')) ?>" class="user-img" alt="<?= session()->name; ?>">
+							<?php endif; ?>
+							<div class="user-info">	
+								<p class="user-name mb-0"><?= session()->get('name') ? session()->get('name') : session()->get('username') ?></p>
 								<p class="designattion mb-0"><?= session()->get('role'); ?></p>
 							</div>
 						</a>

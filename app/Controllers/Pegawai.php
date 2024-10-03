@@ -19,7 +19,7 @@ class Pegawai extends BaseController
 
     public function index()
     {
-        helper(["pegawai", "hash"]);
+        helper(["hash"]);
         $session = service("session");
         $request = $this->request;
         if($request->is('post') && $request->isAJAX()) {
@@ -63,7 +63,7 @@ class Pegawai extends BaseController
 
     public function search()
     {
-        helper(["pegawai", "hash"]);
+        helper(["hash"]);
         $session = session();
         $request = $this->request;
         $search = strtolower($request->getPost('search'));
@@ -118,7 +118,7 @@ class Pegawai extends BaseController
 
     public function detail()
     {
-        helper(["hash","pegawai","tgl_indo"]);
+        helper(["hash","tgl_indo"]);
         $uri = service('uri');
         $getNIK = $uri->getSegment(4);
         $nik = rehash($getNIK);
@@ -127,8 +127,10 @@ class Pegawai extends BaseController
         $profile = $pegawai->getDetailPegawai($nik);
         $pendidikan_terakhir = $pegawai->getPendidikanTerakhir($nik);
         $jabatan_terakhir = $pegawai->getJabatanTerakhir($nik);
-
-        $row = $profile->getRow();
+        $row = $profile->asObject()->first();
+        if($row === null) {
+            return throw new \CodeIgniter\Exceptions\PageNotFoundException('Pegawai tidak ditemukan atau diluar kewenangan anda');
+        }
         $namalengkap = @namalengkap($row->gelar_depan, $row->nama, $row->gelar_blk);
 
         $data = [
@@ -144,7 +146,7 @@ class Pegawai extends BaseController
 
     public function riwayat_pendidikan($id="",$paramsType="")
     {
-        helper(["pegawai", "hash", "tgl_indo"]);
+        helper(["hash", "tgl_indo"]);
         $now = new Time('now', 'Asia/Jakarta', 'id_ID');
         $uri = service('uri');
         $getNIK = $uri->getSegment(3);
@@ -329,7 +331,11 @@ class Pegawai extends BaseController
         $pegawai = model('PegawaiModel');
         $profile = $pegawai->getDetailPegawai($nik);
 
-        $row = $profile->getRow();
+        $row = $profile->asObject()->first();
+        if($row === null) {
+            return throw new \CodeIgniter\Exceptions\PageNotFoundException('Riwayat Pendidikan Pegawai tidak ditemukan');
+        }
+
         $namalengkap = namalengkap($row->gelar_depan, $row->nama, $row->gelar_blk);
         $data = [
             'title' => "Riwayat Pendidikan - {$namalengkap}",
@@ -342,7 +348,7 @@ class Pegawai extends BaseController
 
     public function riwayat_jabatan($id="", $paramsType="")
     {
-        helper(["pegawai", "hash", "tgl_indo"]);
+        helper(["hash", "tgl_indo"]);
         $now = new Time('now', 'Asia/Jakarta', 'id_ID');
 
         $request = $this->request;
@@ -376,6 +382,9 @@ class Pegawai extends BaseController
                 $this->db->table('pegawai')->where('nik', rehash($id))->update([
                     'fid_unit_kerja' => $request->getPost('unit_kerja'),
                     'fid_jabatan' => $request->getPost('jabatan'),
+                ]);
+                $this->db->table('users')->where('nik', rehash($id))->update([
+                    'fid_unit_kerja' => $request->getPost('unit_kerja'),
                 ]);
                 return $this->respond($msg, 200);
             }
@@ -453,8 +462,12 @@ class Pegawai extends BaseController
                     'fid_unit_kerja' => @$jabatan->fid_unit_kerja,
                     'fid_jabatan' => @$jabatan->fid_jabatan
                 ];
-                // update unit_kerja berdasarkan riwayat jabatan terakhir
+                // update table pegawai unit_kerja berdasarkan riwayat jabatan terakhir jika pegawai pindah unit kerja
                 $this->db->table('pegawai')->where('nik', $delete_nik)->update($update);
+                // update table user jika pegawai pindah unit kerja maka akun akan ikut pindah berdasarkan unit kerja terakhir
+                $this->db->table('users')->where('nik', $delete_nik)->update([
+                    'fid_unit_kerja' => @$jabatan->fid_unit_kerja,
+                ]);
 
                 $msg = [
                     'statusCode' => 200,
@@ -498,6 +511,9 @@ class Pegawai extends BaseController
                     'fid_unit_kerja' => $request->getPost('unit_kerja'),
                     'fid_jabatan' => $request->getPost('jabatan')
                 ]);
+                $this->db->table('users')->where('nik', rehash($id))->update([
+                    'fid_unit_kerja' => $request->getPost('unit_kerja'),
+                ]);
                 return $this->respond($msg, 200);
             }
             $msg = [
@@ -522,7 +538,10 @@ class Pegawai extends BaseController
             return view("backend/pages/pegawai/riwayat/jabatan_edit", $data);
         }
 
-        $row = $profile->getRow();
+        $row = $profile->asObject()->first();
+        if($row === null) {
+            return throw new \CodeIgniter\Exceptions\PageNotFoundException('Riwayat Jabatan Pegawai tidak ditemukan');
+        }
         $namalengkap = namalengkap($row->gelar_depan, $row->nama, $row->gelar_blk);
         $data = [
             'title' => "Riwayat Jabatan - {$namalengkap}",
@@ -535,14 +554,19 @@ class Pegawai extends BaseController
 
     public function riwayat_keluarga($id="", $paramsType="", $methodType = "", $uid = "")
     {
-        helper(["pegawai", "hash", "tgl_indo"]);
+        helper(["hash", "tgl_indo"]);
         $now = new Time('now', 'Asia/Jakarta', 'id_ID');
 
         $request = $this->request;
 
         $pegawai = model('PegawaiModel');
         $profile = $pegawai->getDetailPegawai(rehash($id));
-        $row = $profile->getRow();
+        
+        $row = $profile->asObject()->first();
+        if($row === null) {
+            return throw new \CodeIgniter\Exceptions\PageNotFoundException('Riwayat Keluarga Pegawai tidak ditemukan');
+        }
+        
         $isGender = $row->jns_kelamin === 'PRIA' ? 'Istri' : 'Suami';
 
         if($request->isAJAX() && $request->is("post") && $paramsType === "sutri" && $methodType = "add")
@@ -841,14 +865,18 @@ class Pegawai extends BaseController
 
     public function riwayat_workshop($id="", $paramsType="")
     {
-        helper(["pegawai", "hash", "tgl_indo"]);
+        helper(["hash", "tgl_indo"]);
         $now = new Time('now', 'Asia/Jakarta', 'id_ID');
 
         $request = $this->request;
 
         $pegawai = model('PegawaiModel');
         $profile = $pegawai->getDetailPegawai(rehash($id));
-        $row = $profile->getRow();
+
+        $row = $profile->asObject()->first();
+        if($row === null) {
+            return throw new \CodeIgniter\Exceptions\PageNotFoundException('Riwayat Workshop Pegawai tidak ditemukan');
+        }
 
         if($request->isAJAX() && $request->is("post") && $paramsType === "add")
         {
@@ -984,14 +1012,17 @@ class Pegawai extends BaseController
 
     public function riwayat_lhkpn($id="", $paramsType="")
     {
-        helper(["pegawai", "hash", "tgl_indo"]);
+        helper(["hash", "tgl_indo"]);
         $now = new Time('now', 'Asia/Jakarta', 'id_ID');
 
         $request = $this->request;
 
         $pegawai = model('PegawaiModel');
         $profile = $pegawai->getDetailPegawai(rehash($id));
-        $row = $profile->getRow();
+        $row = $profile->asObject()->first();
+        if($row === null) {
+            return throw new \CodeIgniter\Exceptions\PageNotFoundException('Riwayat LHKPN Pegawai tidak ditemukan');
+        }
 
         if($request->isAJAX() && $request->is("post") && $paramsType === "add")
         {
@@ -1148,6 +1179,30 @@ class Pegawai extends BaseController
         ];
 
         return view("backend/pages/pegawai/riwayat/lhkpn", $data);
+    }
+
+    public function riwayat_tunjangan($id="", $paramsType="")
+    {
+        helper(["hash", "tgl_indo"]);
+        $now = new Time('now', 'Asia/Jakarta', 'id_ID');
+
+        $request = $this->request;
+
+        $pegawai = model('PegawaiModel');
+        $profile = $pegawai->getDetailPegawai(rehash($id));
+        $row = $profile->asObject()->first();
+        if($row === null) {
+            return throw new \CodeIgniter\Exceptions\PageNotFoundException('Riwayat Tunjangan Pegawai tidak ditemukan');
+        }
+
+        $namalengkap = namalengkap($row->gelar_depan, $row->nama, $row->gelar_blk);
+        $data = [
+            'title' => "Riwayat Tunjangan - {$namalengkap}",
+            'nik' => rehash($id),
+            'row' => $row,
+        ];
+
+        return view("backend/pages/pegawai/riwayat/tunjangan", $data);
     }
     
 }

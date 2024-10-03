@@ -24,7 +24,7 @@
                             <th class="all">Nama Jabatan</th>
                             <th>Atasan</th>
                             <th>Jenis</th>
-                            <th>Gajih</th>
+                            <th>Gaji</th>
                             <th>Tunjangan</th>
                             <th class="all">Aksi</th>
                         </tr>

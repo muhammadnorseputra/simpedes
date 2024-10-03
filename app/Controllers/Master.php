@@ -132,7 +132,7 @@ class Master extends BaseController
 
     public function pegawai($paramsType = "")
     {
-        helper(["hash", "pegawai"]);
+        helper(["hash"]);
         $session = session();
         // $image = service('image', 'imagick');
 
@@ -176,7 +176,8 @@ class Master extends BaseController
                         'no_bpjs_ketenagakerjaan' => $request->getPost('no_bpjs_ketenagakerjaan'),
                         'no_npwp' => $request->getPost('no_npwp'),
                         'photo' => $newName,
-                        'status' => 'ENTRI_ULANG',
+                        // 'status' => 'ENTRI_ULANG',
+                        'status' => 'VERIFIKASI',
                         'created_at' => $now->addHours(1),
                         'created_by' => session()->get('nik') 
                     ];
@@ -227,7 +228,7 @@ class Master extends BaseController
                     'no_bpjs_ketenagakerjaan' => $request->getPost('no_bpjs_ketenagakerjaan'),
                     'no_npwp' => $request->getPost('no_npwp'),
                     'photo' => $updatePhotoNewName,
-                    'status' => 'ENTRI_ULANG',
+                    'status' => 'VERIFIKASI',
                     'updated_at' => $now->addHours(1),
                     'updated_by' => session()->get('nik')
                 ];
@@ -416,18 +417,48 @@ class Master extends BaseController
         }
 
         if($request->is('post') && $request->is('ajax')) {
+            // ENTRI MANUAL
+            if($request->getPost('is_manual') === 'YA')
+            {
+                $data = [
+                    'nik' => $request->getPost('nik'),
+                    'role' => $request->getPost('role'),
+                    'username' => $request->getPost('username'),
+                    'password' => password_hash($request->getPost('password'), PASSWORD_DEFAULT),
+                    'fid_unit_kerja' => $request->getPost('fid_unit_kerja'),
+                    'created_by' => session()->name
+                ];
+                $created = $this->db->table('users')->insert($data);
+                if($created) {
+                    $msg = [
+                        'status' => true,
+                        'message' => 'Userportal (Manual) Berhasil Ditambahkan',
+                        'data' => $data
+                    ];
+                    return $this->respond($msg, 201);
+                }
+    
+                $msg = [
+                    'status' => false,
+                    'message' => 'Userportal (Manual) gagal ditambahkan',
+                    'data' => $data
+                ];
+                return $this->respond($msg, 400);
+            }
+            // ENTRI BY PEGAWAI
             $data = [
                 'nik' => $request->getPost('token'),
                 'role' => $request->getPost('role'),
                 'username' => $request->getPost('username'),
                 'password' => password_hash($request->getPost('password'), PASSWORD_DEFAULT),
+                'fid_unit_kerja' => $request->getPost('fid_unit_kerja'),
                 'created_by' => session()->name
             ];
             $created = $this->db->table('users')->insert($data);
             if($created) {
                 $msg = [
                     'status' => true,
-                    'message' => 'Pegawai Berhasil Ditambahkan',
+                    'message' => 'Userportal Berhasil Ditambahkan',
                     'data' => $data
                 ];
                 return $this->respond($msg, 201);
@@ -435,7 +466,7 @@ class Master extends BaseController
 
             $msg = [
                 'status' => false,
-                'message' => 'Pegawai gagal ditambahkan',
+                'message' => 'Userportal gagal ditambahkan',
                 'data' => $data
             ];
             return $this->respond($msg, 400);

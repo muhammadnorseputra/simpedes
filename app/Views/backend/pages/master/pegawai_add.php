@@ -38,7 +38,7 @@
             <?php endif; ?>
             <?php if(isset($default->ket_status) && $default->ket_status !== ""): ?>
             <div class="col-md-12 image-user" style="z-index: 10">
-                <div class="alert alert-info border-0 bg-info alert-dismissible fade show py-2">
+                <div class="alert alert-warning border-0 bg-warning alert-dismissible fade show py-2">
                     <div class="d-flex align-items-center">
                         <div class="font-35 text-dark"><i class="bx bx-info-circle"></i>
                         </div>
@@ -143,7 +143,7 @@
               <div class="col-md-6">
                 <div class="form-floating">
                   <textarea class="form-control" name="alamat" placeholder="Masukan alamat lengkap disini." id="alamat" style="height: 115px" required><?= @$default->alamat ?></textarea>
-                  <label for="alamat">Alamat Lengkap / Domisili <span class="text-danger">*</span></label>
+                  <label for="alamat">Alamat lengkap sesuai domisili <span class="text-danger">*</span></label>
                 </div>
               </div>
               <div class="col-md-6">
@@ -195,13 +195,13 @@
               <div class="col-md-4">
                   <div class="form-floating">
                       <input type="tel" name="no_hp" value="<?= @$default->no_hp ?>" class="form-control" id="no_hp" placeholder="Nomor Handphone" required>
-                      <label for="no_hp">Nomor Handphone</label>
+                      <label for="no_hp">Nomor Handphone <span class="text-danger">*</span></label>
                   </div>
               </div>
               <div class="col-md-4">
                   <div class="form-floating">
                       <input type="email" name="email" value="<?= @$default->email ?>" class="form-control" id="email" placeholder="Email" required>
-                      <label for="email">Email</label>
+                      <label for="email">Email <span class="text-danger">*</span></label>
                   </div>
               </div>
             </div>
@@ -260,13 +260,13 @@
                     </div>
                 </div>
                 
-                <?php if(@$default->status === 'ENTRI_ULANG'): ?>
+                <!-- <?php //if(@$default->status === 'ENTRI_ULANG'): ?>
                 <div class="card-footer">
                     <div class="d-grid gap-2">
                         <button type="button" class="btn btn-danger" onclick="KirimDataPeremajaan('<?= dohash(@$default->nik) ?>')">Kirim Data Verifikasi <i class="bx bx-mail-send"></i></button>
                     </div>
                 </div>
-                <?php endif; ?>
+                <?php //endif; ?> -->
             </div>
             <?php 
             // jika status data perlu di verifikasi
@@ -455,63 +455,84 @@ $(document).ready(function() {
         _.parsley({
             trigger: 'change'
         }).validate();
-
         if(_.parsley().isValid()) {
-            $url = _.attr('action'),
-            $method = _.attr('method');
+            let data = new FormData(this);
+            $.confirm({
+                title: 'Verifikasi & Validasi',
+                content: 'Apakah anda yakin akan data tersebut sudah valid ? \n Data tersebuat akan dikunci sementara dan dilakukan verifikasi oleh admin.',
+                type: 'orange',
+                theme: 'material',
+                buttons: {
+                    yakin: {
+                        text: '<i class="bx bx-check"></i> Yakin',
+                        btnClass: 'btn-lg btn-success',
+                        action: function () {
+                            $url = _.attr('action'),
+                            $method = _.attr('method');
+                            $.ajax({
+                                url: $url,
+                                method: $method,
+                                data: data,
+                                processData: false,
+                                contentType: false,
+                                cache: false,
+                                dataType: "json",
+                                beforeSend: () => {
+                                    _.find("button[type='submit']").html(`<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>`).prop("disabled", true);
+                                },
+                                success: (res) => {
+                                    if (res.statusCode === 201) {
+                                        iziToast.success({
+                                            timeout: 1500,
+                                            message: res.message,
+                                            position: 'topCenter',
+                                            onClosing: () => {
+                                                _.parsley().reset();
+                                                window.location.href = res.redirect;
+                                            }
+                                        });
+                                        _.find("button[type='submit']").html(`<i class="bx bx-save"></i>  Simpan`).prop("disabled", false)
+                                        return false;
+                                    } 
 
-            $.ajax({
-                url: $url,
-                method: $method,
-                data: new FormData(this),
-                processData: false,
-                contentType: false,
-                cache: false,
-                dataType: "json",
-                beforeSend: () => {
-                    _.find("button[type='submit']").html(`<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>`).prop("disabled", true);
-                },
-                success: (res) => {
-                    if (res.statusCode === 201) {
-                        iziToast.success({
-                            message: res.message,
-                            position: 'topCenter',
-                            onClosing: () => {
-                                _.parsley().reset();
-                                window.location.href = res.redirect;
-                            }
-                        });
-                        _.find("button[type='submit']").html(`<i class="bx bx-save"></i>  Simpan`).prop("disabled", false)
-                        return false;
-                    } 
+                                    if (res.statusCode === 200) {
+                                        iziToast.success({
+                                            timeout: 1500,
+                                            message: res.message,
+                                            position: 'topCenter',
+                                            onClosing: () => {
+                                            _.parsley().reset();
+                                            window.location.reload();
+                                            }
+                                        });
+                                        _.find("button[type='submit']").html(`<i class="bx bx-save"></i>  Simpan`).prop("disabled", false)
+                                        return false;
+                                    } 
 
-                    if (res.statusCode === 200) {
-                        iziToast.success({
-                            message: res.message,
-                            position: 'topCenter',
-                            onClosing: () => {
-                            _.parsley().reset();
-                            window.location.reload();
-                            }
-                        });
-                        _.find("button[type='submit']").html(`<i class="bx bx-save"></i>  Simpan`).prop("disabled", false)
-                        return false;
-                    } 
-
-                    iziToast.warning({
-                        message: res.message,
-                        position: 'topCenter'
-                    });
-                    _.find("button[type='submit']").html(`<i class="bx bx-save"></i>  Simpan`).prop("disabled", false)
-                },
-                error: (err) => {
-                    iziToast.error({
-                        message: err.responseJSON.message || err.statusText,
-                        position: 'topCenter'
-                    });
-                    _.find("button[type='submit']").html(`<i class="bx bx-save"></i>  Simpan`).prop("disabled", false)
+                                    iziToast.warning({
+                                        message: res.message,
+                                        position: 'topCenter'
+                                    });
+                                    _.find("button[type='submit']").html(`<i class="bx bx-save"></i>  Simpan`).prop("disabled", false)
+                                },
+                                error: (err) => {
+                                    iziToast.error({
+                                        message: err.responseJSON.message || err.statusText,
+                                        position: 'topCenter'
+                                    });
+                                    _.find("button[type='submit']").html(`<i class="bx bx-save"></i>  Simpan`).prop("disabled", false)
+                                }
+                            })
+                        }
+                    },
+                    batal: {
+                        text: '<i class="bx bx-x"></i> Batal',
+                        action: function() {
+                            return;
+                        }
+                    },
                 }
-            })
+            });
         }
     });
 
@@ -589,61 +610,61 @@ $(document).ready(function() {
 });
 
 // kirim data untuk verifikasi admin
-function KirimDataPeremajaan(token) {
-    $.confirm({
-		title: 'Verifikasi & Validasi',
-		content: 'Apakah anda yakin akan data tersebut sudah valid ?',
-		type: 'orange',
-		theme: 'material',
-		buttons: {
-			yakin: {
-				text: '<i class="bx bx-check"></i> Yakin',
-				btnClass: 'btn-lg btn-success',
-				action: function () {
-                    // CSRF Hash
-                    var csrfName = '<?= csrf_token() ?>'; // CSRF Token name
-                    var csrfHash = '<?= csrf_hash() ?>'; // CSRF hash
+// function KirimDataPeremajaan(token) {
+//     $.confirm({
+// 		title: 'Verifikasi & Validasi',
+// 		content: 'Apakah anda yakin akan data tersebut sudah valid ?',
+// 		type: 'orange',
+// 		theme: 'material',
+// 		buttons: {
+// 			yakin: {
+// 				text: '<i class="bx bx-check"></i> Yakin',
+// 				btnClass: 'btn-lg btn-success',
+// 				action: function () {
+//                     // CSRF Hash
+//                     var csrfName = '<?= csrf_token() ?>'; // CSRF Token name
+//                     var csrfHash = '<?= csrf_hash() ?>'; // CSRF hash
 
-                    $data = {
-                        token,
-                        [csrfName]: csrfHash,
-                        _method: 'PUT'
-                    };
-                    $.post(`${origin}/app/master/pegawai/peremajaan`, $data,
-						function (res) {
-							if (res.statusCode === 200) {
-								iziToast.success({
-									position: 'topCenter',
-									message: res.message,
-                                    onClosing: () => {
-                                        window.location.reload()
-                                    }
-								});
-                                return false;
-							}
-                            iziToast.warning({
-                                position: 'topCenter',
-                                message: res.message,
-                            });
-						},
-						"json"
-					).fail((err) => {
-                        iziToast.error({
-                            message: err.responseJSON.message || err.statusText,
-                            position: 'topCenter',
-                        });
-                    });
-				}
-			},
-			batal: {
-				text: '<i class="bx bx-x"></i> Batal',
-				action: function() {
-					return;
-				}
-			},
-		}
-	});
-}
+//                     $data = {
+//                         token,
+//                         [csrfName]: csrfHash,
+//                         _method: 'PUT'
+//                     };
+//                     $.post(`${origin}/app/master/pegawai/peremajaan`, $data,
+// 						function (res) {
+// 							if (res.statusCode === 200) {
+// 								iziToast.success({
+// 									position: 'topCenter',
+// 									message: res.message,
+//                                     onClosing: () => {
+//                                         window.location.reload()
+//                                     }
+// 								});
+//                                 return false;
+// 							}
+//                             iziToast.warning({
+//                                 position: 'topCenter',
+//                                 message: res.message,
+//                             });
+// 						},
+// 						"json"
+// 					).fail((err) => {
+//                         iziToast.error({
+//                             message: err.responseJSON.message || err.statusText,
+//                             position: 'topCenter',
+//                         });
+//                     });
+// 				}
+// 			},
+// 			batal: {
+// 				text: '<i class="bx bx-x"></i> Batal',
+// 				action: function() {
+// 					return;
+// 				}
+// 			},
+// 		}
+// 	});
+// }
 </script>
 <?= $this->endSection(); ?>
 
