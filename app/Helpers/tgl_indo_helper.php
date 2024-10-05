@@ -276,6 +276,18 @@
         // Mengembalikan format tanggal saja (Y-m-d)
         return $date->format('Y-m-d');
     }
+
+    function checkDaysAfterCreation($created_at,$batas) {
+        $created_date = new DateTime($created_at);
+        $current_date = new DateTime();
+        $interval = $created_date->diff($current_date);
+        
+        if ($interval->days > $batas) {
+            return false;
+        }
+        
+        return true;
+    }
     
 // RUN
 // echo shortdate_indo('2017-09-5');

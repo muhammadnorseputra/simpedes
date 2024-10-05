@@ -305,14 +305,23 @@ class AjaxDatatable extends BaseController
             endif;
         })
         ->add('action', function($row) {
+            if($this->db->resultID->num_rows > 1) {
+                return '<div class="dropdown">
+                    <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="true"><i class="bx bx-edit"></i></button>
+                    <ul class="dropdown-menu" data-popper-placement="bottom-start">
+                    <li><button type="button" class="dropdown-item text-secondary d-flex justify-content-between align-items-center" id="upload-berkas" data-uid="'.$row->id.'" data-nik="'.$row->nik.'">Upload Berkas <i class="bx bx-upload"></i></button></li>
+                    <li><button type="button" class="dropdown-item text-primary d-flex justify-content-between align-items-center" id="edit" data-uid="'.dohash($row->id).'" data-nik="'.$row->nik.'">Edit <i class="bx bx-edit-alt"></i></button></li>
+                    <li><button type="button" class="dropdown-item text-danger d-flex justify-content-between align-items-center" id="hapus" data-uid="'.$row->id.'" data-nik="'.$row->nik.'" data-file="'.$row->berkas.'">Hapus <i class="bx bx-trash"></i></button></li>
+                    </ul>
+                </div>';
+            }
             return '<div class="dropdown">
-                        <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="true"><i class="bx bx-edit"></i></button>
-                        <ul class="dropdown-menu" data-popper-placement="bottom-start">
-                            <li><button type="button" class="dropdown-item text-secondary d-flex justify-content-between align-items-center" id="upload-berkas" data-uid="'.$row->id.'" data-nik="'.$row->nik.'">Upload Berkas <i class="bx bx-upload"></i></button></li>
-                            <li><button type="button" class="dropdown-item text-primary d-flex justify-content-between align-items-center" id="edit" data-uid="'.dohash($row->id).'" data-nik="'.$row->nik.'">Edit <i class="bx bx-edit-alt"></i></button></li>
-                            <li><button type="button" class="dropdown-item text-danger d-flex justify-content-between align-items-center" id="hapus" data-uid="'.$row->id.'" data-nik="'.$row->nik.'" data-file="'.$row->berkas.'">Hapus <i class="bx bx-trash"></i></button></li>
-                        </ul>
-                    </div>';
+                    <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="true"><i class="bx bx-edit"></i></button>
+                    <ul class="dropdown-menu" data-popper-placement="bottom-start">
+                    <li><button type="button" class="dropdown-item text-secondary d-flex justify-content-between align-items-center" id="upload-berkas" data-uid="'.$row->id.'" data-nik="'.$row->nik.'">Upload Berkas <i class="bx bx-upload"></i></button></li>
+                    <li><button type="button" class="dropdown-item text-primary d-flex justify-content-between align-items-center" id="edit" data-uid="'.dohash($row->id).'" data-nik="'.$row->nik.'">Edit <i class="bx bx-edit-alt"></i></button></li>
+                    </ul>
+                </div>';
         })
         ->toJson(true);
     }
@@ -519,9 +528,10 @@ class AjaxDatatable extends BaseController
     public function hitung_tunjangan()
     {
         helper(["number","tgl_indo","hash"]);
+
         $builder = $this->db->table('riwayat_tunjangan rt')
         ->select('rt.nik,rt.id,rt.nama_unit_kerja,rt.nama_desa,rt.nama_jabatan,rt.bulan,rt.tahun,rt.jumlah_bulan,rt.jumlah_uang,rt.pph21,
-        p.nama,p.gelar_depan,p.gelar_blk')
+        p.nama,p.gelar_depan,p.gelar_blk,rt.created_at')
         ->join('pegawai p', 'rt.nik=p.nik')
         ->where('p.fid_unit_kerja', $this->request->getPost('id'))
         ->where('bulan', date('m'))
@@ -545,12 +555,16 @@ class AjaxDatatable extends BaseController
             return number_to_currency($value, "IDR", "id_ID");
         })
         ->add('action', function($row) {
-            return '<div class="dropdown">
-                        <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="true"><i class="bx bx-edit"></i></button>
-                        <ul class="dropdown-menu" data-popper-placement="bottom-start">
-                            <li><button type="button" class="dropdown-item text-danger d-flex justify-content-between align-items-center" id="hapus" data-uid="'.dohash($row->id).'">Batalkan Perhitungan <i class="bx bx-trash"></i></button></li>
-                        </ul>
-                    </div>';
+            if(checkDaysAfterCreation($row->created_at, 1)) {
+                return '<div class="dropdown">
+                <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="true"><i class="bx bx-edit"></i></button>
+                <ul class="dropdown-menu" data-popper-placement="bottom-start">
+                <li><button type="button" class="dropdown-item text-danger d-flex justify-content-between align-items-center" id="hapus" data-uid="'.dohash($row->id).'">Batalkan Perhitungan <i class="bx bx-trash"></i></button></li>
+                </ul>
+                </div>';
+            }
+            return "<i class='bx bx-lock text-primary'></i>";
+
         })
         ->toJson(true);
     }

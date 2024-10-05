@@ -17,6 +17,14 @@
     <!--end breadcrumb-->
     <div class="card">
         <div class="card-body">
+            <div class="alert alert-primary" role="alert">
+                <b>Perhatian !</b> 
+                Periode otomatis dibuat oleh sistem berdasarkan BULAN dan TAHUN sekarang.
+            </div>
+            <div class="alert alert-warning" role="alert">
+                <b>Perhatian !</b> 
+                Perhitungan setelah 3 Hari sejak ditambahkan, akan dikunci oleh sistem atau tidak bisa dibatalkan.
+            </div>
             <div class="table-responsive">
                 <table id="example" class="table table-striped table-bordered table-hover border border-3">
                     <thead>
@@ -177,7 +185,7 @@ $(document).ready(function() {
             {data: 'jumlah_bulan', orderable: false, searchabel: false},
             {data: 'jumlah_uang', orderable: false, searchabel: false},
             {data: 'pph21', orderable: false, searchabel: false},
-            {data: 'action', orderable: false, searchabel: false}
+            {data: 'action', orderable: false, searchabel: false, className: 'text-center'}
         ]
     });
 

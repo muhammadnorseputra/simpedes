@@ -114,7 +114,7 @@
                     <h5 class="modal-title">Lupa Password ?</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">Jika anda lupa password, silahkan hubungi operator desa untuk melakukan reset password pegawai.</div>
+                <div class="modal-body">Jika anda lupa password, silahkan hubungi operator desa / dinas untuk melakukan reset password pegawai.</div>
                 <div class="modal-footer">
                     <button type="button" data-bs-dismiss="modal" aria-label="Oke" class="btn btn-primary">OKE</button>
                 </div>
