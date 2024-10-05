@@ -143,6 +143,7 @@ $routes->group('select2', function($route) {
 
 $routes->group('cetak', function($route) {
     $route->get('profile/(:any)', 'Pdf::index/$1');
+    $route->get('nominatif', 'Pdf::cetak_nomperkec');
 });
 
 $routes->group('pembayaran', function($route) {
@@ -158,5 +159,6 @@ $routes->group('pembayaran', function($route) {
 });
 
 $routes->group('nominatif', function($route) {
+    $route->post('nomperkec', 'Pdf::cetak_nomperkec');
     $route->post('cetak', 'Pdf::cetak_nomperunker');
 });

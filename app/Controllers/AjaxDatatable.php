@@ -192,12 +192,12 @@ class AjaxDatatable extends BaseController
     public function users() 
     {
     
-        helper(["hash", "pegawai"]);
+        helper(["hash"]);
 
         $builder = $this->db->table('users s')
         ->select('s.nik,p.nipd,p.nama,s.username,s.is_disabled,s.role,p.gelar_depan,p.gelar_blk,p.jns_kelamin,p.fid_unit_kerja,p.photo,u.nama_unit_kerja')
         ->join('pegawai p','s.nik=p.nik', 'left')
-        ->join('ref_unit_kerja u', 'p.fid_unit_kerja=u.id_unit_kerja', 'left');
+        ->join('ref_unit_kerja u', 's.fid_unit_kerja=u.id_unit_kerja', 'left');
         
         return DataTable::of($builder)
         ->setSearchableColumns(['p.nik', 'p.nipd', 'p.nama', 's.username'])

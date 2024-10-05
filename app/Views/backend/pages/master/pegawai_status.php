@@ -24,7 +24,7 @@
         <div class="card-body d-flex flex-column justify-content-center aling-items-center gap-3 text-center">
             <div><img src="<?= base_url('assets/images/notif/undraw_secure_login_pdn4.svg') ?>" alt="Status Verifikasi" width="300"/></div>
             <h3>Tahap Verifikasi Data</h3>
-            <p>Usulan pegawai "<strong>(<?= $status->nik ?>) <?= namalengkap($status->gelar_depan, $status->nama, $status->gelar_blk) ?></strong>" masih dalam tahap verifikasi.</p>
+            <p>Usulan pegawai "<strong><?= namalengkap($status->gelar_depan, $status->nama, $status->gelar_blk) ?> (NIK. <?= $status->nik ?>) </strong>" dalam tahap verifikasi.</p>
         </div>
     </div>
 <?= $this->endSection(); ?>
@@ -52,7 +52,7 @@
         <div class="card-body d-flex flex-column justify-content-center aling-items-center gap-3 text-center">
             <div><img src="<?= base_url('assets/images/notif/undraw_certificate_re_yadi.svg') ?>" alt="Status Verifikasi" width="300"/></div>
             <h3>Selamat Data Kamu Valid <i class="bx bx-check-circle text-success"></i></h3>
-            <p>Usulan pegawai "<strong>(<?= $status->nik ?>) <?= namalengkap($status->gelar_depan, $status->nama, $status->gelar_blk) ?></strong>" telah diverifikasi sebagai <strong> PEGAWAI AKTIF</strong>.</p>
+            <p>Usulan pegawai "<strong><?= namalengkap($status->gelar_depan, $status->nama, $status->gelar_blk) ?> (NIK. <?= $status->nik ?>) </strong>" telah diverifikasi sebagai <strong> PEGAWAI AKTIF</strong>.</p>
         </div>
     </div>
 <?= $this->endSection(); ?>
@@ -81,7 +81,7 @@
         <div class="card-body d-flex flex-column justify-content-center aling-items-center gap-3 text-center">
             <div><img src="<?= base_url('assets/images/notif/undraw_access_denied_re_awnf.svg') ?>" alt="Status Verifikasi" width="300"/></div>
             <h3>Waduh, sepertinya data tidak valid <i class="bx bx-x-circle text-danger"></i></h3>
-            <p>Usulan pegawai "<strong>(<?= $status->nik ?>) <?= namalengkap($status->gelar_depan, $status->nama, $status->gelar_blk) ?></strong>" telah diverifikasi.</p>
+            <p>Pegawai "<strong><?= namalengkap($status->gelar_depan, $status->nama, $status->gelar_blk) ?> (NIK. <?= $status->nik ?>) </strong>" telah diverifikasi.</p>
             <p class="border border-danger p-3"> <strong> PEGAWAI NON AKTIF</strong> <br>Catatan Verifikator : <?= $status->ket_status ?></p>
         </div>
     </div>
@@ -111,7 +111,7 @@
         <div class="card-body d-flex flex-column justify-content-center aling-items-center gap-3 text-center">
             <div><img src="<?= base_url('assets/images/notif/undraw_access_denied_re_awnf.svg') ?>" alt="Status Verifikasi" width="300"/></div>
             <h3>Waduh, sepertinya data tidak valid <i class="bx bx-x-circle text-danger"></i></h3>
-            <p>Usulan pegawai "<strong>(<?= $status->nik ?>) <?= namalengkap($status->gelar_depan, $status->nama, $status->gelar_blk) ?></strong>" telah diverifikasi.</p>
+            <p>Pegawai "<strong><?= namalengkap($status->gelar_depan, $status->nama, $status->gelar_blk) ?> (NIK. <?= $status->nik ?>) </strong>" telah diverifikasi.</p>
             <p class="border border-danger p-3"><strong> PEGAWAI NON AKTIF ATAU NIK DITOLAK</strong> <br>Catatan Verifikator : <?= $status->ket_status ?></p>
         </div>
     </div>

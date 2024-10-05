@@ -142,8 +142,10 @@
                     <select class="form-select" name="jenis" id="jenis"
                         required>
                         <option value="">-- Pilih Jenis --</option>
+                        <?php if(count($tahun) > 0): ?>
                         <option value="BPD">BPD</option>
                         <option value="PEMDES">PEMDES</option>
+                        <?php endif; ?>
                     </select>
                 </div>
             </div>
@@ -174,6 +176,9 @@ $(document).ready(function() {
 <?php endif; ?>
 
 <?= $this->section('script'); ?>
+<script src="<?= base_url("template/vertical/plugins/parsley/parsley.min.js") ?>"></script>
+<script src="<?= base_url("template/vertical/plugins/parsley/i18n/id.js") ?>"></script>
+<script src="<?= base_url("template/vertical/plugins/parsley/default.js") ?>"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
 $(document).ready(function() {

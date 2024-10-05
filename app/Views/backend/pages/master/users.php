@@ -692,6 +692,7 @@ $(document).ready(function() {
         allowClear: true,
         // minimumInputLength: 2,
         minimumResultsForSearch: 10,
+        dropdownParent: $("#add-user"),
         ajax: { 
           url: "<?= base_url('select2/unit_kerja_list')?>",
           type: "POST",

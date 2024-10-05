@@ -27,6 +27,15 @@
 						<div class="menu-title">Satuan Unit Kerja</div>
 					</a>
 				</li>
+				<?php if(session()->get('role') === 'ADMIN' || session()->get('role') === 'USER'): ?>
+				<li>
+					<a href="<?= base_url('cetak/nominatif') ?>">
+						<div class="parent-icon"><i class='bx bx-printer'></i>
+						</div>
+						<div class="menu-title">Nominatif</div>
+					</a>
+				</li>
+				<?php endif; ?>
 				<li class="menu-label">Pembayaran</li>
 				<li>
 					<a href="javascript:;" class="has-arrow">

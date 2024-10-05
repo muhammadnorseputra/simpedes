@@ -33,20 +33,29 @@ $(function () {
         if (res.status === true) {
           let result = "";
           res?.data?.map((pegawai) => {
-            const { photo, nama, nama_unit_kerja, status, token } = pegawai;
+            const {
+              photo,
+              nama,
+              nama_unit_kerja,
+              status,
+              token,
+              jabatan,
+              jabatan_jenis,
+            } = pegawai;
             const link =
               status === "AKTIF"
                 ? `${origin}/app/pegawai/detail/${token}`
                 : `${origin}/app/master/pegawai/peremajaan?token=${token}`;
             result += `
-              <div class="d-flex flex-row justify-content-between align-items-center gap-3 border-bottom pb-3 mb-3">
-                  <img src="${photo}" class="user-img" alt="${nama}">
-                  <div class="d-inline-flex flex-column justify-content-start align-items-start w-100">
+              <div class="d-flex flex-row justify-content-between align-items-start gap-3 border-bottom pb-3 mb-3">
+                  <img src="${photo}" class="user-img rounded w-auto" alt="${nama}">
+                  <div class="d-inline-flex flex-column justify-content-start align-items-start w-100 gap-1">
                       <span class="fw-bold">${nama}</span>
+                      <span>${jabatan} (${jabatan_jenis})</span>
                       <span>${nama_unit_kerja}</span>
                       <span class="badge bg-light-primary text-primary px-2 py-1 rounded">${status}</span>
                   </div>
-                  <div class="flex-1">
+                  <div class="flex-1 align-self-center">
                     <a href="${link}" class="btn btn-default rounded"><i class="bx bx-right-arrow-alt"></i></a>
                   </div>
               </div>  

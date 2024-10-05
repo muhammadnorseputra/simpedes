@@ -12,7 +12,7 @@ class Dashboard extends BaseController
     private function trendsPegawaiByGender($jns_kelamin)
     {
         $db = $this->db->table('pegawai')->where('jns_kelamin', $jns_kelamin)->where('status', 'AKTIF');
-        return $db->countAllResults();
+        return $db->countAllResults(false);
     }
 
     private function trendsPegawaiByUsia()
@@ -134,7 +134,7 @@ class Dashboard extends BaseController
 
         $total_pegawai_non_aktif = $this->db->table('pegawai p')
         ->join('ref_jabatan j', 'p.fid_jabatan=j.id')
-        ->where('p.status !=', 'AKTIF');
+        ->whereIn('p.status', ['NON_AKTIF','NON_AKTIF_NIK_DITOLAK']);
 
         $total_pengeluaran_tunjangan_tahunan = $this->db->table('riwayat_tunjangan')
         ->selectSum('jumlah_uang')
@@ -150,10 +150,10 @@ class Dashboard extends BaseController
         $data = [
             'title' => 'Dashboard',
             'config' => $config,
-            'total_pegawai_bpd_aktif' => $total_pegawai_bpd_aktif->countAllResults(),
-            'total_pegawai_pemdes_aktif' => $total_pegawai_pemdes_aktif->countAllResults(),
-            'total_pegawai_non_aktif' => $total_pegawai_non_aktif->countAllResults(),
-            'total_unit_kerja_aktif' => $total_unit_kerja_aktif->countAllResults(),
+            'total_pegawai_bpd_aktif' => $total_pegawai_bpd_aktif->countAllResults(false),
+            'total_pegawai_pemdes_aktif' => $total_pegawai_pemdes_aktif->countAllResults(false),
+            'total_pegawai_non_aktif' => $total_pegawai_non_aktif->countAllResults(false),
+            'total_unit_kerja_aktif' => $total_unit_kerja_aktif->countAllResults(false),
             'total_desa' => $total_desa->countAll(),
             'total_userportal' => $total_userportal->countAll(),
             'total_pengeluaran_tunjangan_tahunan' => $total_pengeluaran_tunjangan_tahunan,

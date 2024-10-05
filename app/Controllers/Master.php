@@ -145,17 +145,19 @@ class Master extends BaseController
             $defaultData = $this->db->table('pegawai')->where('nik', rehash($request->getGet('token')))->get(); 
                             
             if($request->is("post") && $request->is("ajax")) {
-                $ceknik = $this->db->table('pegawai')->where('nik', $request->getPost('nik'));
+                $ceknik = $this->db->table('pegawai')->where('nik', $request->getPost('nik'))->get();
                 $imageFile = $request->getFile('photo');
 
-                // jika data belum ada
-                if($ceknik->countAllResults() === 0) {
+                // jika data sudah ada dan status ENTRI_ULANG
+                if(count($ceknik->getResult()) > 0 && $ceknik->getRow()->status === 'ENTRI_ULANG') {
                     // upload photo
-                    $newName = $request->getPost('nik').".".$imageFile->getClientExtension();
-                    $imageFile->move("assets/images/users/", $newName, true);
-
-                    $akun = [
-                        'nik' => $request->getPost('nik'),
+                    $updatePhotoNewName = $request->getPost('nik').".".$imageFile->getClientExtension();
+                    if($imageFile->isValid() === true) {
+                        $imageFile->move("assets/images/users", $updatePhotoNewName, true);
+                    }
+                    
+                    // jika data sudah ada
+                    $update = [
                         'no_kk' => $request->getPost('no_kk'),
                         'nipd' => $request->getPost('nipd'),
                         'nama' => $request->getPost('nama'),
@@ -175,39 +177,51 @@ class Master extends BaseController
                         'no_bpjs_kesehatan' => $request->getPost('no_bpjs_kesehatan'),
                         'no_bpjs_ketenagakerjaan' => $request->getPost('no_bpjs_ketenagakerjaan'),
                         'no_npwp' => $request->getPost('no_npwp'),
-                        'photo' => $newName,
-                        // 'status' => 'ENTRI_ULANG',
+                        'photo' => $updatePhotoNewName,
                         'status' => 'VERIFIKASI',
-                        'created_at' => $now->addHours(1),
-                        'created_by' => session()->get('nik') 
+                        'updated_at' => $now->addHours(1),
+                        'updated_by' => session()->get('nik')
                     ];
-                    $save = $this->db->table('pegawai')->insert($akun);
-                    if($save) {
+
+                    if($imageFile->hasMoved() === false) {
+                        unset($update["photo"]);
+                    }
+
+                    $SaveUpdate = $this->db->table('pegawai')->where('nik', $request->getPost('nik'))->update($update);
+
+                    if($SaveUpdate) {
                         $msg = [
-                            'statusCode' => 201,
-                            'status' => true,
-                            'message' => 'Data berhasil ditambahkan !',
-                            'redirect' => base_url("/app/master/pegawai/peremajaan?token=".dohash($request->getPost('nik')))
+                            'statusCode' => 200,
+                            'status' => $SaveUpdate,
+                            'message' => 'Data berhasil diperbaharui !',
                         ];
                     } else {
                         $msg = [
                             'statusCode' => 500,
-                            'status' => fales,
-                            'message' => 'Gagal gagal ditambahkan !',
-                            'redirect' => false
+                            'status' => $SaveUpdate,
+                            'message' => 'Gagal gagal diperbaharui !',
                         ];
                     }
+                    return $this->response->setJson($msg);
+                    // var_dump($imageFile->hasMoved());die();
+                }
+
+                if(count($ceknik->getResult()) > 0 && $ceknik->getRow()->status !== 'ENTRI_ULANG') {
+                    $msg = [
+                        'statusCode' => 500,
+                        'status' => false,
+                        'message' => 'NIK atau Pegawai sudah terdaftar !',
+                        'data' => count($ceknik->getResult())
+                    ];
                     return $this->response->setJson($msg);
                 }
 
                 // upload photo
-                $updatePhotoNewName = $request->getPost('nik').".".$imageFile->getClientExtension();
-                if($imageFile->isValid() === true) {
-                    $imageFile->move("assets/images/users", $updatePhotoNewName, true);
-                }
-                
-                // jika data sudah ada
-                $update = [
+                $newName = $request->getPost('nik').".".$imageFile->getClientExtension();
+                $imageFile->move("assets/images/users/", $newName, true);
+
+                $akun = [
+                    'nik' => $request->getPost('nik'),
                     'no_kk' => $request->getPost('no_kk'),
                     'nipd' => $request->getPost('nipd'),
                     'nama' => $request->getPost('nama'),
@@ -227,33 +241,29 @@ class Master extends BaseController
                     'no_bpjs_kesehatan' => $request->getPost('no_bpjs_kesehatan'),
                     'no_bpjs_ketenagakerjaan' => $request->getPost('no_bpjs_ketenagakerjaan'),
                     'no_npwp' => $request->getPost('no_npwp'),
-                    'photo' => $updatePhotoNewName,
+                    'photo' => $newName,
+                    // 'status' => 'ENTRI_ULANG',
                     'status' => 'VERIFIKASI',
-                    'updated_at' => $now->addHours(1),
-                    'updated_by' => session()->get('nik')
+                    'created_at' => $now->addHours(1),
+                    'created_by' => session()->get('nik') 
                 ];
-
-                if($imageFile->hasMoved() === false) {
-                    unset($update["photo"]);
-                }
-
-                $SaveUpdate = $this->db->table('pegawai')->where('nik', $request->getPost('nik'))->update($update);
-
-                if($SaveUpdate) {
+                $save = $this->db->table('pegawai')->insert($akun);
+                if($save) {
                     $msg = [
-                        'statusCode' => 200,
-                        'status' => $SaveUpdate,
-                        'message' => 'Data berhasil diperbaharui !',
+                        'statusCode' => 201,
+                        'status' => true,
+                        'message' => 'Data berhasil ditambahkan !',
+                        'redirect' => base_url("/app/master/pegawai/peremajaan?token=".dohash($request->getPost('nik')))
                     ];
                 } else {
                     $msg = [
                         'statusCode' => 500,
-                        'status' => $SaveUpdate,
-                        'message' => 'Gagal gagal diperbaharui !',
+                        'status' => fales,
+                        'message' => 'Gagal gagal ditambahkan !',
+                        'redirect' => false
                     ];
                 }
                 return $this->response->setJson($msg);
-                // var_dump($imageFile->hasMoved());die();
             }
 
             if($request->is("put") && $request->is("ajax")) {

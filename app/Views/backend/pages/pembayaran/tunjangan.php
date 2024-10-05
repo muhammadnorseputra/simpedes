@@ -38,18 +38,13 @@
                     </div>
                     <div class="col-2">
                         <label for="jns_pegawai" class="form-label">Pilih Jenis Pegawai <span class="text-danger">*</span></label>
-                        <!-- <?php //if(session()->role === 'OPERATOR' || session()->role === 'USER'): ?>
-                            <select class="form-select" name="jns_pegawai" id="jns_pegawai" data-placeholder="Pilih Pegawai" required>
-                                <option value="">Pilih Pegawai</option>
-                                <option value="<?= session()->jenis_jabatan; ?>" selected><?= session()->jenis_jabatan; ?></option>
-                            </select>
-                        <?php //else: ?> -->
                         <select class="form-select" name="jns_pegawai" id="jns_pegawai" data-placeholder="Pilih Pegawai" required>
                             <option value="">Pilih Pegawai</option>
+                            <?php if(session()->jenis_jabatan !== null): ?>
                             <option value="PEMDES" <?= session()->jenis_jabatan === "PEMDES" ? 'selected' : ''; ?>>PEMDES</option>
                             <option value="BPD" <?= session()->jenis_jabatan === "BPD" ? 'selected' : ''; ?>>BPD</option>
+                            <?php endif; ?>
                         </select>
-                        <!-- <?php //endif; ?> -->
                     </div>
                     <div class="col-2 d-flex justify-content-start aling-items-center">
                         <button type="submit" id="submit" class="btn btn-primary"><i class="bx bx-save"></i> <br> Pilih</button>

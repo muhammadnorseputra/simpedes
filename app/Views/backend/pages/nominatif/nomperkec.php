@@ -2,13 +2,13 @@
 class MYPDF extends TCPDF {
     public function Header(){
         $this->SetFont("DejaVuSans", "N", 8);
-        $this->cell(0,5,"Daftar Nominatif Pegawai per Unit Kerja ",0,0,'L',0); 
+        $this->cell(0,5,"Daftar Nominatif Pegawai per Kecamatan ",0,0,'L',0); 
         $this->cell(0,5,"Dicetak oleh ".session()->fullname." (NIK. ".session()->nik.") pada ".date_indo(date("Y-m-d"))."",0,0,'R',0); 
         //buat garis horizontal
         $this->Line(PDF_MARGIN_LEFT,$this->GetY()+5,$this->getPageWidth()-PDF_MARGIN_LEFT,$this->GetY()+ 5);  
     }
 
-    public function Content($req,$pegawai,$unor)
+    public function Content($req,$pegawai,$kecamatan)
     {
 
         $logoPath = FCPATH . 'assets/images/app/logo.png'; // Adjust this path to your logo file
@@ -19,7 +19,7 @@ class MYPDF extends TCPDF {
         $this->setX(PDF_MARGIN_LEFT + 12);
         $this->Cell(0, 5, 'DAFTAR NOMINATIF PEGAWAI', 0, 1, 'L', 0, '', 0, false, 'T', 'M');
         $this->setX(PDF_MARGIN_LEFT + 12);
-        $this->Cell(100, 5, strtoupper($unor->nama_unit_kerja), 0, 0, 'L', 0, '', 0, false, 'T', 'M');
+        $this->Cell(100, 5, "KECAMATAN ".strtoupper($kecamatan->nama_kecamatan), 0, 0, 'L', 0, '', 0, false, 'T', 'M');
         $this->setY(14);
         $this->SetFont("DejaVuSans", "B", 12);
         $this->Cell(0, 5, $req['jenis'], 0, 1, 'R', 0, '', 0, false, 'T', 'M');
@@ -30,13 +30,14 @@ class MYPDF extends TCPDF {
         $this->SetFillColor(144, 238, 144); // Grey;
         $this->SetLineStyle(array('width' => 0.2, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => array(0,0,0)));
         $this->Cell(10, 10, 'NO', 1, 0, 'C', 1, '', 0, false, 'T', 'M');
-        $this->Cell(80, 10, 'NAMA LENGKAP', 1, 0, 'C', 1, '', 0, false, 'T', 'M');
+        $this->Cell(60, 10, 'NAMA LENGKAP', 1, 0, 'C', 1, '', 0, false, 'T', 'M');
         $this->Cell(30, 10, "JNS KELAMIN", 1, 0, 'C', 1, '', 0, false, 'T', 'M');
-        $this->Cell(90, 10, 'JABATAN', 1, 0, 'C', 1, '', 0, false, 'T', 'M');
+        $this->Cell(60, 10, 'JABATAN', 1, 0, 'C', 1, '', 0, false, 'T', 'M');
         // $this->Cell(30, 10, 'GAJI', 1, 0, 'C', 1, '', 0, false, 'T', 'M');
         // $this->Cell(30, 10, 'TUNJANGAN', 1, 0, 'C', 1, '', 0, false, 'T', 'M');
         $this->Cell(30, 10, 'PENDIDIKAN', 1, 0, 'C', 1, '', 0, false, 'T', 'M');
         $this->Cell(30, 10, 'USIA', 1, 0, 'C', 1, '', 0, false, 'T', 'M');
+        $this->Cell(50, 10, 'DESA', 1, 0, 'C', 1, '', 0, false, 'T', 'M');
         $this->Cell(0, 10, 'TTL', 1, 1, 'C', 1, '', 0, false, 'T', 'M');
         // TABLE BODY
         $this->SetFont("DejaVuSans", "N", 8);
@@ -59,7 +60,7 @@ class MYPDF extends TCPDF {
                 $this->setX(PDF_MARGIN_LEFT + 12);
                 $this->Cell(0, 5, 'DAFTAR NOMINATIF PEGAWAI', 0, 1, 'L', 0, '', 0, false, 'T', 'M');
                 $this->setX(PDF_MARGIN_LEFT + 12);
-                $this->Cell(100, 5, strtoupper($unor->nama_unit_kerja), 0, 0, 'L', 0, '', 0, false, 'T', 'M');
+                $this->Cell(100, 5, strtoupper($kecamatan->nama_kecamatan), 0, 0, 'L', 0, '', 0, false, 'T', 'M');
                 $this->setY(14);
                 $this->SetFont("DejaVuSans", "B", 12);
                 $this->Cell(0, 5, $req['jenis'], 0, 1, 'R', 0, '', 0, false, 'T', 'M');
@@ -70,33 +71,26 @@ class MYPDF extends TCPDF {
                 $this->SetFillColor(144, 238, 144); // Grey;
                 $this->SetLineStyle(array('width' => 0.2, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => array(0,0,0)));
                 $this->Cell(10, 10, 'NO', 1, 0, 'C', 1, '', 0, false, 'T', 'M');
-                $this->Cell(80, 10, 'NAMA LENGKAP', 1, 0, 'C', 1, '', 0, false, 'T', 'M');
+                $this->Cell(60, 10, 'NAMA LENGKAP', 1, 0, 'C', 1, '', 0, false, 'T', 'M');
                 $this->Cell(30, 10, "JNS KELAMIN", 1, 0, 'C', 1, '', 0, false, 'T', 'M');
-                $this->Cell(90, 10, 'JABATAN', 1, 0, 'C', 1, '', 0, false, 'T', 'M');
+                $this->Cell(60, 10, 'JABATAN', 1, 0, 'C', 1, '', 0, false, 'T', 'M');
                 // $this->Cell(30, 10, 'GAJI', 1, 0, 'C', 1, '', 0, false, 'T', 'M');
                 // $this->Cell(30, 10, 'TUNJANGAN', 1, 0, 'C', 1, '', 0, false, 'T', 'M');
                 $this->Cell(30, 10, 'PENDIDIKAN', 1, 0, 'C', 1, '', 0, false, 'T', 'M');
                 $this->Cell(30, 10, 'USIA', 1, 0, 'C', 1, '', 0, false, 'T', 'M');
+                $this->Cell(50, 10, 'DESA', 1, 0, 'C', 1, '', 0, false, 'T', 'M');
                 $this->Cell(0, 10, 'TTL', 1, 1, 'C', 1, '', 0, false, 'T', 'M');
             }
 
             $this->SetFont("DejaVuSans", "N", 8);
             $this->SetFillColor(255, 255, 255); // Grey;
-            // $this->Cell(10, 10, "$no.", 1, 0, 'C', 1, '', 0, false, 'T', 'M');
-            // $this->Cell(80, 10, namalengkap($row->gelar_depan,$row->nama,$row->gelar_blk), 1, 0, 'L', 1, '', 0, false, 'T', 'M');
-            // $this->Cell(30, 10, $row->jns_kelamin, 1, 0, 'C', 1, '', 0, false, 'T', 'M');
-            // $this->Cell(90, 10, $row->nama_jabatan, 1, 0, 'L', 1, '', 0, false, 'T', 'M');
-            // // $this->Cell(30, 10, isNull(number_to_currency($row->gaji, "IDR", "id_ID")), 1, 0, 'R', 1, '', 0, false, 'T', 'M');
-            // // $this->Cell(30, 10, isNull(number_to_currency($row->tunjangan, "IDR", "id_ID")), 1, 0, 'R', 1, '', 0, false, 'T', 'M');
-            // $this->Cell(30, 10, $row->nama_tingkat_pendidikan, 1, 0, 'C', 1, '', 0, false, 'T', 'M');
-            // $this->Cell(30, 10, hitungUsia($row->tgl_lahir), 1, 0, 'C', 1, '', 0, false, 'T', 'M');
-            // $this->Cell(0, 10, $row->tmp_lahir.", ".date_indo($row->tgl_lahir), 1, 1, 'L', 1, '', 0, false, 'T', 'M');
             $this->MultiCell(10, 10, "$no.", 1, 'C', 1, 0, '', '', true, 0, false, true, 10, 'M');
-            $this->MultiCell(80, 10, namalengkap($row->gelar_depan,$row->nama,$row->gelar_blk), 1, 'L', 1, 0, '', '', true, 0, false, true, 10, 'M');
+            $this->MultiCell(60, 10, namalengkap($row->gelar_depan,$row->nama,$row->gelar_blk), 1, 'L', 1, 0, '', '', true, 0, false, true, 10, 'M');
             $this->MultiCell(30, 10, $row->jns_kelamin, 1, 'C', 1, 0, '', '', true, 0, false, true, 10, 'M');
-            $this->MultiCell(90, 10, $row->nama_jabatan, 1, 'L', 1, 0, '', '', true, 0, false, true, 10, 'M');
-            $this->MultiCell(30, 10, $row->nama_tingkat_pendidikan, 1, 'C', 1, 0, '', '', true, 0, false, true, 10, 'M');
+            $this->MultiCell(60, 10, $row->nama_jabatan, 1, 'L', 1, 0, '', '', true, 0, false, true, 10, 'M');
+            $this->MultiCell(30, 10, isNull($row->nama_tingkat_pendidikan), 1, 'C', 1, 0, '', '', true, 0, false, true, 10, 'M');
             $this->MultiCell(30, 10, hitungUsia($row->tgl_lahir), 1, 'J', 1, 0, '', '', true, 0, false, true, 10, 'M');
+            $this->MultiCell(50, 10, $row->nama_desa, 1, 'L', 1, 0, '', '', true, 0, false, true, 10, 'M');
             $this->MultiCell(0, 10, $row->tmp_lahir.", ".date_indo($row->tgl_lahir), 1, 'L', 1, 1, '', '', true, 0, false, true, 10, 'M');
         $no++;
         $maxline++;
@@ -123,9 +117,9 @@ $pdf = new MYPDF("LANDSCAPE", "MM", "LEGAL", true, 'UTF-8', false);
 // set document information
 $pdf->SetCreator(PDF_CREATOR);
 $pdf->SetAuthor('M. NOR SEPUTRA');
-$pdf->SetTitle("Nominatif Pegawai - ".$unor->nama_unit_kerja." ".$req['tahun']);
-$pdf->SetSubject("Nominatif Pegawai - ".$unor->nama_unit_kerja." ".$req['tahun']);
-$pdf->SetKeywords("Nominatif Pegawai - ".$unor->nama_unit_kerja." ".$req['tahun']);
+$pdf->SetTitle("Nominatif Pegawai - Kecamatan ".ucwords(strtolower($kecamatan->nama_kecamatan))." ".$req['tahun']);
+$pdf->SetSubject("Nominatif Pegawai - Kecamatan ".$kecamatan->nama_kecamatan." ".$req['tahun']);
+$pdf->SetKeywords("Nominatif Pegawai - Kecamatan ".$kecamatan->nama_kecamatan." ".$req['tahun']);
 
 // set margins
 $pdf->SetMargins(PDF_MARGIN_LEFT, 10, PDF_MARGIN_RIGHT);
@@ -138,9 +132,9 @@ $pdf->SetAutoPageBreak(TRUE, 0);
 $pdf->setPrintHeader(TRUE);
 $pdf->setPrintFooter(TRUE);
 $pdf->AddPage();
-$pdf->Content($req,$pegawai,$unor);
+$pdf->Content($req,$pegawai,$kecamatan);
 // ---------------------------------------------------------
 
 //Close and output PDF document
-$pdf->Output("Nominatif Pegawai - ".$unor->nama_unit_kerja." ".$req['tahun'].".pdf", 'I');
+$pdf->Output("Nominatif Pegawai - Kecamatan ".ucwords(strtolower($kecamatan->nama_kecamatan))." ".$req['tahun'].".pdf", 'I');
 ?>

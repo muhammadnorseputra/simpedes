@@ -305,7 +305,7 @@
         <?php if(@$default->status === 'ENTRI' || @$default->status === 'ENTRI_ULANG' || !isset($default->status)): ?>
         <div class="card-body border-top d-flex justify-content-between align-items-center">
             <button type="button" class="btn btn-danger" onclick="window.location.href = '<?= base_url('/app/master/pegawai') ?>'"><i class="bx bx-left-arrow-alt"></i>  Batal</button>
-            <button type="submit" class="btn btn-success"><i class="bx bx-save"></i>  Simpan Data</button>
+            <button type="submit" class="btn btn-success"><i class="bx bx-save"></i>  Kirim & Simpan Data</button>
         </div>
         <?php endif; ?>
     <?= form_close(); ?>
@@ -340,7 +340,6 @@ if(@$default->status === 'VERIFIKASI' || @$default->status === 'AKTIF' || @$defa
                         <div class="form-floating mb-3">
                             <select class="form-select" name="status" id="status_verifikasi" aria-label="Floating label select example" required>
                                 <option value="">Pilih Status Verifikasi</option>
-                                <option value="ENTRI" <?= @$default->status === 'ENTRI' ? 'selected' : ''; ?>>ENTRI</option>
                                 <option value="ENTRI_ULANG" <?= @$default->status === 'ENTRI_ULANG' ? 'selected' : ''; ?>>ENTRI ULANG</option>
                                 <option value="AKTIF" <?= @$default->status === 'AKTIF' ? 'selected' : ''; ?>>AKTIF</option>
                                 <option value="NON_AKTIF" <?= @$default->status === 'NON_AKTIF' ? 'selected' : ''; ?>>NON AKTIF</option>

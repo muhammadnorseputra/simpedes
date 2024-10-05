@@ -39,7 +39,7 @@ class Pembayaran extends BaseController
             ->where('nik', $request->getPost('nik'))
             ->where('bulan', date("m"))
             ->where('tahun', date('Y'))
-            ->countAllResults();
+            ->countAllResults(false);
             if($dbcek > 0)
             {
                 $msg = [

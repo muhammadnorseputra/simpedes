@@ -127,4 +127,53 @@ class Pdf extends BaseController
 		$this->response->setContentType('application/pdf');
         return view('backend/pages/nominatif/nomperunker', $data);
     }
+
+    public function cetak_nomperkec()
+    {
+        helper(["number","tgl_indo","time","hash"]);
+        $request = $this->request;
+        if($request->is("post"))
+        {
+            $tahun = $request->getPost('tahun');
+            $kecamatanId = $request->getPost('kecamatan');
+            $jns_pegawai = $request->getPost('jenis');
+
+            $kecamatan = db_connect()->table('ref_kecamatan k')
+            ->where('k.id_kecamatan', $kecamatanId)
+            ->get()
+            ->getRow();
+            
+            $pegawai = db_connect()->table('pegawai p')
+            ->select('p.gelar_depan,p.gelar_blk,p.nama,p.jns_kelamin,p.tmp_lahir,p.tgl_lahir,
+            u.nama_unit_kerja,j.nama_jabatan,j.gaji,j.tunjangan,d.nama_desa')
+            ->select("(SELECT rtp.nama_tingkat_pendidikan 
+                        FROM riwayat_pendidikan as rp 
+                        LEFT JOIN ref_tingkat_pendidikan as rtp ON rp.fid_tingkat=rtp.id_tingkat_pendidikan WHERE rp.nik=p.nik 
+                        ORDER BY id DESC
+                        LIMIT 1) as nama_tingkat_pendidikan", false) 
+            ->join('ref_unit_kerja u', 'p.fid_unit_kerja=u.id_unit_kerja', 'left')
+            ->join('ref_jabatan j', 'p.fid_jabatan=j.id', 'left')
+            ->join('ref_desa d', 'p.fid_keldesa=d.id_desa', 'left')
+            ->where('u.kecamatan', $kecamatanId)
+            ->where('YEAR(p.created_at)', $tahun)
+            ->where('j.jenis', $jns_pegawai)
+            ->get()
+            ->getResult();
+            
+            $data = [
+                'title' => 'Nominatif',
+                'req' => $request->getPost(),
+                'pegawai' => $pegawai,
+                'kecamatan' => $kecamatan
+            ];
+            //line ini penting
+            $this->response->setContentType('application/pdf');
+            return view('backend/pages/nominatif/nomperkec', $data);
+        }
+
+        $data = [
+            'title' => 'Nominatif Per Kecamatan',
+        ];
+        return view('backend/pages/cetak/nomperkec', $data);
+    }
 }

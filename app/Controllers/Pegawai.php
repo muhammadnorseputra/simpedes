@@ -70,8 +70,9 @@ class Pegawai extends BaseController
 
         if($this->request->is('ajax')):
             $builder = $this->db->table('pegawai p')
-            ->select('p.nik,p.photo,p.gelar_depan,p.gelar_blk,p.nama,p.photo,u.nama_unit_kerja,p.status')
+            ->select('p.nik,p.photo,p.gelar_depan,p.gelar_blk,p.nama,p.photo,u.nama_unit_kerja,p.status,j.nama_jabatan,j.jenis')
             ->join('ref_unit_kerja u', 'p.fid_unit_kerja=u.id_unit_kerja')
+            ->join('ref_jabatan j', 'p.fid_jabatan=j.id')
             ->groupStart()
                 ->like('p.nik', $search)
                 ->orLike('p.nama', $search)
@@ -94,6 +95,8 @@ class Pegawai extends BaseController
                         'photo' => base_url("assets/images/users/".$r->photo),
                         'nama' => namalengkap($r->gelar_depan, $r->nama, $r->gelar_blk),
                         'nama_unit_kerja' => $r->nama_unit_kerja,
+                        'jabatan' => $r->nama_jabatan,
+                        'jabatan_jenis' => $r->jenis,
                         'status' => $r->status
                     ];
                 };
@@ -571,7 +574,7 @@ class Pegawai extends BaseController
 
         if($request->isAJAX() && $request->is("post") && $paramsType === "sutri" && $methodType = "add")
         {
-            $jumlah_sutri = $this->db->table('riwayat_sutri')->where('nik', rehash($id))->countAllResults();
+            $jumlah_sutri = $this->db->table('riwayat_sutri')->where('nik', rehash($id))->countAllResults(false);
             $data = [
                 'nik' => rehash($id),
                 'nama_sutri' => $request->getPost('nama_sutri'),

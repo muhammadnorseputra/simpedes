@@ -38,11 +38,12 @@ class Auth extends BaseController
             if($verify_pass) {
                 $builder = $db->builder();
                 $profile = $builder->select('users.*,p.gelar_depan,p.gelar_blk,p.nama,p.email,p.photo,u.id_unit_kerja,
-                u.nama_unit_kerja,rj.id as id_jabatan,rj.nama_jabatan,rj.jenis as jenis_jabatan,rd.id_desa,rd.nama_desa')
+                u.nama_unit_kerja,rj.id as id_jabatan,rj.nama_jabatan,rj.jenis as jenis_jabatan,rd.id_desa,rd.nama_desa,rk.id_kecamatan,rk.nama_kecamatan')
                 ->join('pegawai p', 'users.nik=p.nik', 'left')
                 ->join('ref_unit_kerja u', 'users.fid_unit_kerja=u.id_unit_kerja', 'left')
                 ->join('ref_jabatan rj', 'p.fid_jabatan=rj.id', 'left')
                 ->join('ref_desa rd', 'p.fid_keldesa=rd.id_desa', 'left')
+                ->join('ref_kecamatan rk', 'rd.fid_kecamatan=rk.id_kecamatan', 'left')
                 ->groupStart()
                     ->where('users.username', $username)
                     ->orWhere('p.nipd', $username)
@@ -77,6 +78,8 @@ class Auth extends BaseController
                     'nama_unit_kerja' => $profile->nama_unit_kerja,
                     'id_desa' => $profile->id_desa,
                     'nama_desa' => $profile->nama_desa,
+                    'id_kecamatan' => $profile->id_kecamatan,
+                    'nama_kecamatan' => $profile->nama_kecamatan,
                     'isLogin'     => TRUE
                 ];
                 $session->set($sessionSetData);
