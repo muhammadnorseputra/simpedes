@@ -109,7 +109,7 @@ class AjaxSelect2 extends BaseController
         //     ]];
         //     return $this->response->setJSON($response);
         // }
-        if(session()->role === 'OPERATOR' || session()->role === 'USER'):
+        if(session()->role === 'OPERATOR'):
             $unor = $this->db->table('ref_unit_kerja')->where('aktif', 'Y')->where('id_unit_kerja', session()->id_unit_kerja)->orderBy('id_unit_kerja', 'desc')->get();
         else:
             $unor = $this->db->table('ref_unit_kerja')->where('aktif', 'Y')->like('nama_unit_kerja', $q)->orderBy('id_unit_kerja', 'desc')->get();
@@ -285,8 +285,9 @@ class AjaxSelect2 extends BaseController
         $nik = $this->request->getGet('nik');
         if($this->request->is('ajax')):
             $builder = $this->db->table('pegawai p')
-            ->select('p.nik,p.photo,p.gelar_depan,p.gelar_blk,p.nama,p.photo,u.nama_unit_kerja,u.id_unit_kerja')
+            ->select('p.nik,p.photo,p.gelar_depan,p.gelar_blk,p.nama,p.photo,u.nama_unit_kerja,u.id_unit_kerja,j.nama_jabatan')
             ->join('ref_unit_kerja u', 'p.fid_unit_kerja=u.id_unit_kerja')
+            ->join('ref_jabatan j', 'p.fid_jabatan=j.id')
             ->where('p.nik', $nik);
 
             if($builder->countAllResults(false) > 0) {
@@ -298,6 +299,7 @@ class AjaxSelect2 extends BaseController
                         'nik' => $row->nik,
                         'photo' => base_url("assets/images/users/".$row->photo),
                         'nama' => namalengkap($row->gelar_depan, $row->nama, $row->gelar_blk),
+                        'nama_jabatan' => $row->nama_jabatan,
                         'nama_unit_kerja' => $row->nama_unit_kerja,
                         'id_unit_kerja' => $row->id_unit_kerja
                     ]

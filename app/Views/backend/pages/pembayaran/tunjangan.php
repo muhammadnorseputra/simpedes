@@ -40,7 +40,7 @@
                         <label for="jns_pegawai" class="form-label">Pilih Jenis Pegawai <span class="text-danger">*</span></label>
                         <select class="form-select" name="jns_pegawai" id="jns_pegawai" data-placeholder="Pilih Pegawai" required>
                             <option value="">Pilih Pegawai</option>
-                            <?php if(session()->jenis_jabatan !== null): ?>
+                            <?php if(session()->jenis_jabatan !== null || session()->role === 'ADMIN' || session()->role === 'USER'): ?>
                             <option value="PEMDES" <?= session()->jenis_jabatan === "PEMDES" ? 'selected' : ''; ?>>PEMDES</option>
                             <option value="BPD" <?= session()->jenis_jabatan === "BPD" ? 'selected' : ''; ?>>BPD</option>
                             <?php endif; ?>

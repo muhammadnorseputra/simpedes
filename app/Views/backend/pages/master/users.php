@@ -104,7 +104,7 @@
                     aria-selected="true">
                     <div class="d-flex align-items-center">
                         <div class="tab-icon">
-                        <i class="bx bx-home font-18 me-1"></i>
+                        <i class="bx bx-user-pin font-18 me-1"></i>
                         </div>
                         <div class="tab-title">Pegawai</div>
                     </div>
@@ -119,9 +119,24 @@
                     aria-selected="false">
                     <div class="d-flex align-items-center">
                         <div class="tab-icon">
-                        <i class="bx bx-user-pin font-18 me-1"></i>
+                        <i class="bx bx-user-plus font-18 me-1"></i>
                         </div>
                         <div class="tab-title">Manual</div>
+                    </div>
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a
+                    class="nav-link"
+                    data-bs-toggle="tab"
+                    href="#info"
+                    role="tab"
+                    aria-selected="false">
+                    <div class="d-flex align-items-center">
+                        <div class="tab-icon">
+                        <i class="bx bx-user font-18 me-1"></i>
+                        </div>
+                        <div class="tab-title">Dinas</div>
                     </div>
                     </a>
                 </li>
@@ -156,8 +171,6 @@
                         <div class="col-12">
                             <label for="role" class="form-label fw-bold">Pilih Kewenangan (Role)</label>
                             <select class="form-select" name="role" id="role" aria-label="Pilih role">
-                                <option value="ADMIN">ADMIN</option>
-                                <option value="USER">USER</option>
                                 <option value="OPERATOR" selected>OPERATOR</option>
                             </select>
                         </div>
@@ -214,8 +227,6 @@
                         <div class="col-12">
                             <label for="role-manual" class="form-label fw-bold">Pilih Kewenangan (Role)</label>
                             <select class="form-select" name="role" id="role-manual" aria-label="Pilih role manual" required>
-                                <option value="ADMIN">ADMIN</option>
-                                <option value="USER">USER</option>
                                 <option value="OPERATOR" selected>OPERATOR</option>
                             </select>
                         </div>
@@ -232,7 +243,7 @@
                             <label for="password-manual" class="form-label fw-bold">Password <span class="text-danger">*</span></label>
                             <div class="position-relative input-icon">
                                 <input type="text" name="password" minlength="8" class="form-control" id="password-manual" placeholder="Password"
-                                data-parsley-errors-container="#errorPassword" 
+                                data-parsley-errors-container="#errorPasswordManual" 
                                 data-parsley-uppercase="1"
                                 data-parsley-lowercase="1"
                                 data-parsley-number="1"
@@ -240,7 +251,52 @@
                                 required>
                                 <span class="position-absolute top-0 pt-2"><i class="bx bx-key"></i></span>
                             </div>
-                            <div id="errorPassword"></div>
+                            <div id="errorPasswordManual"></div>
+                        </div>
+                        <div class="input-group">
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-primary"><i class="bx bx-save"></i> Simpan Data</button>
+                        </div>
+                    </div>
+                    <?= form_close(); ?>
+                </div>
+                <div
+                    class="tab-pane fade"
+                    id="info"
+                    role="tabpanel">
+                    <?= form_open(base_url('app/master/users'), ['class' => 'needs-validation', 'id' => 'FormAddUserManual', 'novalidate' => '', 'autocomplete' => 'off'], ['is_manual' => 'DINAS']); ?>
+                    <div class="d-flex flex-column justify-content-start align-items-start gap-3">
+                        <div class="col-12">
+                            <label for="nik" class="form-label fw-bold">Nomor Induk Kependudukan <span class="text-danger">*</span></label>
+                            <div class="position-relative input-icon">
+                                <input type="text" name="nik" class="form-control" id="nik" placeholder="Masukan NIK"
+                                data-parsley-type="alphanum"
+                                required>
+                                <span class="position-absolute top-0 pt-2"><i class="bx bx-key"></i></span>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label for="username-dinas" class="form-label fw-bold">Username <span class="text-danger">*</span></label>
+                            <div class="position-relative input-icon">
+                                <input type="text" name="username" class="form-control" id="username-dinas" placeholder="Username"
+                                data-parsley-type="alphanum"
+                                required>
+                                <span class="position-absolute top-0 pt-2"><i class="bx bx-user"></i></span>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label for="password-dinas" class="form-label fw-bold">Password <span class="text-danger">*</span></label>
+                            <div class="position-relative input-icon">
+                                <input type="text" name="password" minlength="8" class="form-control" id="password-dinas" placeholder="Password"
+                                data-parsley-errors-container="#errorPasswordDinas" 
+                                data-parsley-uppercase="1"
+                                data-parsley-lowercase="1"
+                                data-parsley-number="1"
+                                data-parsley-special="1"
+                                required>
+                                <span class="position-absolute top-0 pt-2"><i class="bx bx-key"></i></span>
+                            </div>
+                            <div id="errorPasswordDinas"></div>
                         </div>
                         <div class="input-group">
                             <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batal</button>

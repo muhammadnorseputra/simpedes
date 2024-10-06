@@ -248,7 +248,7 @@ $colorScheme = implode(" ", [$theme, $color, $sidebarColor])
 				</div>
 				<div class="d-inline-flex flex-column gap-1 w-100 border-bottom pb-3">
 					<div class="text-uppercase">Satuan Unit Kerja</div>
-					<div class="fw-bold "><?= strtoupper(session()->nama_unit_kerja) ?></div>
+					<div class="fw-bold "><?= isNull(strtoupper(session()->nama_unit_kerja)) ?></div>
 				</div>
 				<div class="d-inline-flex flex-column gap-1 w-100 border-bottom pb-3">
 					<div class="text-uppercase">Kecamatan</div>

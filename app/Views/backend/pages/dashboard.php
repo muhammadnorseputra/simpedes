@@ -61,6 +61,7 @@
             </div>
         </div>
     </div>
+    <?php if(session()->role === 'ADMIN'): ?>
     <div class="col">
         <div class="card radius-10 border-start border-0 border-4 border-success">
             <div class="card-body">
@@ -91,6 +92,7 @@
             </div>
         </div>
     </div> 
+    <?php endif; ?>
 </div><!--end row-->
 <div class="row">
     <!-- Chart Pengeluaran Tunjangan Bulanan -->

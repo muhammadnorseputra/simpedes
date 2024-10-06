@@ -32,7 +32,7 @@
                                         <input type="search" class="form-control ps-5 search" placeholder="Ketikan NIPD atau Nama pegawai"> <span class="position-absolute top-50 product-show translate-middle-y"><i class="bx bx-search"></i></span>
                                     </div>
                                 </div>
-                                <?php if(session()->role === 'ADMIN'): ?>
+                                <?php if(session()->role === 'ADMIN' || session()->role === 'USER'): ?>
                                 <div class="col col-xl-6">
                                     <?= form_open(base_url("app/pegawai/unit"), ["class" => "needs-validation", "id" => "FormFilter", "novalidate" => ""]) ?>
                                         <div class="input-group">

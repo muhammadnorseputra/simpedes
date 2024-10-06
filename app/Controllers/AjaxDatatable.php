@@ -197,7 +197,12 @@ class AjaxDatatable extends BaseController
         $builder = $this->db->table('users s')
         ->select('s.nik,p.nipd,p.nama,s.username,s.is_disabled,s.role,p.gelar_depan,p.gelar_blk,p.jns_kelamin,p.fid_unit_kerja,p.photo,u.nama_unit_kerja')
         ->join('pegawai p','s.nik=p.nik', 'left')
-        ->join('ref_unit_kerja u', 's.fid_unit_kerja=u.id_unit_kerja', 'left');
+        ->join('ref_unit_kerja u', 's.fid_unit_kerja=u.id_unit_kerja', 'left')
+        ->when(session()->role, static function($query, $status) {
+            if($status === 'USER') {
+                $query->whereIn('role', ['OPERATOR']);
+            }
+        });
         
         return DataTable::of($builder)
         ->setSearchableColumns(['p.nik', 'p.nipd', 'p.nama', 's.username'])
@@ -528,12 +533,19 @@ class AjaxDatatable extends BaseController
     public function hitung_tunjangan()
     {
         helper(["number","tgl_indo","hash"]);
+        
+        $request = $this->request;
 
         $builder = $this->db->table('riwayat_tunjangan rt')
         ->select('rt.nik,rt.id,rt.nama_unit_kerja,rt.nama_desa,rt.nama_jabatan,rt.bulan,rt.tahun,rt.jumlah_bulan,rt.jumlah_uang,rt.pph21,
-        p.nama,p.gelar_depan,p.gelar_blk,rt.created_at')
+        p.nama,p.gelar_depan,p.gelar_blk,rt.created_at,u.nama_unit_kerja')
         ->join('pegawai p', 'rt.nik=p.nik')
-        ->where('p.fid_unit_kerja', $this->request->getPost('id'))
+        ->join('ref_unit_kerja u', 'p.fid_unit_kerja=u.id_unit_kerja')
+        ->when(session()->role, static function($query, $status) {
+            if($status === 'OPERATOR') {
+                $query->where('p.fid_unit_kerja', session()->id_unit_kerja);
+            }
+        })
         ->where('bulan', date('m'))
         ->where('tahun', date('Y'));
         

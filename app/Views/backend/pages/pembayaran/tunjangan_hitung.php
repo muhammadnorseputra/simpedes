@@ -31,6 +31,7 @@
                         <tr>
                             <th>No</th>
                             <th>Bulan</th>
+                            <th>Desa</th>
                             <th>NIK</th>
                             <th>Nama Lengkap</th>
                             <th>Jabatan</th>
@@ -173,12 +174,13 @@ $(document).ready(function() {
             method: 'POST',
             data: {
                 ['<?= csrf_token() ?>']: '<?= csrf_hash() ?>',
-                id: <?= session()->id_unit_kerja; ?>,
+                id: <?= session()->id_unit_kerja ? session()->id_unit_kerja : 0; ?>,
             },
         },
         columns: [
             {data: 'no', orderable: false, searchabel: false, className: 'text-center'},
             {data: 'bulan'},
+            {data: 'nama_desa', orderable: false},
             {data: 'nik'},
             {data: 'nama'},
             {data: 'nama_jabatan'},
@@ -247,13 +249,14 @@ $(document).ready(function() {
         if(nik !== '') {
             preview.html('Loading ...');
             $.getJSON(`${origin}/select2/pegawai`, { nik }, function(res) {
-                const { photo, nama, nama_unit_kerja } = res.data;
+                const { photo, nama, nama_unit_kerja, nama_jabatan } = res.data;
                 preview.html(`
-                    <div class="d-flex flex-row justify-content-start align-items-center gap-3">
-                        <img src="${photo}" class="user-img" alt="${nama}">
+                    <div class="d-flex flex-row justify-content-start align-items-start gap-3">
+                        <img src="${photo}" class="user-img rounded" alt="${nama}">
                         <div class="d-inline-flex flex-column justify-content-start align-items-start">
                             <span class="fw-bold">${nama}</span>
                             <span>${nama_unit_kerja}</span>
+                            <span class="text-info">${nama_jabatan ?? "-"}</span>
                         </div>
                     </div>  
                     <hr/>

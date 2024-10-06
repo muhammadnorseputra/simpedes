@@ -147,6 +147,7 @@ class Master extends BaseController
             if($request->is("post") && $request->is("ajax")) {
                 $ceknik = $this->db->table('pegawai')->where('nik', $request->getPost('nik'))->get();
                 $imageFile = $request->getFile('photo');
+                $ktpFile = $request->getFile('photo_ktp');
 
                 // jika data sudah ada dan status ENTRI_ULANG
                 if(count($ceknik->getResult()) > 0 && $ceknik->getRow()->status === 'ENTRI_ULANG') {
@@ -154,6 +155,11 @@ class Master extends BaseController
                     $updatePhotoNewName = $request->getPost('nik').".".$imageFile->getClientExtension();
                     if($imageFile->isValid() === true) {
                         $imageFile->move("assets/images/users", $updatePhotoNewName, true);
+                    }
+                    // upload KTP
+                    $updateNewNameKtp = $request->getPost('nik').".".$ktpFile->getClientExtension();
+                    if($ktpFile->isValid() === true) {
+                        $ktpFile->move("assets/file_ktp/", $updateNewNameKtp, true);
                     }
                     
                     // jika data sudah ada
@@ -178,6 +184,7 @@ class Master extends BaseController
                         'no_bpjs_ketenagakerjaan' => $request->getPost('no_bpjs_ketenagakerjaan'),
                         'no_npwp' => $request->getPost('no_npwp'),
                         'photo' => $updatePhotoNewName,
+                        'photo_ktp' => $updateNewNameKtp,
                         'status' => 'VERIFIKASI',
                         'updated_at' => $now->addHours(1),
                         'updated_by' => session()->get('nik')
@@ -185,6 +192,10 @@ class Master extends BaseController
 
                     if($imageFile->hasMoved() === false) {
                         unset($update["photo"]);
+                    }
+
+                    if($ktpFile->hasMoved() === false) {
+                        unset($update["photo_ktp"]);
                     }
 
                     $SaveUpdate = $this->db->table('pegawai')->where('nik', $request->getPost('nik'))->update($update);
@@ -219,6 +230,9 @@ class Master extends BaseController
                 // upload photo
                 $newName = $request->getPost('nik').".".$imageFile->getClientExtension();
                 $imageFile->move("assets/images/users/", $newName, true);
+                // upload KTP
+                $newNameKtp = $request->getPost('nik').".".$ktpFile->getClientExtension();
+                $ktpFile->move("assets/file_ktp/", $newNameKtp, true);
 
                 $akun = [
                     'nik' => $request->getPost('nik'),
@@ -242,7 +256,7 @@ class Master extends BaseController
                     'no_bpjs_ketenagakerjaan' => $request->getPost('no_bpjs_ketenagakerjaan'),
                     'no_npwp' => $request->getPost('no_npwp'),
                     'photo' => $newName,
-                    // 'status' => 'ENTRI_ULANG',
+                    'photo_ktp' => $newNameKtp,
                     'status' => 'VERIFIKASI',
                     'created_at' => $now->addHours(1),
                     'created_by' => session()->get('nik') 
@@ -322,6 +336,7 @@ class Master extends BaseController
             if(@$defaultData->getRow()->status !== 'ENTRI_ULANG' 
             && @$defaultData->getRow()->status !== 'ENTRI' 
             && $session->get('role') !== 'ADMIN'
+            && $session->get('role') !== 'USER'
             && isset($defaultData->getRow()->status)):
                 $data = [
                     'title' => 'Verifikasi Usulan Pegawai',
@@ -451,6 +466,34 @@ class Master extends BaseController
                 $msg = [
                     'status' => false,
                     'message' => 'Userportal (Manual) gagal ditambahkan',
+                    'data' => $data
+                ];
+                return $this->respond($msg, 400);
+            }
+            // ENTRI MANUAL DINAS
+            if($request->getPost('is_manual') === 'DINAS')
+            {
+                $data = [
+                    'nik' => $request->getPost('nik'),
+                    'role' => 'USER',
+                    'username' => $request->getPost('username'),
+                    'password' => password_hash($request->getPost('password'), PASSWORD_DEFAULT),
+                    'fid_unit_kerja' => 0,
+                    'created_by' => session()->name
+                ];
+                $created = $this->db->table('users')->insert($data);
+                if($created) {
+                    $msg = [
+                        'status' => true,
+                        'message' => 'Userportal (Dinas) Berhasil Ditambahkan',
+                        'data' => $data
+                    ];
+                    return $this->respond($msg, 201);
+                }
+    
+                $msg = [
+                    'status' => false,
+                    'message' => 'Userportal (Dinas) gagal ditambahkan',
                     'data' => $data
                 ];
                 return $this->respond($msg, 400);

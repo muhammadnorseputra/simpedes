@@ -113,8 +113,17 @@
                 <div class="col-12">
                     <?php  
                     $ttd_kepala = db_connect()->table('pegawai p')
+                    ->select('p.nama,p.nik,p.nipd,j.nama_jabatan,u.nama_unit_kerja')
                     ->join('ref_jabatan j', 'p.fid_jabatan=j.id')
-                    ->where('p.fid_unit_kerja', session()->id_unit_kerja)
+                    ->join('ref_unit_kerja u', 'p.fid_unit_kerja=u.id_unit_kerja')
+                    ->when([session()->role, $unor->id_unit_kerja], function($query, $role) {
+                        if($role[0] === 'OPERATOR') {
+                            $query->where('p.fid_unit_kerja', session()->id_unit_kerja);
+                        }
+                        if($role[0] === 'USER') {
+                            $query->where('p.fid_unit_kerja', $role[1]);
+                        }
+                    })
                     ->whereIn('j.nama_jabatan', ['KETUA','WAKIL KETUA','KEPALA DESA','SEKRETARIS DESA'])
                     ->orderBy('j.id_atasan', 'asc')
                     ->get()
@@ -125,15 +134,24 @@
                         required>
                         <option value="">-- Pilih Kepala --</option>
                         <?php foreach($ttd_kepala as $kepala): ?>
-                            <option value="<?= $kepala->nik; ?>"><?= $kepala->nipd; ?> - <?= $kepala->nama; ?> - <?= $kepala->nama_jabatan; ?></option>
+                            <option value="<?= $kepala->nik; ?>"><?= $kepala->nipd; ?> - <?= $kepala->nama; ?> - <?= $kepala->nama_jabatan; ?> - <?= $kepala->nama_unit_kerja; ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
                 <div class="col-12">
                     <?php  
                     $ttd_bendahara = db_connect()->table('pegawai p')
+                    ->select('p.nama,p.nik,p.nipd,j.nama_jabatan,u.nama_unit_kerja')
                     ->join('ref_jabatan j', 'p.fid_jabatan=j.id')
-                    ->where('p.fid_unit_kerja', session()->id_unit_kerja)
+                    ->join('ref_unit_kerja u', 'p.fid_unit_kerja=u.id_unit_kerja')
+                    ->when([session()->role, $unor->id_unit_kerja], function($query, $role) {
+                        if($role[0] === 'OPERATOR') {
+                            $query->where('p.fid_unit_kerja', session()->id_unit_kerja);
+                        }
+                        if($role[0] === 'USER') {
+                            $query->where('p.fid_unit_kerja', $role[1]);
+                        }
+                    })
                     ->whereIn('j.nama_jabatan', ['KEPALA URUSAN KEUANGAN'])
                     ->get()
                     ->getResult();
@@ -143,7 +161,7 @@
                         required>
                         <option value="">-- Pilih Bendahara --</option>
                         <?php foreach($ttd_bendahara as $kepala): ?>
-                            <option value="<?= $kepala->nik; ?>"><?= $kepala->nipd; ?> - <?= $kepala->nama; ?> - <?= $kepala->nama_jabatan; ?></option>
+                            <option value="<?= $kepala->nik; ?>"><?= $kepala->nipd; ?> - <?= $kepala->nama; ?> - <?= $kepala->nama_jabatan; ?> - <?= $kepala->nama_unit_kerja; ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>

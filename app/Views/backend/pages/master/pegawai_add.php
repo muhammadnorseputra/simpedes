@@ -16,8 +16,14 @@
     </div>
     <!--end breadcrumb-->
     <div class="card">
-    <div class="card-header px-4 py-3">
+    <div class="card-header px-4 py-3 d-flex justify-content-start align-items-center">
         <h5 class="mb-0">Formulir Peremajaan Data Pegawai</h5>
+        <?php 
+        // jika status data perlu di verifikasi
+        if(@$default->status === 'VERIFIKASI' || @$default->status === 'AKTIF' || @$default->status === 'NON_AKTIF' || @$default->status === 'NON_AKTIF_NIK_DITOLAK' && session()->get('role') === 'ADMIN'): 
+        ?>
+            <button type="button" class="btn btn-primary ms-auto" data-bs-toggle="modal" data-bs-target="#modal-verifikasi">Verifikasi Data Usul Pegawai <i class="bx bx-lock"></i></button>
+        <?php endif; ?>
       </div>
     <?= form_open_multipart(base_url('app/master/pegawai/peremajaan'), ['id' => 'FormStepAkun', 'class' => 'needs-validation', 'novalidate' => '', 'autocomplete' => 'off']); ?>
         <div class="card-body row">
@@ -51,7 +57,7 @@
             </div>
             <?php endif; ?>
             <!-- Start row -->
-            <div class="row mb-4 gap-md-0 gap-3 border border-2 border-danger p-2 p-md-3 mx-0 shadow rounded">
+            <div class="row mb-4 gap-md-0 gap-3 border border-2 border-danger p-2 p-md-3 mx-0 rounded">
                 <div class="col-md-4">
                     <div class="form-floating">
                         <?php $disableNIK = @$default->nik !== null ? "readonly" : ""; ?>
@@ -139,33 +145,29 @@
             </div>
             <!---end row-->
             <!-- Start row -->
-            <div class="row mb-3 gap-md-0 gap-3">
+            <div class="row gap-md-0 gap-3">
               <div class="col-md-6">
-                <div class="form-floating">
-                  <textarea class="form-control" name="alamat" placeholder="Masukan alamat lengkap disini." id="alamat" style="height: 115px" required><?= @$default->alamat ?></textarea>
-                  <label for="alamat">Alamat lengkap sesuai domisili <span class="text-danger">*</span></label>
-                </div>
+                <div class="mb-3">
+                    <label for="desa" class="form-label">Pilih Kelurahan / Desa <span class="text-danger">*</span> (** domisili saat ini tinggal) </label>
+                        <select class="form-select" name="fid_keldesa" id="desa" data-placeholder="-- Pilih Kelurahan / Desa Domisili --" 
+                        data-parsley-errors-container="#errordesa"
+                        data-parsley-error-message="Tidak Boleh Kosong"
+                        required></select>
+                        <div id="errordesa"></div>
+                    </div>
               </div>
               <div class="col-md-6">
                 <?php $disableUnitKerja = @$default->status !== "ENTRI" && isset($_GET['token']) ? "disabled" : ""; ?>
                 <?= @$default->status !== "ENTRI" ? '<input name="fid_unit_kerja" value="'.@$default->fid_unit_kerja.'" type="hidden"/>' : ""; ?>
-                <div class="form-floating  mb-3">
-                    <select class="form-select" name="fid_unit_kerja" id="unitkerja" data-placeholder="Pilih Unit Kerja" 
+                <div class="mb-3">
+                    <label for="unitkerja" class="form-label">Pilih Unit kerja <span class="text-danger">*</span></label>
+                    <select class="form-select" name="fid_unit_kerja" id="unitkerja" data-placeholder="-- Pilih Unit Kerja --" 
                     data-parsley-errors-container="#errorunitkerja"
                     data-parsley-error-message="Tidak Boleh Kosong"
                     required
                     <?= $disableUnitKerja; ?>
                     ></select>
-                    <label for="unitkerja" class="form-label">Pilih Unit kerja <span class="text-danger">*</span></label>
                     <div id="errorunitkerja"></div>
-                </div>
-                <div class="form-floating">
-                    <select class="form-select" name="fid_keldesa" id="desa" data-placeholder="Pilih Desa" 
-                    data-parsley-errors-container="#errordesa"
-                    data-parsley-error-message="Tidak Boleh Kosong"
-                    required></select>
-                    <label for="desa" class="form-label">Pilih Desa <span class="text-danger">*</span></label>
-                    <div id="errordesa"></div>
                 </div>
                 <!-- <div class="form-floating">
                   <?php  
@@ -185,6 +187,14 @@
               </div>
             </div>
             <!---end row-->
+            <div class="row mb-3 gap-md-0 gap-3">
+                <div class="col-12">
+                    <div class="form-floating">
+                    <textarea class="form-control" name="alamat" placeholder="Masukan alamat lengkap disini." id="alamat" style="height: 115px" required><?= @$default->alamat ?></textarea>
+                    <label for="alamat">Alamat lengkap sesuai domisili <span class="text-danger">*</span></label>
+                    </div>
+                </div>
+            </div>
             <div class="row mb-3 gap-md-0 gap-3">
               <div class="col-md-4">
                   <div class="form-floating">
@@ -233,14 +243,13 @@
 
             <div class="card shadow-none border">
                 <?php if(!isset($default->photo)): ?>
-                <img id="preview" src="<?= base_url('assets/images/users/default.png') ?>" class="card-img-top" alt="MyPhoto">
+                <img id="preview" src="<?= base_url('assets/images/users/default.png') ?>" class="w-50 mx-auto rounded shadow-sm mt-2" alt="MyPhoto">
                 <?php else: ?>
-                <img id="preview" src="<?= base_url('assets/images/users/'.@$default->photo) ?>" class="card-img-top" alt="<?= @$default->nik ?>">
+                <img id="preview" src="<?= base_url('assets/images/users/'.@$default->photo) ?>" class="w-50 mx-auto rounded shadow-sm mt-2" alt="<?= @$default->nik ?>">
                 <?php endif; ?>
                 <div class="card-body">
-                    <h6 class="card-title cursor-pointer">Upload Gambar</h6>
+                    <h6 class="card-title cursor-pointer">Upload Gambar Profile <span class="text-danger">*</span></h6>
                     <div class="clearfix">
-                        <label for="formFile" class="form-label">Pilih File (jpg/jpeg) Max: 300kb</label>
                         <?php if(!isset($default->photo)): ?>
                         <input class="form-control" name="photo" type="file" id="formFile"
                         oninput="preview.src=window.URL.createObjectURL(this.files[0])"
@@ -257,6 +266,7 @@
                         data-parsley-mime-type="image/jpg,image/jpeg"
                         data-parsley-image-dimensions="150x150">
                         <?php endif; ?>
+                        <label for="formFile" class="form-label mt-2">** Format File (jpg/jpeg) <br> ** Maksimal size : 300 kb <br> ** Dimensi 4x6 / 3x4</label>
                     </div>
                 </div>
                 
@@ -268,38 +278,37 @@
                 </div>
                 <?php //endif; ?> -->
             </div>
-            <?php 
-            // jika status data perlu di verifikasi
-            if(@$default->status === 'VERIFIKASI' || @$default->status === 'AKTIF' || @$default->status === 'NON_AKTIF' || @$default->status === 'NON_AKTIF_NIK_DITOLAK' && session()->get('role') === 'ADMIN'): 
-            ?>
-            <table class="table table-bordered table-responsive">
-                <tbody>
-                    <tr>
-                        <td>Status Pegawai</td>
-                        <td><?= @$default->status ?></td>
-                    </tr>
-                    <tr>
-                        <td>Diusulkan Oleh</td>
-                        <td><?= @$default->created_by ?></td>
-                    </tr>
-                    <tr>
-                        <td>Diusulkan Pada</td>
-                        <td><?= @$default->created_at ?></td>
-                    </tr>
-                    <tr>
-                        <td>Diperbaharui Oleh</td>
-                        <td><?= @$default->updated_by ?></td>
-                    </tr>
-                    <tr>
-                        <td>Diperbaharui Pada</td>
-                        <td><?= @$default->updated_at ?></td>
-                    </tr>
-                </tbody>
-            </table>
-            <div class="d-grid gap-2 mb-3">
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-verifikasi">Verifikasi Data Usul Pegawai <i class="bx bx-mail-send"></i></button>
-            </div>
-            <?php endif; ?>
+
+            <div class="card shadow-none border">
+                    <div class="card-body">
+                    <h6 class="card-title cursor-pointer">Upload KTP <span class="text-danger">*</span></h6>
+                    <div class="clearfix">
+                        <?php if(!isset($default->photo_ktp)): ?>
+                        <img id="preview_ktp" src="<?= base_url('assets/file_ktp/sampel-ktp.png') ?>" class="w-100 mb-2" alt="MyPhoto">
+                        <?php else: ?>
+                        <a href="<?= base_url('assets/file_ktp/'.@$default->photo_ktp) ?>" target="_blank"><img id="preview_ktp" src="<?= base_url('assets/file_ktp/'.@$default->photo_ktp) ?>" class="w-100 mb-2" alt="<?= @$default->nik ?>"></a>
+                        <?php endif; ?>
+
+                        <?php if(!isset($default->photo_ktp)): ?>
+                        <input class="form-control" name="photo_ktp" type="file" id="fileKTP"
+                        oninput="preview_ktp.src=window.URL.createObjectURL(this.files[0])"
+                        accept="image/jpg,image/jpeg" 
+                        data-parsley-max-file-size="300" 
+                        data-parsley-mime-type="image/jpg,image/jpeg"
+                        data-parsley-image-dimensions="150x150"
+                        required>
+                        <?php else: ?>
+                        <input class="form-control" name="photo_ktp" type="file" id="fileKTP"
+                        oninput="preview_ktp.src=window.URL.createObjectURL(this.files[0])"
+                        accept="image/jpg,image/jpeg" 
+                        data-parsley-max-file-size="300" 
+                        data-parsley-mime-type="image/jpg,image/jpeg"
+                        data-parsley-image-dimensions="150x150">
+                        <?php endif; ?>
+                        <label for="fileKTP" class="form-label mt-2">** Format File (jpg/jpeg) <br> ** Maksimal size : 300 kb <br> ** Mode landscape</label>
+                    </div>
+                    </div>
+                </div>
           </div>
         </div>
         <?php if(@$default->status === 'ENTRI' || @$default->status === 'ENTRI_ULANG' || !isset($default->status)): ?>
@@ -333,7 +342,7 @@ if(@$default->status === 'VERIFIKASI' || @$default->status === 'AKTIF' || @$defa
                 <div class="card shadow-none">
                 <?= form_open(base_url('app/master/pegawai/peremajaan'), ['class' => 'modal-content needs-validation', 'id' => 'FormVerifikasi', 'novalidate' => '', 'autocomplete' => 'off'], ['token' => dohash(@$default->nik)]); ?>
                     <div class="card-header px-4 py-3 d-flex justify-content-between align-items-center">
-                        <h5 class="card-title mb-0">Hasil Verifikasi</h5>
+                        <h5 class="card-title mb-0">Memverifikasi Pegawai</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="card-body">
@@ -345,7 +354,7 @@ if(@$default->status === 'VERIFIKASI' || @$default->status === 'AKTIF' || @$defa
                                 <option value="NON_AKTIF" <?= @$default->status === 'NON_AKTIF' ? 'selected' : ''; ?>>NON AKTIF</option>
                                 <option value="NON_AKTIF_NIK_DITOLAK" <?= @$default->status === 'NON_AKTIF_NIK_DITOLAK' ? 'selected' : ''; ?>>NON AKTIF - NIK DITOLAK</option>
                             </select>
-                            <label for="status_verifikasi">Status Verif <span class="text-danger">*</span></label>
+                            <label for="status_verifikasi">Status Verifiaksi <span class="text-danger">*</span></label>
                         </div>
                         <div class="form-floating">
                             <textarea class="form-control" name="ket_status" placeholder="Masukan keterangan status disini." id="ket_status" style="height: 130px"><?= @$default->ket_status ?></textarea>
@@ -358,6 +367,37 @@ if(@$default->status === 'VERIFIKASI' || @$default->status === 'AKTIF' || @$defa
                         </div>
                     </div>
                 <?= form_close() ?>
+            </div>
+            <div class="card shadow-none border">
+                <div class="card-header px-4 py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Info Tambahan</h5>
+                </div>
+                <div class="card-body">
+                <table class="table table-bordered table-responsive">
+                    <tbody>
+                        <tr>
+                            <td>Status Pegawai Saat Ini</td>
+                            <td><?= @$default->status ?></td>
+                        </tr>
+                        <tr>
+                            <td>Diusulkan Oleh</td>
+                            <td><?= @$default->created_by ?></td>
+                        </tr>
+                        <tr>
+                            <td>Diusulkan Pada</td>
+                            <td><?= @$default->created_at ?></td>
+                        </tr>
+                        <tr>
+                            <td>Diperbaharui Oleh</td>
+                            <td><?= @$default->updated_by ?></td>
+                        </tr>
+                        <tr>
+                            <td>Diperbaharui Pada</td>
+                            <td><?= @$default->updated_at ?></td>
+                        </tr>
+                    </tbody>
+                </table>
+                </div>
             </div>
         </div>
         <?= form_close(); ?>
@@ -540,9 +580,9 @@ $(document).ready(function() {
         theme: "bootstrap-5",
         width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
         placeholder: $( this ).data( 'placeholder' ),
-        selectionCssClass: 'select2--large',
-        dropdownCssClass: 'select2--large',
-        minimumInputLength: 4,
+        //selectionCssClass: 'select2--large',
+        //dropdownCssClass: 'select2--large',
+        minimumInputLength: 3,
         allowClear: true,
         ajax: { 
           url: "<?= base_url('select2/desa')?>",
@@ -576,9 +616,9 @@ $(document).ready(function() {
         theme: "bootstrap-5",
         width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
         placeholder: $( this ).data( 'placeholder' ),
-        selectionCssClass: 'select2--large',
-        dropdownCssClass: 'select2--large',
-        minimumInputLength: 4,
+        //selectionCssClass: 'select2--large',
+        //dropdownCssClass: 'select2--large',
+        minimumInputLength: 3,
         allowClear: true,
         ajax: { 
           url: "<?= base_url('select2/unit_kerja')?>",
