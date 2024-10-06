@@ -254,10 +254,6 @@ $colorScheme = implode(" ", [$theme, $color, $sidebarColor])
 					<div class="text-uppercase">Kecamatan</div>
 					<div class="fw-bold "><?= isNull(session()->nama_kecamatan) ?></div>
 				</div>
-				<!-- <div class="d-inline-flex flex-column gap-1 w-100 border-bottom pb-3">
-					<div class="text-uppercase">Desa / Kelurahan</div>
-					<div class="fw-bold "><?= //isNull(session()->nama_desa) ?></div>
-				</div> -->
 				<div class="d-grid gap-3 w-100">
 					<button type="button" class="btn btn-primary" onClick="window.location.href= '<?= base_url('app/password') ?>';">Ganti Password <i class="bx bx-lock"></i></button>
 				</div>
