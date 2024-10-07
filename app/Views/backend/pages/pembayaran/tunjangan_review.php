@@ -106,7 +106,7 @@
         ['class' => 'modal-content needs-validation',"target"=>"_blank","data-parsley-validate" => "", 'id' => 'FormAdd', 'novalidate' => '', 'autocomplete' => 'off'],
         ['unit' => $unor->id_unit_kerja, 'bulan' => $request['bulan'], 'jns_pegawai' => $request['jenis_pegawai']]); ?>
             <div class="modal-header">
-                <h5 class="modal-title">CETAK TANDA TERIMA</h5>
+                <h5 class="modal-title">SPESIMEN</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body d-flex flex-column justify-content-start align-items-start gap-3">
@@ -156,7 +156,7 @@
                     ->get()
                     ->getResult();
                     ?>
-                    <label for="bendahara" class="form-label fw-bold">Bendahara <span class="text-danger">*</span></label>
+                    <label for="bendahara" class="form-label fw-bold">Kaur Keuangan <span class="text-danger">*</span></label>
                     <select class="form-select" name="bendahara" id="bendahara"
                         required>
                         <option value="">-- Pilih Bendahara --</option>
@@ -166,7 +166,7 @@
                     </select>
                 </div>
                 <div class="col-12">
-                    <label for="tgl_cetak">Tanggal Cetak <span class="text-danger">*</span></label>
+                    <label for="tgl_cetak fw-bold">Tanggal Cetak <span class="text-danger">*</span></label>
                     <input type="date" name="tgl_cetak" class="form-control datepicker" value="<?= date("Y-m-d"); ?>" id="tgl_cetak" placeholder="Tanggal Cetak" required/>
                 </div>
             </div>
@@ -199,6 +199,8 @@
             altFormat: "j F Y",
             dateFormat: "Y-m-d",
             "locale": "id",
+            static: true,
+            monthSelectorType: 'static'
         });
     })
 </script>

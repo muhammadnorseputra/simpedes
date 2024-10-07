@@ -37,7 +37,7 @@ class MYPDF extends TCPDF {
         // $this->Cell(30, 10, 'TUNJANGAN', 1, 0, 'C', 1, '', 0, false, 'T', 'M');
         $this->Cell(30, 10, 'PENDIDIKAN', 1, 0, 'C', 1, '', 0, false, 'T', 'M');
         $this->Cell(30, 10, 'USIA', 1, 0, 'C', 1, '', 0, false, 'T', 'M');
-        $this->Cell(50, 10, 'DESA', 1, 0, 'C', 1, '', 0, false, 'T', 'M');
+        $this->Cell(50, 10, 'UNIT KERJA', 1, 0, 'C', 1, '', 0, false, 'T', 'M');
         $this->Cell(0, 10, 'TTL', 1, 1, 'C', 1, '', 0, false, 'T', 'M');
         // TABLE BODY
         $this->SetFont("DejaVuSans", "N", 8);
@@ -78,7 +78,7 @@ class MYPDF extends TCPDF {
                 // $this->Cell(30, 10, 'TUNJANGAN', 1, 0, 'C', 1, '', 0, false, 'T', 'M');
                 $this->Cell(30, 10, 'PENDIDIKAN', 1, 0, 'C', 1, '', 0, false, 'T', 'M');
                 $this->Cell(30, 10, 'USIA', 1, 0, 'C', 1, '', 0, false, 'T', 'M');
-                $this->Cell(50, 10, 'DESA', 1, 0, 'C', 1, '', 0, false, 'T', 'M');
+                $this->Cell(50, 10, 'UNIT KERJA', 1, 0, 'C', 1, '', 0, false, 'T', 'M');
                 $this->Cell(0, 10, 'TTL', 1, 1, 'C', 1, '', 0, false, 'T', 'M');
             }
 
@@ -90,7 +90,7 @@ class MYPDF extends TCPDF {
             $this->MultiCell(60, 10, $row->nama_jabatan, 1, 'L', 1, 0, '', '', true, 0, false, true, 10, 'M');
             $this->MultiCell(30, 10, isNull($row->nama_tingkat_pendidikan), 1, 'C', 1, 0, '', '', true, 0, false, true, 10, 'M');
             $this->MultiCell(30, 10, hitungUsia($row->tgl_lahir), 1, 'J', 1, 0, '', '', true, 0, false, true, 10, 'M');
-            $this->MultiCell(50, 10, $row->nama_desa, 1, 'L', 1, 0, '', '', true, 0, false, true, 10, 'M');
+            $this->MultiCell(50, 10, $row->nama_unit_kerja, 1, 'L', 1, 0, '', '', true, 0, false, true, 10, 'M');
             $this->MultiCell(0, 10, $row->tmp_lahir.", ".date_indo($row->tgl_lahir), 1, 'L', 1, 1, '', '', true, 0, false, true, 10, 'M');
         $no++;
         $maxline++;
