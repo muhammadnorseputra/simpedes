@@ -63,14 +63,18 @@ class AjaxSelect2 extends BaseController
         // if(session()->role === 'OPERATOR' || session()->role === 'USER'):
             // $desa = $this->db->table('ref_desa')->where('id_desa', session()->id_desa)->orderBy('id_desa', 'desc')->get();
         // else:
-        $desa = $this->db->table('ref_desa')->like('nama_desa', $q)->orderBy('id_desa', 'desc')->get();
+        $desa = $this->db->table('ref_desa d')
+        ->join('ref_kecamatan k', 'd.fid_kecamatan=k.id_kecamatan')
+        ->like('d.nama_desa', $q)
+        ->orderBy('d.id_desa', 'desc')
+        ->get();
         // endif;
         if(count($desa->getResultArray()) > 0):
             $data = array();
             foreach($desa->getResult() as $list){
                 $data[] = array(
                     "id" => $list->id_desa,
-                    "text" => ucwords(strtolower($list->nama_desa)),
+                    "text" => ucwords(strtolower($list->nama_desa))." - Kec. ".ucwords(strtolower($list->nama_kecamatan)),
                 );
             }
 
@@ -110,16 +114,26 @@ class AjaxSelect2 extends BaseController
         //     return $this->response->setJSON($response);
         // }
         if(session()->role === 'OPERATOR'):
-            $unor = $this->db->table('ref_unit_kerja')->where('aktif', 'Y')->where('id_unit_kerja', session()->id_unit_kerja)->orderBy('id_unit_kerja', 'desc')->get();
+            $unor = $this->db->table('ref_unit_kerja u')
+            ->join('ref_kecamatan k', 'u.kecamatan=k.id_kecamatan')
+            ->where('u.aktif', 'Y')
+            ->where('u.id_unit_kerja', session()->id_unit_kerja)
+            ->orderBy('u.id_unit_kerja', 'desc')
+            ->get();
         else:
-            $unor = $this->db->table('ref_unit_kerja')->where('aktif', 'Y')->like('nama_unit_kerja', $q)->orderBy('id_unit_kerja', 'desc')->get();
+            $unor = $this->db->table('ref_unit_kerja u')
+            ->join('ref_kecamatan k', 'u.kecamatan=k.id_kecamatan')
+            ->where('u.aktif', 'Y')
+            ->like('u.nama_unit_kerja', $q)
+            ->orderBy('u.id_unit_kerja', 'desc')
+            ->get();
         endif;
         if(count($unor->getResultArray()) > 0):
             $data = array();
             foreach($unor->getResult() as $list){
                 $data[] = array(
                     "id" => $list->id_unit_kerja,
-                    "text" => ucwords($list->nama_unit_kerja),
+                    "text" => ucwords($list->nama_unit_kerja)." - Kec. ".ucwords(strtolower($list->nama_kecamatan)),
                 );
             }
 
@@ -151,17 +165,26 @@ class AjaxSelect2 extends BaseController
 
         if(!isset($postData['searchTerm'])){
             // Fetch record
-            $unor = $this->db->table('ref_unit_kerja')->where('aktif', 'Y')->orderBy('id_unit_kerja', 'desc')->get();
+            $unor = $this->db->table('ref_unit_kerja u')
+            ->join('ref_kecamatan k', 'u.kecamatan=k.id_kecamatan')
+            ->where('u.aktif', 'Y')
+            ->orderBy('u.id_unit_kerja', 'desc')
+            ->get();
         }else{
             $searchTerm = $postData['searchTerm'];
             // Fetch record
-            $unor = $this->db->table('ref_unit_kerja')->where('aktif', 'Y')->like('nama_unit_kerja', $searchTerm)->orderBy('id_unit_kerja', 'desc')->get();
+            $unor = $this->db->table('ref_unit_kerja u')
+            ->join('ref_kecamatan k', 'u.kecamatan=k.id_kecamatan')
+            ->where('u.aktif', 'Y')
+            ->like('u.nama_unit_kerja', $searchTerm)
+            ->orderBy('u.id_unit_kerja', 'desc')
+            ->get();
         } 
         $data = array();
         foreach($unor->getResult() as $list){
             $data[] = array(
                 "id" => $list->id_unit_kerja,
-                "text" => ucwords(strtolower($list->nama_unit_kerja)),
+                "text" => ucwords(strtolower($list->nama_unit_kerja))." - Kec. ".ucwords(strtolower($list->nama_kecamatan)),
             );
         }
 

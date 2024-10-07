@@ -9,6 +9,9 @@ $colorScheme = implode(" ", [$theme, $color, $sidebarColor])
 <html lang="en" class="<?= $colorScheme ?>">
 
 <head>
+	<noscript>
+        <meta http-equiv="refresh" runat="server" id="mtaJSCheck" content="0;<?= base_url("logout") ?>" />
+    </noscript>
 	<!-- Required meta tags -->
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -42,6 +45,18 @@ $colorScheme = implode(" ", [$theme, $color, $sidebarColor])
 </head>
 
 <body>
+<noscript>
+    <style>
+        body, html, *{ /*hides all elements inside the body*/
+            display: none;
+        }
+        h1{ /* even if this h1 is inside head tags it will be first hidden, so we have to display it again after all body elements are hidden*/
+            display: block;
+        }
+    </style>
+    <h1>JavaScript is not enabled, please check your browser settings.</h1>
+</noscript>
+
 	<!--wrapper-->
 	<?php  
 		$sidebarToggle = get_cookie('sidebarToggled') === "true" ? 'toggled' : '';
