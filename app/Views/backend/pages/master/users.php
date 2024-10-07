@@ -566,7 +566,7 @@ $(document).ready(function() {
             {data: 'nipd', orderable: true},
             {data: 'photo', width: '5%', className: 'text-center align-middle', orderable: false, searchable: false},
             {data: 'nama',  className: 'align-middle'},
-            {data: 'username',  className: 'align-middle'},
+            {data: 'username',  className: 'align-top'},
             {data: 'nama_unit_kerja', orderable: false},
             {data: 'action', width: '10%',orderable: false, searchable: false}
         ],
