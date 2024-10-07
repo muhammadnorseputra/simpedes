@@ -70,7 +70,7 @@
             theme: "bootstrap-5",
             width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
             placeholder: $( this ).data( 'placeholder' ),
-            minimumInputLength: <?= session()->role === "ADMIN" ? 4 : 0 ?>,
+            minimumInputLength: <?= session()->role === "ADMIN" ? 3 : 0 ?>,
             minimumResultsForSearch: 5,
             dropdownParent: $("body"),
             allowClear: true,
