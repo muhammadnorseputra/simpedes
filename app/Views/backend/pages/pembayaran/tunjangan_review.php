@@ -199,7 +199,6 @@
             altFormat: "j F Y",
             dateFormat: "Y-m-d",
             "locale": "id",
-            static: true,
         });
     })
 </script>
