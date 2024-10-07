@@ -166,7 +166,7 @@
                     </select>
                 </div>
                 <div class="col-12">
-                    <label for="tgl_cetak fw-bold">Tanggal Cetak <span class="text-danger">*</span></label>
+                    <label for="tgl_cetak" class="fw-bold">Tanggal Cetak <span class="text-danger">*</span></label>
                     <input type="date" name="tgl_cetak" class="form-control datepicker" value="<?= date("Y-m-d"); ?>" id="tgl_cetak" placeholder="Tanggal Cetak" required/>
                 </div>
             </div>
@@ -200,7 +200,6 @@
             dateFormat: "Y-m-d",
             "locale": "id",
             static: true,
-            monthSelectorType: 'static'
         });
     })
 </script>
