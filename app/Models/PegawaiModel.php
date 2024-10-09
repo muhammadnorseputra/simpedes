@@ -20,7 +20,7 @@ class PegawaiModel extends Model
         $builder->join('ref_status_kawin rsk', 'p.fid_status_kawin=rsk.id_status_kawin');
         $builder->join('ref_jabatan j', 'p.fid_jabatan=j.id', 'left');
         $builder->where('p.nik', $nik);
-        if(session()->role !== 'ADMIN') {
+        if(session()->role === 'OPERATOR') {
             $builder->where('p.fid_unit_kerja', session()->id_unit_kerja);
         }
         return $builder;

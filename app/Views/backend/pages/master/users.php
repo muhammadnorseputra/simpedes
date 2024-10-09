@@ -110,6 +110,7 @@
                     </div>
                     </a>
                 </li>
+                <?php if(session()->role === 'ADMIN'): ?>
                 <li class="nav-item" role="presentation">
                     <a
                     class="nav-link"
@@ -140,6 +141,7 @@
                     </div>
                     </a>
                 </li>
+                <?php endif; ?>
                 </ul>
                 <div class="tab-content py-3">
                 <div
@@ -204,6 +206,7 @@
                     </div>
                     <?= form_close(); ?>
                 </div>
+                <?php if(session()->role === 'ADMIN'): ?>
                 <div
                     class="tab-pane fade"
                     id="secondary"
@@ -305,6 +308,7 @@
                     </div>
                     <?= form_close(); ?>
                 </div>
+                <?php endif; ?>
                 </div>
             </div>
         </div>

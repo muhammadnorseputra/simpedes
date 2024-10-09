@@ -224,6 +224,16 @@ class AjaxDatatable extends BaseController
         ->add('action', function($row) {
             $isDisabled = $row->is_disabled === 'Y' ? 'Enabled' : 'Disabled';
             $isDisabledTextColor = $row->is_disabled === 'Y' ? 'text-success' : 'text-danger';
+
+            if(session()->role === 'USER') {
+                return '<div class="dropdown">
+                        <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="true"><i class="bx bx-edit"></i></button>
+                        <ul class="dropdown-menu" data-popper-placement="bottom-start">
+                            <li><button type="button" class="dropdown-item text-secondary d-flex justify-content-between align-items-center" id="EditFn" data-uid="'.$row->nik.'">Reset Password <i class="bx bx-key"></i></button></li>
+                            <li><button type="button" class="dropdown-item '.$isDisabledTextColor.' d-flex justify-content-between align-items-center" id="DisabledFn" data-status="'.$row->is_disabled.'" data-uid="'.$row->nik.'">'.$isDisabled.' <i class="bx bx-block"></i></button></li>
+                        </ul>
+                    </div>';
+            }
             return '<div class="dropdown">
                         <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="true"><i class="bx bx-edit"></i></button>
                         <ul class="dropdown-menu" data-popper-placement="bottom-start">
