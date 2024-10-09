@@ -61,8 +61,8 @@
 										<?= form_open(base_url("auth/action"), ["id" => "formAuth", "class" => 'row g-3 needs-validation', 'novalidate' => '']) ?>
 											<div class="col-12">
 											<div class="form-floating">
-												<input type="text" required minlength="3" name="username" value="<?= set_value('username') ?>" class="form-control" id="floatingInputUsername" placeholder="Masukan username / NIPD / email">
-												<label for="floatingInputUsername">Masukan Username / NIPD / Email</label>
+												<input type="text" required minlength="3" name="username" value="<?= set_value('username') ?>" class="form-control" id="floatingInputUsername" placeholder="Masukan usernamel">
+												<label for="floatingInputUsername">Masukan Username</label>
 												<div id="floatingInputUsername" class="invalid-feedback">
 													Please choose a username.
 												</div>
