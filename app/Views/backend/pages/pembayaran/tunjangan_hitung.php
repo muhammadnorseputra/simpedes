@@ -148,6 +148,14 @@ $(document).ready(function() {
         }
     })
 
+    $.fn.dataTable.ext.buttons.reload = {
+            text: '<i class="bx bx-refresh"></i> Refresh',
+            action: function ( e, dt, node, config ) {
+                dt.ajax.reload();
+            },
+            className: 'btn btn-secondary',
+        };
+
     $.fn.dataTable.ext.buttons.add = {
         text: '<i class="bx bx-plus"></i> Tambah',
         action: function ( e, dt, node, config ) {  
@@ -167,7 +175,10 @@ $(document).ready(function() {
         layout: {
             topStart: [{
                 buttons: ['add']
-            }]
+            }],
+            topEnd: [{
+                buttons: ['reload']
+            }],
         },
         ajax: {
             url: '<?= base_url('datatable/tunjangan/hitung') ?>',
