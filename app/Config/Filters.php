@@ -26,7 +26,7 @@ class Filters extends BaseConfig
         'secureheaders' => SecureHeaders::class,
         'authfilter' => \App\Filters\AuthSessionCheck::class,
         'redirectIfAuthenticated' => \App\Filters\RedirectIfAuthenticated::class,
-        'isAjaxOnly' => \App\Filters\isAjaxOnly::class,
+        'isAjaxOnly' => \App\Filters\IsAjaxOnly::class,
         'cors'     => \App\Filters\Cors::class,
     ];
 
