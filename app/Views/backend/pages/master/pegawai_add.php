@@ -15,6 +15,11 @@
         </div>
     </div>
     <!--end breadcrumb-->
+
+    <div class="alert alert-warning" role="alert">
+            <b>Perhatian !</b> 
+            Formulir yang diberi tanda (<span class="text-danger">*</span>) wajib diisi.
+        </div>
     <div class="card">
     <div class="card-header px-4 py-3 d-flex justify-content-start align-items-center">
         <h5 class="mb-0">Formulir Peremajaan Data Pegawai</h5>
