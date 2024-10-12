@@ -22,20 +22,20 @@ $routes->group('app', function($route) {
         // route jabatan
         $route->get('jabatan', 'Master::jabatan');
         $route->get('jabatan/edit/(:num)', 'Master::jabatan/$1');
-        $route->post('jabatan', 'Master::jabatan');
+        $route->post('jabatan', 'Master::jabatan', ['filter' => 'isAjaxOnly']);
         $route->put('jabatan', 'Master::jabatan');
         $route->delete('jabatan', 'Master::jabatan');
         // route pegawai
         $route->get('pegawai', 'Master::pegawai');
         $route->get('pegawai/peremajaan', 'Master::pegawai/peremajaan');
-        $route->post('pegawai/peremajaan', 'Master::pegawai/peremajaan');
+        $route->post('pegawai/peremajaan', 'Master::pegawai/peremajaan', ['filter' => 'isAjaxOnly']);
         $route->put('pegawai/peremajaan', 'Master::pegawai/peremajaan');
         $route->patch('pegawai/peremajaan', 'Master::pegawai/peremajaan');
         // route users
         $route->get('users', 'Master::users');
         $route->put('users/(:any)', 'Master::users/$1');
         $route->patch('users', 'Master::users');
-        $route->post('users', 'Master::users');
+        $route->post('users', 'Master::users', ['filter' => 'isAjaxOnly']);
     });
 
     // Nested router group /app/referensi
@@ -50,7 +50,7 @@ $routes->group('app', function($route) {
         // route satuan_unit_kerja
         $route->get('satuan_unit_kerja', 'Referensi::satuan_unit_kerja');
         $route->get('satuan_unit_kerja/edit/(:num)', 'Referensi::satuan_unit_kerja/edit/$1');
-        $route->post('satuan_unit_kerja', 'Referensi::simpan_satuan_unit_kerja');
+        $route->post('satuan_unit_kerja', 'Referensi::simpan_satuan_unit_kerja', ['filter' => 'isAjaxOnly']);
         $route->delete('satuan_unit_kerja', 'Referensi::hapus_satuan_unit_kerja');
         $route->put('satuan_unit_kerja', 'Referensi::update_satuan_unit_kerja');
         $route->patch('satuan_unit_kerja/(:num)', 'Referensi::update_satuan_unit_kerja/$1');
@@ -65,30 +65,30 @@ $routes->group('app', function($route) {
         // riwayat pendidikan
         $route->get('(:any)/pendidikan', 'Pegawai::riwayat_pendidikan/$1');
         $route->get('(:any)/pendidikan/(:any)', 'Pegawai::riwayat_pendidikan/$1/$2');
-        $route->post('(:any)/pendidikan/(:any)', 'Pegawai::riwayat_pendidikan/$1/$2');
+        $route->post('(:any)/pendidikan/(:any)', 'Pegawai::riwayat_pendidikan/$1/$2', ['filter' => 'isAjaxOnly']);
         $route->delete('(:any)/pendidikan/(:any)', 'Pegawai::riwayat_pendidikan/$1/$2');
         // riwayat jabatan
         $route->get('(:any)/jabatan', 'Pegawai::riwayat_jabatan/$1');
         $route->get('(:any)/jabatan/(:any)', 'Pegawai::riwayat_jabatan/$1/$2');
-        $route->post('(:any)/jabatan/(:any)', 'Pegawai::riwayat_jabatan/$1/$2');
+        $route->post('(:any)/jabatan/(:any)', 'Pegawai::riwayat_jabatan/$1/$2', ['filter' => 'isAjaxOnly']);
         $route->delete('(:any)/jabatan/(:any)', 'Pegawai::riwayat_jabatan/$1/$2');
         // riwayat keluarga
         $route->get('(:any)/keluarga', 'Pegawai::riwayat_keluarga/$1');
         $route->get('(:any)/keluarga/(:any)/(:any)', 'Pegawai::riwayat_keluarga/$1/$2/$3');
         $route->get('(:any)/keluarga/(:any)/edit/(:any)', 'Pegawai::riwayat_keluarga/$1/$2/$3');
-        $route->post('(:any)/keluarga/(:any)/(:any)', 'Pegawai::riwayat_keluarga/$1/$2/$3');
+        $route->post('(:any)/keluarga/(:any)/(:any)', 'Pegawai::riwayat_keluarga/$1/$2/$3', ['filter' => 'isAjaxOnly']);
         $route->put('(:any)/keluarga/(:any)/(:any)', 'Pegawai::riwayat_keluarga/$1/$2/$3');
         $route->patch('(:any)/keluarga/(:any)/(:any)', 'Pegawai::riwayat_keluarga/$1/$2/$3');
         $route->delete('(:any)/keluarga/(:any)/(:any)', 'Pegawai::riwayat_keluarga/$1/$2/$3');
         // Riwayat Workshop
         $route->get('(:any)/workshop', 'Pegawai::riwayat_workshop/$1');
         $route->get('(:any)/workshop/(:any)', 'Pegawai::riwayat_workshop/$1/$2');
-        $route->post('(:any)/workshop/(:any)', 'Pegawai::riwayat_workshop/$1/$2');
+        $route->post('(:any)/workshop/(:any)', 'Pegawai::riwayat_workshop/$1/$2', ['filter' => 'isAjaxOnly']);
         $route->delete('(:any)/workshop/(:any)', 'Pegawai::riwayat_workshop/$1/$2');
         // Riwayat LHKPN
         $route->get('(:any)/lhkpn', 'Pegawai::riwayat_lhkpn/$1');
         $route->get('(:any)/lhkpn/(:any)', 'Pegawai::riwayat_lhkpn/$1/$2');
-        $route->post('(:any)/lhkpn/(:any)', 'Pegawai::riwayat_lhkpn/$1/$2');
+        $route->post('(:any)/lhkpn/(:any)', 'Pegawai::riwayat_lhkpn/$1/$2', ['filter' => 'isAjaxOnly']);
         $route->delete('(:any)/lhkpn/(:any)', 'Pegawai::riwayat_lhkpn/$1/$2');
         // Riwayat Tunjangan
         $route->get('(:any)/tunjangan', 'Pegawai::riwayat_tunjangan/$1');
@@ -96,7 +96,7 @@ $routes->group('app', function($route) {
 
 });
 
-$routes->group('datatable', function($route) {
+$routes->group('datatable', ['filter' => 'isAjaxOnly'], function($route) {
     $route->post('agama', 'AjaxDatatable::agama');
     $route->post('kecamatan', 'AjaxDatatable::kecamatan');
     $route->post('desa', 'AjaxDatatable::desa');
@@ -127,7 +127,7 @@ $routes->group('datatable', function($route) {
     });
 });
 
-$routes->group('select2', function($route) {
+$routes->group('select2', ['filter' => 'isAjaxOnly'], function($route) {
     $route->post('desa', 'AjaxSelect2::desa');
     $route->post('kecamatan', 'AjaxSelect2::kecamatan');
     $route->post('unit_kerja', 'AjaxSelect2::unit_kerja');
@@ -152,8 +152,8 @@ $routes->group('pembayaran', function($route) {
     $route->post('tunjangan/filter', 'Pembayaran::filter');
 
     $route->get('hitung', 'Pembayaran::hitung');
-    $route->post('hitung', 'Pembayaran::hitung');
-    $route->delete('hitung', 'Pembayaran::hitung');
+    $route->post('hitung', 'Pembayaran::hitung', ['filter' => 'isAjaxOnly']);
+    $route->delete('hitung', 'Pembayaran::hitung', ['filter' => 'isAjaxOnly']);
 
     $route->post('cetak', 'Pdf::cetak_tt_tunjangan');
 });

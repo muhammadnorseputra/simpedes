@@ -73,7 +73,7 @@
 												<div class="position-relative input-icon" id="show_hide_password">
 													<input type="password" required name="password" class="form-control form-control-lg border-end-1" id="inputChoosePassword" placeholder="Masukan Password"> 
 													<span class="position-absolute top-0 pt-2 mt-1"><em class="bx bx-key"></em></span>
-													<a href="javascript:;" class="bg-transparent position-absolute end-0" data-bs-toggle="tooltip" data-bs-placement="top" style="top: -30px">
+													<a href="javascript:;" tabindex="-1" class="bg-transparent position-absolute end-0" data-bs-toggle="tooltip" data-bs-placement="top" style="top: -30px">
 														<i class="bx bx-hide fs-5 text-secondary"></i>
 													</a>
 													<div id="floatingInputUsername" class="invalid-feedback">
@@ -83,7 +83,7 @@
 											</div>
 											<div class="col-md-6">
 											</div>
-											<div class="col-md-6 text-end">	<a href="javascript:;" data-bs-toggle="modal" data-bs-target="#exampleVerticallycenteredModal">Lupa Password ?</a>
+											<div class="col-md-6 text-end">	<a href="javascript:;" tabindex="-1" data-bs-toggle="modal" data-bs-target="#exampleVerticallycenteredModal">Lupa Password ?</a>
 											</div>
 											<div class="col-12">
 												<div class="d-grid">

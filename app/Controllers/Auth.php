@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use \App\Models\UserModel;
+use CodeIgniter\Exceptions\PageNotFoundException;
 
 class Auth extends BaseController
 {
@@ -20,10 +21,28 @@ class Auth extends BaseController
         $session = session();
         $db = new UserModel();
 
-        if($this->request->isAjax()) {
-            $username = $this->request->getPost('username');
-            $password = $this->request->getPost('password');
+        if(!$this->request->isAjax()) {
+          return throw PageNotFoundException::forPageNotFound("Bad Request With Ajax Only");
         }
+
+        $validation = service("validation");
+        $rules = [
+            "username" => [
+                "label" => "Username",
+                "rules" => "required"
+            ],
+            "password" => [
+                "label" => "Password",
+                "rules" => "required"
+            ],
+        ];
+
+        if(!$this->validate($rules)) {
+            return $this->response->setJson($validation->getErrors());
+        }
+
+        $username = $this->request->getPost('username');
+        $password = $this->request->getPost('password');
 
         $data = $db->join('pegawai', 'users.nik=pegawai.nik', 'left')
         ->groupStart()

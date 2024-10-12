@@ -26,6 +26,7 @@ class Filters extends BaseConfig
         'secureheaders' => SecureHeaders::class,
         'authfilter' => \App\Filters\AuthSessionCheck::class,
         'redirectIfAuthenticated' => \App\Filters\RedirectIfAuthenticated::class,
+        'isAjaxOnly' => \App\Filters\isAjaxOnly::class,
         'cors'     => \App\Filters\Cors::class,
     ];
 
@@ -67,8 +68,17 @@ class Filters extends BaseConfig
      */
     public array $methods = [
         'post' => [
-            'csrf'
-        ]
+            'csrf',
+        ],
+        'put' => [
+            'isAjaxOnly'
+        ],
+        'patch' => [
+            'isAjaxOnly'
+        ],
+        'delete' => [
+            'isAjaxOnly'
+        ],
     ];
 
     /**
