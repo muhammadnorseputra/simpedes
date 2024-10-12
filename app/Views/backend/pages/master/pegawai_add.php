@@ -67,8 +67,8 @@
                 </div>
                 <div class="col-md-4">
                     <div class="form-floating">
-                        <input type="number" name="nipd" class="form-control" id="nipd" placeholder="NIPD" value="<?= @$default->nipd ?>" required>
-                        <label for="nipd">Nomor Induk Pegawai <span class="text-danger">*</span></label>
+                        <input type="number" name="nipd" class="form-control" id="nipd" placeholder="NIPD" value="<?= @$default->nipd ?>">
+                        <label for="nipd">Nomor Induk Pegawai Desa</label>
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -486,6 +486,10 @@ $(document).ready(function() {
 
   $(".datepicker").flatpickr({
     dateFormat: "Y-m-d",
+    altInput: true,
+    altFormat: "j F Y",
+    dateFormat: "Y-m-d",
+    "locale": "id",
   });
 
   FORM_STEP_AKUN.on("submit", function(e) {

@@ -2,6 +2,7 @@
 namespace App\Controllers;
 
 use \Hermawan\DataTables\DataTable;
+use CodeIgniter\I18n\Time;
 
 class AjaxDatatable extends BaseController
 {
@@ -543,6 +544,7 @@ class AjaxDatatable extends BaseController
     public function hitung_tunjangan()
     {
         helper(["number","tgl_indo","hash"]);
+        $now = new Time('now', 'Asia/Jakarta', 'id_ID');
         
         $request = $this->request;
 
@@ -556,8 +558,8 @@ class AjaxDatatable extends BaseController
                 $query->where('p.fid_unit_kerja', session()->id_unit_kerja);
             }
         })
-        ->where('bulan', date('m'))
-        ->where('tahun', date('Y'));
+        ->whereIn('bulan', [$now->getMonth(), $now->addMonths(-1)->getMonth()])
+        ->whereIn('tahun', [$now->getYear(), $now->addYears(-1)->getYear()]);
         
         return DataTable::of($builder)
         ->addNumbering('no')

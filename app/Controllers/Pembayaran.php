@@ -37,8 +37,10 @@ class Pembayaran extends BaseController
 
             $dbcek = db_connect()->table('riwayat_tunjangan')
             ->where('nik', $request->getPost('nik'))
-            ->where('bulan', date("m"))
-            ->where('tahun', date('Y'))
+            ->groupStart()
+            ->where('bulan', $request->getPost('periode_bulan'))
+            ->where('tahun', $request->getPost('periode_tahun'))
+            ->groupEnd()
             ->countAllResults(false);
             if($dbcek > 0)
             {
@@ -58,8 +60,8 @@ class Pembayaran extends BaseController
                 'nama_desa' => $pegawai->nama_desa,
                 'nama_jabatan' => $pegawai->nama_jabatan,
                 'jenis_pegawai' => $pegawai->jenis,
-                'bulan' => date("m"),
-                'tahun' => date('Y'),
+                'bulan' => $request->getPost('periode_bulan'),
+                'tahun' => $request->getPost('periode_tahun'),
                 'jumlah_bulan' => $request->getPost('jml_bulan'),
                 'jumlah_uang' => $jumlah_uang,
                 'pph21' => str_replace(".", "", $request->getPost('pph21')),
@@ -104,8 +106,10 @@ class Pembayaran extends BaseController
             ];
             return $this->response->setJSON($msg);
         }
+        
         $data = [
             'title' => 'Hitung Tunjangan',
+            'now' => $now->addHours(1)
         ];
         return view('backend/pages/pembayaran/tunjangan_hitung', $data);
     }

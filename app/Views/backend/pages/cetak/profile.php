@@ -268,7 +268,7 @@
                 <td colspan="2" width="75%">: <?= $keluarga->pekerjaan; ?></td>
             </tr>
             <tr>
-                <td>NIPD <?= $row->jns_kelamin === "PRIA" ? "Istri" : "Suami"; ?></td>
+                <td>NIK <?= $row->jns_kelamin === "PRIA" ? "Istri" : "Suami"; ?></td>
                 <td colspan="2" width="75%">: <?= isNull($keluarga->nip_sutri); ?></td>
             </tr>
             <tr>

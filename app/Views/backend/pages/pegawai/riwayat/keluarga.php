@@ -180,7 +180,12 @@
         <div class="row g-3 mb-4 px-4">
             <div class="col-12">
                 <label for="nip_sutri" class="form-label">NIK <?= $row->jns_kelamin === 'PRIA' ? 'Istri' : 'Suami'; ?></label>
-                <input type="text" class="form-control" id="nip_sutri" name="nip_sutri" placeholder="Masukan NIK"/>
+                <input type="number" class="form-control" id="nip_sutri" name="nip_sutri" placeholder="Masukan NIK"/>
+            </div>
+            <div class="col-12">
+                <label for="no_bpjs_kesehatan" class="form-label">No. BPJS Kesehatan <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="no_bpjs_kesehatan" name="no_bpjs_kesehatan" placeholder="Masukan nomor bpjs kesehatan" required/>
+                <div id="no_bpjs_kesehatan_help" class="form-text fst-italic">Apabila tidak ada, isi dengan tanda (<b>-</b>)</div>
             </div>
         </div>
         <div class="row g-3 px-4">
@@ -343,6 +348,15 @@
                     </label>
                 </div>
             </div>
+        </div>
+        <hr/>
+        <div class="row g-3 mb-4 px-4">
+            <div class="col-12">
+                <label for="no_bpjs_kesehatan" class="form-label">No. BPJS Kesehatan <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="no_bpjs_kesehatan" name="no_bpjs_kesehatan" placeholder="Masukan nomor bpjs kesehatan" required/>
+                <div id="no_bpjs_kesehatan_help" class="form-text fst-italic">Apabila tidak ada, isi dengan tanda (<b>-</b>) </div>
+            </div>
+
             <div class="col-12">
                 <div class="btn-group g-3 w-100">
                     <button type="button" class="btn btn-danger" data-bs-dismiss="offcanvas"> <i class="bx bx-x-circle"></i> Batal</button>

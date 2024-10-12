@@ -588,6 +588,7 @@ class Pegawai extends BaseController
                 'status_hidup' => $request->getPost('status_hidup') === 'YA' ? 'YA' : 'TIDAK',
                 'tanggungan' => $request->getPost('tanggungan') === 'YA' ? 'YA' : 'TIDAK',
                 'nip_sutri' => $request->getPost('nip_sutri'),
+                'no_bpjs_kesehatan' => $request->getPost('no_bpjs_kesehatan'),
                 'created_at' => $now->addHours(1),
                 'created_by' => session()->nik,
             ];
@@ -626,6 +627,7 @@ class Pegawai extends BaseController
                 'status_hidup' => $request->getPost('status_hidup') === 'YA' ? 'YA' : 'TIDAK',
                 'tanggungan' => $request->getPost('tanggungan') === 'YA' ? 'YA' : 'TIDAK',
                 'nip_sutri' => $request->getPost('nip_sutri'),
+                'no_bpjs_kesehatan' => $request->getPost('no_bpjs_kesehatan'),
                 'updated_at' => $now->addHours(1),
                 'updated_by' => session()->nik,
             ];
@@ -751,6 +753,7 @@ class Pegawai extends BaseController
                 'status' => $request->getPost('status'),
                 'status_hidup' => $request->getPost('status_hidup') === 'YA' ? 'YA' : 'TIDAK',
                 'tanggungan' => $request->getPost('tanggungan') === 'YA' ? 'YA' : 'TIDAK',
+                'no_bpjs_kesehatan' => $request->getPost('no_bpjs_kesehatan'),
                 'created_at' => $now->addHours(1),
                 'created_by' => session()->nik,
             ];
@@ -784,6 +787,7 @@ class Pegawai extends BaseController
                 'status' => $request->getPost('status'),
                 'status_hidup' => $request->getPost('status_hidup') === 'YA' ? 'YA' : 'TIDAK',
                 'tanggungan' => $request->getPost('tanggungan') === 'YA' ? 'YA' : 'TIDAK',
+                'no_bpjs_kesehatan' => $request->getPost('no_bpjs_kesehatan'),
                 'updated_at' => $now->addHours(1),
                 'updated_by' => session()->nik,
             ];

@@ -85,6 +85,12 @@
                     </label>
                 </div>
             </div>
+            <hr>
+            <div class="col-12">
+                <label for="no_bpjs_kesehatan" class="form-label">No. BPJS Kesehatan <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="no_bpjs_kesehatan" name="no_bpjs_kesehatan" value="<?= $row->no_bpjs_kesehatan; ?>" placeholder="Masukan nomor bpjs kesehatan" required/>
+                <div id="no_bpjs_kesehatan_help" class="form-text fst-italic">Apabila tidak ada, isi dengan tanda (<b>-</b>) </div>
+            </div>
             <div class="col-12">
                 <div class="btn-group g-3 w-100">
                     <button type="button" class="btn btn-danger" onClick="return window.history.back()"> <i class="bx bx-x-circle"></i> Batal</button>

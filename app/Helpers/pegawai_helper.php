@@ -85,7 +85,7 @@ function updateAt($tanggal) {
 }
 
 function isNull($value) {
-    if($value === null || $value === '') return "-";
+    if($value === null || $value === '' || $value === 0 || $value === '0') return "-";
     return $value;
 }
 

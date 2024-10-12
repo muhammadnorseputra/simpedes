@@ -17,10 +17,14 @@
     <!--end breadcrumb-->
     <div class="card">
         <div class="card-body">
-            <div class="alert alert-primary" role="alert">
-                <b>Perhatian !</b> 
-                Periode otomatis dibuat oleh sistem berdasarkan BULAN dan TAHUN sekarang.
-            </div>
+            <?php 
+            $current_date = $now->now()->addHours(1);
+            // Mendapatkan tanggal 15 bulan ini pukul 24:00 (sebenarnya tanggal 16 pukul 00:00)
+            $start_date = $now->createFromDate($current_date->getYear(), $current_date->getMonth(), 16);
+            // Mendapatkan tanggal 15 bulan depan
+            $end_date = $start_date->addMonths(1);
+            if ($current_date >= $start_date && $current_date < $end_date):
+            ?>
             <div class="alert alert-warning" role="alert">
                 <b>Perhatian !</b> 
                 Perhitungan setelah 3 Hari sejak ditambahkan, akan dikunci oleh sistem atau tidak bisa dibatalkan.
@@ -30,7 +34,7 @@
                     <thead>
                         <tr>
                             <th>No</th>
-                            <th>Bulan</th>
+                            <th>Bulan</th>      
                             <th>Desa</th>
                             <th>NIK</th>
                             <th>Nama Lengkap</th>
@@ -43,6 +47,18 @@
                     </thead>
                 </table>
             </div>
+            <?php else: ?>
+            <div class="alert alert-danger" role="alert">
+                <b>Perhatian !</b> <br>
+                Perhitungan hanya dapat dilakukan pada <b><?= $start_date->getDay(); ?> <?= bulan($start_date->getMonth()); ?> <?= $start_date->getYear(); ?></b>.
+            </div>
+            <p class="text-center text-secondary opacity-50">
+                <span><i class="bx bx-timer bx-lg"></i></span>
+                <p class="text-center text-secondary opacity-50">
+                    Periode <b class="text-danger"><?= strtoupper(bulan($current_date->getMonth())); ?></b> Belum Dibuka.
+                </p>
+            </p>
+            <?php endif; ?>
         </div>
     </div>
 <?= $this->endSection(); ?>
@@ -66,6 +82,32 @@
                     <div id="error-pegawai"></div>
                 </div>
                 <div class="col-12 d-none" id="preview"></div>
+                <div class="col-md-12">
+                    <label for="periode_bulan" class="form-label fw-bold">Pilih Periode Bulan <span class="text-danger">*</span></label>
+                    <select class="form-select" name="periode_bulan" id="periode_bulan"
+                        required>
+                        <?php 
+                        $current_date = $now->now()->addHours(1);
+                        $bulan_ini = $current_date->getMonth();
+                        $bulan_lalu = $current_date->addMonths(-1)->getMonth();
+                        ?>
+                        <option value="<?= $bulan_lalu; ?>"><?= bulan($bulan_lalu); ?></option>
+                        <option value="<?= $bulan_ini; ?>" selected><?= bulan($bulan_ini); ?></option>
+                    </select>
+                </div>
+                <div class="col-md-12">
+                    <label for="periode_tahun" class="form-label fw-bold">Pilih Periode Tahun <span class="text-danger">*</span></label>
+                    <select class="form-select" name="periode_tahun" id="periode_tahun"
+                        required>
+                        <?php 
+                        $current_date = $now->now()->addHours(1);
+                        $tahun_lalu = $current_date->addYears(-1)->getYear();
+                        $tahun_ini = $current_date->getYear();
+                        ?>
+                        <option value="<?= $tahun_lalu; ?>"><?= $tahun_lalu; ?></option>
+                        <option value="<?= $tahun_ini; ?>" selected><?= $tahun_ini; ?></option>
+                    </select>
+                </div>
                 <div class="col-12">
                     <label for="jml_bulan" class="form-label fw-bold">Jumlah Bulan <span class="text-danger">*</span></label>
                     <select class="form-select" name="jml_bulan" id="jml_bulan"
@@ -171,6 +213,7 @@ $(document).ready(function() {
         lengthChange: false,
         paging: false,
         info: false,
+        responsive: true,
         order: [], //this mean no init order on datatable
         layout: {
             topStart: [{
