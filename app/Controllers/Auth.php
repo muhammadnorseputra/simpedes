@@ -40,7 +40,7 @@ class Auth extends BaseController
         if(!$this->validate($rules)) {
             $res = [
                 'status' => false,
-                'message' => 'Invalid Formulir',
+                'message' => 'Formulir Tidak Lengkap',
                 'data' => $validation->getErrors()
             ];
             return $this->response->setJson($res);

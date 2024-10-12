@@ -28,9 +28,9 @@
 		<div class="section-authentication-cover">
 			<div class="">
 				<div class="row g-0">
-					<div class="col-12 col-xl-7 col-xxl-8 auth-cover-left align-items-center justify-content-center 
+					<div class="col-12 col-xl-6 col-xxl-6 auth-cover-left align-items-center justify-content-center 
                     d-none d-xl-flex relative overflow-hidden" 
-                    style="background: url('<?= base_url('assets/images/app/auth-bg.jpg') ?>'); 
+                    style="background: url('<?= base_url('assets/images/app/auth-bg.jpeg') ?>'); 
                     background-attacment: fixed; background-size: cover; background-repeat: no-repeat">
                         <div class="fixed-top left-0 top-0 w-100 h-100 bg-black z-0 opacity-75"></div>
                         <div class="card bg-transparent shadow-none">
@@ -39,18 +39,18 @@
                                     <h2 class="text-white"><?= $config->siteName ?></h2>
                                 </div>
                             </div>
-                            <div class="card-body text-white text-center fs-5">
+                            <div class="card-body text-white text-center fs-6">
 								<?= $config->siteDesc ?>
                             </div>
                         </div>
                     </div>
 
-					<div class="col-12 col-xl-4 col-xxl-4 auth-cover-right align-items-center justify-content-center bg-white shadow-lg z-1">
+					<div class="col-12 col-xl-6 col-xxl-6 auth-cover-right align-items-center justify-content-center bg-white shadow-lg z-1">
 						<div class="card rounded-0 shadow-none bg-transparent mb-0">
 							<div class="card-body p-sm-5">
-								<div class="">
+								<div class="col-md-8 mx-auto">
 									<div class="mb-4 text-center">
-                                    <img class="mb-2" src="<?= base_url("assets/images/app/logo.png") ?>" alt="logo balangan" width="50">
+                                    	<img class="mb-2" src="<?= base_url("assets/images/app/logo.png") ?>" alt="logo balangan" width="50">
 									</div>
 									<div class="text-center mb-4">
 										<h5 class="mb-2">Masuk Aplikasi <?= ucwords(strtolower($config->siteSortName)) ?></h5>
@@ -60,22 +60,24 @@
 										<div id="message"></div>
 										<?= form_open(base_url("auth/action"), ["id" => "formAuth", "class" => 'row g-3 needs-validation', 'novalidate' => '']) ?>
 											<div class="col-12">
-											<div class="form-floating">
-												<input type="text" required minlength="3" name="username" value="<?= set_value('username') ?>" class="form-control" id="floatingInputUsername" placeholder="Masukan usernamel">
-												<label for="floatingInputUsername">Masukan Username</label>
-												<div id="floatingInputUsername" class="invalid-feedback">
-													Please choose a username.
+												<div class="form-floating">
+													<input type="text" required minlength="3" name="username" value="<?= set_value('username') ?>" class="form-control" id="floatingInputUsername" placeholder="Masukan usernamel">
+													<label for="floatingInputUsername">Masukan Username</label>
+													<div id="floatingInputUsername" class="invalid-feedback">
+														Please choose a username.
+													</div>
 												</div>
 											</div>
-											</div>
 											<div class="col-12">
-												<label for="inputChoosePassword" class="form-label">Password</label>
-												<div class="position-relative input-icon" id="show_hide_password">
-													<input type="password" required name="password" class="form-control form-control-lg border-end-1" id="inputChoosePassword" placeholder="Masukan Password"> 
-													<span class="position-absolute top-0 pt-2 mt-1"><em class="bx bx-key"></em></span>
-													<a href="javascript:;" tabindex="-1" class="bg-transparent position-absolute end-0" data-bs-toggle="tooltip" data-bs-placement="top" style="top: -30px">
-														<i class="bx bx-hide fs-5 text-secondary"></i>
-													</a>
+												<div class="form-floating">
+													<!-- <div class="position-relative input-icon" id="show_hide_password">
+														<span class="position-absolute top-0 pt-2 mt-1"><em class="bx bx-key"></em></span>
+														<a href="javascript:;" tabindex="-1" class="bg-transparent position-absolute end-0" data-bs-toggle="tooltip" data-bs-placement="top" style="top: -30px">
+															<i class="bx bx-hide fs-5 text-secondary"></i>
+														</a>
+													</div> -->
+													<input type="password" required name="password" class="form-control border-end-1" id="inputChoosePassword" placeholder="Masukan Sandi"> 
+													<label for="inputChoosePassword" class="form-label">Sandi</label>
 													<div id="floatingInputUsername" class="invalid-feedback">
 														Please choose a password.
 													</div>
