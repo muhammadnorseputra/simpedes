@@ -224,7 +224,7 @@
             <td colspan="3">: <?= isNull($row->no_bpjs_kesehatan); ?></td>
         </tr>
         <tr>
-            <td width="30%">No. BPJS Ketenagakerjaan</td>
+            <td>No. BPJS Tenaga Kerja</td>
             <td colspan="3">: <?= isNull($row->no_bpjs_ketenagakerjaan); ?></td>
         </tr>
         <tr>
@@ -270,6 +270,10 @@
             <tr>
                 <td>NIK <?= $row->jns_kelamin === "PRIA" ? "Istri" : "Suami"; ?></td>
                 <td colspan="2" width="75%">: <?= isNull($keluarga->nip_sutri); ?></td>
+            </tr>
+            <tr>
+                <td>No. BPJS Kesehatan</td>
+                <td colspan="2" width="75%">: <?= isNull($keluarga->no_bpjs_kesehatan); ?></td>
             </tr>
             <tr>
                 <td>Status Hidup</td>
