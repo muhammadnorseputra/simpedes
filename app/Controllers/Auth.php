@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use \App\Models\UserModel;
 use CodeIgniter\Exceptions\PageNotFoundException;
+use CodeIgniter\I18n\Time;
 
 class Auth extends BaseController
 {
@@ -20,6 +21,7 @@ class Auth extends BaseController
     public function action() {
         $session = session();
         $db = new UserModel();
+        $now = new Time('now', 'Asia/Jakarta', 'id_ID');
 
         if(!$this->request->isAjax()) {
           return throw PageNotFoundException::forPageNotFound("Bad Request With Ajax Only");
@@ -107,6 +109,7 @@ class Auth extends BaseController
                     'isLogin'     => TRUE
                 ];
                 $session->set($sessionSetData);
+                $db->where('username', $username)->set(['last_login' => $now->addHours(1)])->update();
                 $res = [
                         'status' => true,
                         'message' => 'Login Berhasil !, anda akan segera dialihkan, mohon tunggu tunggu ...',
