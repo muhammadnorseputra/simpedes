@@ -32,9 +32,9 @@
                                 <th>Hadir</th>
                                 <th>Izin</th>
                                 <th>Sakit</th>
-                                <th>TK</th>
-                                <th>CUTI</th>
-                                <th>TUDIN</th>
+                                <th data-bs-toggle="tooltip" title="Tanpa Keterangan">TK</th>
+                                <th data-bs-toggle="tooltip" title="Cuti">CUTI</th>
+                                <th data-bs-toggle="tooltip" title="Tugas Dinas">TUDIN</th>
                             </tr>
                         </tr>
                     </thead>
