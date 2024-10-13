@@ -20,7 +20,7 @@
             <?php 
             $current_date = $now->now()->addHours(1);
             // Mendapatkan tanggal 15 bulan ini pukul 24:00 (sebenarnya tanggal 16 pukul 00:00)
-            $start_date = $now->createFromDate($current_date->getYear(), $current_date->getMonth(), 12);
+            $start_date = $now->createFromDate($current_date->getYear(), $current_date->getMonth(), 16);
             // Mendapatkan tanggal 15 bulan depan
             $end_date = $start_date->addMonths(1);
             if ($current_date >= $start_date && $current_date < $end_date):
