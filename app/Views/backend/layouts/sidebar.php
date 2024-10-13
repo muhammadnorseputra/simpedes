@@ -44,6 +44,7 @@
 						<div class="menu-title">Tunjangan</div>
 					</a>
 					<ul>
+						<li> <a href="<?= base_url('pembayaran/absensi') ?>"><i class='bx bx-radio-circle'></i>Absensi</a></li>
 						<li> <a href="<?= base_url('pembayaran/hitung') ?>"><i class='bx bx-radio-circle'></i>Hitung Tunjangan</a></li>
 						<li> <a href="<?= base_url('pembayaran/tunjangan') ?>"><i class='bx bx-radio-circle'></i>Tanda Terima</a></li>
 					</ul>

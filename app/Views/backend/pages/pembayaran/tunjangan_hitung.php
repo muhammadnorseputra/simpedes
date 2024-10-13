@@ -20,7 +20,7 @@
             <?php 
             $current_date = $now->now()->addHours(1);
             // Mendapatkan tanggal 15 bulan ini pukul 24:00 (sebenarnya tanggal 16 pukul 00:00)
-            $start_date = $now->createFromDate($current_date->getYear(), $current_date->getMonth(), 16);
+            $start_date = $now->createFromDate($current_date->getYear(), $current_date->getMonth(), 12);
             // Mendapatkan tanggal 15 bulan depan
             $end_date = $start_date->addMonths(1);
             if ($current_date >= $start_date && $current_date < $end_date):
@@ -29,24 +29,22 @@
                 <b>Perhatian !</b> 
                 Perhitungan setelah 3 Hari sejak ditambahkan, akan dikunci oleh sistem atau tidak bisa dibatalkan.
             </div>
-            <div class="table-responsive">
-                <table id="example" class="table table-striped table-bordered table-hover border border-3">
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Bulan</th>      
-                            <th>Desa</th>
-                            <th>NIK</th>
-                            <th>Nama Lengkap</th>
-                            <th>Jabatan</th>
-                            <th>Jumlah Bulan</th>
-                            <th>Jumlah Uang</th>
-                            <th>PPH21</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                </table>
-            </div>
+            <table id="example" class="table table-striped table-bordered table-hover border border-3">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Bulan</th>      
+                        <th>Desa</th>
+                        <th>NIK</th>
+                        <th>Nama Lengkap</th>
+                        <th>Jabatan</th>
+                        <th>Jumlah Bulan</th>
+                        <th>Jumlah Uang</th>
+                        <th>PPH21</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+            </table>
             <?php else: ?>
             <div class="alert alert-danger" role="alert">
                 <b>Perhatian !</b> <br>
@@ -74,7 +72,7 @@
             <div class="modal-body d-flex flex-column justify-content-start align-items-start gap-3">
                 <div class="col-12">
                     <label for="pegawai" class="form-label fw-bold">Cari Pegawai <span class="text-danger">*</span></label>
-                    <select class="form-select" name="pegawai" id="pegawai" multiple="multiple" data-placeholder="Cari Pegawai" 
+                    <select class="form-select" name="pegawai" id="pegawai" data-placeholder="Cari Pegawai" 
                     data-allow-clear="true"
                     data-parsley-errors-container="#error-pegawai" 
                     data-parsley-error-message="Tidak Boleh Kosong"
@@ -251,9 +249,6 @@ $(document).ready(function() {
         width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
         placeholder: $( this ).data( 'placeholder' ),
         dropdownParent: $("#add-tunjangan"),
-        tags: true,
-        maximumSelectionLength: 1,
-        minimumInputLength: 4,
         maximumInputLength: 20,
         minimumResultsForSearch: 10,
         createTag: function (params) {

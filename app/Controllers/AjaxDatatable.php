@@ -522,8 +522,10 @@ class AjaxDatatable extends BaseController
     public function riwayat_tunjangan()
     {
         helper(["number","tgl_indo"]);
+
         $builder = $this->db->table('riwayat_tunjangan')
         ->where('nik', $this->request->getPost('nik'));
+
         return DataTable::of($builder)
         ->addNumbering('no')
         ->postQuery(function($query){
@@ -534,6 +536,24 @@ class AjaxDatatable extends BaseController
         })
         ->format('pph21', function($value) {
             return number_to_currency($value, "IDR", "id_ID");
+        })
+        ->format('bulan', function($value) {
+            return bulan($value);
+        })
+        ->toJson(true);
+    }
+
+    public function riwayat_absensi()
+    {
+        helper(["number","tgl_indo"]);
+        
+        $builder = $this->db->table('riwayat_absensi')
+        ->where('nik', $this->request->getPost('nik'));
+
+        return DataTable::of($builder)
+        ->addNumbering('no')
+        ->postQuery(function($query){
+            $query->orderBy('created_at', 'desc');
         })
         ->format('bulan', function($value) {
             return bulan($value);
@@ -585,6 +605,49 @@ class AjaxDatatable extends BaseController
                 <ul class="dropdown-menu" data-popper-placement="bottom-start">
                 <li><button type="button" class="dropdown-item text-danger d-flex justify-content-between align-items-center" id="hapus" data-uid="'.dohash($row->id).'">Batalkan Perhitungan <i class="bx bx-trash"></i></button></li>
                 </ul>
+                </div>';
+            }
+            return "<i class='bx bx-lock text-primary'></i>";
+
+        })
+        ->toJson(true);
+    }
+
+    public function absensi()
+    {
+        helper(["number","tgl_indo","hash","pegawai"]);
+        $now = new Time('now', 'Asia/Jakarta', 'id_ID');
+        
+        $request = $this->request;
+
+        $builder = $this->db->table('riwayat_absensi a')
+        ->select('a.id,a.nik,a.bulan,a.tahun,a.hadir,a.izin,a.sakit,a.tk,a.cuti,a.tudin,a.created_at,p.nama,p.gelar_depan,p.gelar_blk')
+        ->join('pegawai p', 'a.nik=p.nik')
+        ->when(session()->role, static function($query, $status) {
+            if($status === 'OPERATOR') {
+                $query->where('p.fid_unit_kerja', session()->id_unit_kerja);
+            }
+        });
+        
+        return DataTable::of($builder)
+        ->addNumbering('no')
+        ->postQuery(function($query){
+            $query->orderBy('a.created_at', 'desc');
+        })
+        ->edit('nik', static function($row){
+            return "<b>".$row->nik."</b><br>".namalengkap($row->gelar_depan,$row->nama,$row->gelar_blk);
+        })
+        ->edit('bulan', static function($row){
+            return "<b>".bulan($row->bulan)." ".$row->tahun."</b>";
+        })
+        ->add('action', function($row) {
+            if(checkDaysAfterCreation($row->created_at, 1)) {
+                return '<div class="dropdown">
+                <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="true"><i class="bx bx-edit"></i></button>
+                    <ul class="dropdown-menu" data-popper-placement="bottom-start">
+                        <li><button type="button" class="dropdown-item text-info d-flex justify-content-between align-items-center" id="edit" data-uid="'.dohash($row->id).'" data-detail=\''.json_encode($row).'\'>Perbaiki <i class="bx bx-edit"></i></button></li>
+                        <li><button type="button" class="dropdown-item text-danger d-flex justify-content-between align-items-center" id="hapus" data-uid="'.dohash($row->id).'">Batalkan Import <i class="bx bx-trash"></i></button></li>
+                    </ul>
                 </div>';
             }
             return "<i class='bx bx-lock text-primary'></i>";

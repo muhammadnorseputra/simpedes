@@ -19,19 +19,72 @@
 <!--end breadcrumb-->
 <div class="card">
     <div class="card-body">
-        <table id="example" class="table table-striped table-bordered table-hover border border-3">
-            <thead>
-                <tr>
-                    <th data-bs-toggle="tooltip" data-bs-title="Nomor">No</th>
-                    <th data-bs-toggle="tooltip" data-bs-title="Order By Tahun">Tahun</th>
-                    <th data-bs-toggle="tooltip" data-bs-title="Order By Bulan">Bulan</th>
-                    <th>Jabatan</th>
-                    <th>Jumlah Bulan</th>
-                    <th>Jumlah Uang</th>
-                    <th>PPh21</th>
-                </tr>
-            </thead>
-        </table>
+        <ul class="nav nav-tabs nav-primary" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a
+                class="nav-link active"
+                data-bs-toggle="tab"
+                href="#primary"
+                role="tab"
+                aria-selected="true">
+                <div class="d-flex align-items-center">
+                    <div class="tab-icon">
+                    <i class="bx bx-money font-18 me-1"></i>
+                    </div>
+                    <div class="tab-title text-uppercase">Tunjangan</div>
+                </div>
+                </a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a
+                class="nav-link"
+                data-bs-toggle="tab"
+                href="#secondary"
+                role="tab"
+                aria-selected="false">
+                <div class="d-flex align-items-center">
+                    <div class="tab-icon">
+                    <i class="bx bx-spreadsheet font-18 me-1"></i>
+                    </div>
+                    <div class="tab-title text-uppercase">Absensi</div>
+                </div>
+                </a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="primary" role="tabpanel">
+                <table id="tunjangan" class="table table-striped table-bordered table-hover border border-3">
+                    <thead>
+                        <tr>
+                            <th data-bs-toggle="tooltip" data-bs-title="Nomor">No</th>
+                            <th data-bs-toggle="tooltip" data-bs-title="Order By Tahun">Tahun</th>
+                            <th data-bs-toggle="tooltip" data-bs-title="Order By Bulan">Bulan</th>
+                            <th>Jabatan</th>
+                            <th>Jumlah Bulan</th>
+                            <th>Jumlah Uang</th>
+                            <th>PPh21</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            <div class="tab-pane fade" id="secondary" role="tabpanel">
+                <table id="absensi" class="table table-striped table-bordered table-hover border border-3">
+                    <thead>
+                        <tr>
+                            <th data-bs-toggle="tooltip" data-bs-title="Nomor">No</th>
+                            <th data-bs-toggle="tooltip" data-bs-title="Order By Tahun">Tahun</th>
+                            <th data-bs-toggle="tooltip" data-bs-title="Order By Bulan">Bulan</th>
+                            <th>Hadir</th>
+                            <th>Izin</th>
+                            <th>Sakit</th>
+                            <th>TK</th>
+                            <th>CUTI</th>
+                            <th>TUDIN</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 <?= $this->endSection(); ?>
@@ -47,7 +100,7 @@
 <?= $this->section('script'); ?>
 <script>
     $(document).ready(function() {
-        let datatable  = $('table#example').DataTable({
+        let tunjangan  = $('table#tunjangan').DataTable({
             processing: true,
             serverSide: true,
             responsive: true,
@@ -76,6 +129,40 @@
                 {data: 'jumlah_bulan', width: '8%', className: 'text-center', orderable: false, searchabel: false},
                 {data: 'jumlah_uang', orderable: false, searchabel: false},
                 {data: 'pph21', orderable: false, searchabel: false, className: 'text-center'},
+            ]
+        });
+
+        let absensi  = $('table#absensi').DataTable({
+            processing: true,
+            serverSide: true,
+            responsive: true,
+            searching: false,
+            // lengthChange: false,
+            layout: {
+                topStart: [],
+                bottomStart: ['info','pageLength']
+            },
+            // paging: false,
+            // info: false,
+            order: [], //this mean no init order on datatable
+            ajax: {
+                url: '<?= base_url('datatable/riwayat/absensi') ?>',
+                method: 'POST',
+                data: {
+                    ['<?= csrf_token() ?>']: '<?= csrf_hash() ?>',
+                    nik: '<?= $row->nik ?>'
+                },
+            },
+            columns: [
+                {data: 'no', width: '3%', orderable: false, searchabel: false, className: 'text-center'},
+                {data: 'tahun', className: 'text-center text-uppercase', width: '5%'},
+                {data: 'bulan', className: 'text-uppercase', width: '10%'},
+                {data: 'hadir', orderable: false, searchabel: false, className: 'text-center'},
+                {data: 'izin', orderable: false, searchabel: false, className: 'text-center'},
+                {data: 'sakit', orderable: false, searchabel: false, className: 'text-center'},
+                {data: 'tk', orderable: false, searchabel: false, className: 'text-center'},
+                {data: 'cuti', orderable: false, searchabel: false, className: 'text-center'},
+                {data: 'tudin', orderable: false, searchabel: false, className: 'text-center'},
             ]
         });
     })

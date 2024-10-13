@@ -251,14 +251,14 @@ class AjaxSelect2 extends BaseController
         $response[csrf_token()] = csrf_hash();
         $q = @$postData['searchTerm'];
         // Fetch record
-        if($q === "" || empty($q)) {
-            $response['data'] = [[
-                "id" => 0,
-                "text" => 'Silahkan ketikan kata kunci yang benar',
-                'disabled' => true
-            ]];
-            return $this->response->setJSON($response);
-        }
+        // if($q === "" || empty($q)) {
+        //     $response['data'] = [[
+        //         "id" => 0,
+        //         "text" => 'Silahkan ketikan kata kunci yang benar',
+        //         'disabled' => true
+        //     ]];
+        //     return $this->response->setJSON($response);
+        // }
 
         if(session()->role === 'OPERATOR' || session()->role === 'USER'):
         $pegawai = $this->db->table('pegawai')
@@ -284,7 +284,7 @@ class AjaxSelect2 extends BaseController
             foreach($pegawai->getResult() as $list){
                 $data[] = array(
                     "id" => $list->nik,
-                    "text" => $list->nik." (".namalengkap($list->gelar_depan,$list->nama,$list->gelar_blk).")",
+                    "text" => $list->nik." - ".namalengkap($list->gelar_depan,$list->nama,$list->gelar_blk),
                 );
             }
 

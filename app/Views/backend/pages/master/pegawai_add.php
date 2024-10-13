@@ -73,7 +73,7 @@
                 <div class="col-md-4">
                     <div class="form-floating">
                         <input type="number" name="nipd" class="form-control" id="nipd" placeholder="NIPD" value="<?= @$default->nipd ?>">
-                        <label for="nipd">Nomor Induk Pegawai Desa</label>
+                        <label for="nipd">Nomor Induk Perangkat Desa</label>
                     </div>
                 </div>
                 <div class="col-md-4">

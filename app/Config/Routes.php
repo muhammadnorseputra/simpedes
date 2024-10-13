@@ -120,10 +120,12 @@ $routes->group('datatable', ['filter' => 'isAjaxOnly'], function($route) {
         $route->post('workshop', 'AjaxDatatable::riwayat_workshop');
         $route->post('lhkpn', 'AjaxDatatable::riwayat_lhkpn');
         $route->post('tunjangan', 'AjaxDatatable::riwayat_tunjangan');
+        $route->post('absensi', 'AjaxDatatable::riwayat_absensi');
     });
     // Nested router group /datatable/tunjangan
     $route->group('tunjangan', function($route) {
         $route->post('hitung', 'AjaxDatatable::hitung_tunjangan');
+        $route->post('absensi', 'AjaxDatatable::absensi');
     });
 });
 
@@ -150,6 +152,11 @@ $routes->group('pembayaran', function($route) {
     
     $route->get('tunjangan', 'Pembayaran::tunjangan');
     $route->post('tunjangan/filter', 'Pembayaran::filter');
+
+    $route->get('absensi', 'Pembayaran::absensi');
+    $route->post('absensi', 'Pembayaran::absensi', ['filter' => 'isAjaxOnly']);
+    $route->delete('absensi', 'Pembayaran::absensi', ['filter' => 'isAjaxOnly']);
+    $route->put('absensi', 'Pembayaran::absensi', ['filter' => 'isAjaxOnly']);
 
     $route->get('hitung', 'Pembayaran::hitung');
     $route->post('hitung', 'Pembayaran::hitung', ['filter' => 'isAjaxOnly']);

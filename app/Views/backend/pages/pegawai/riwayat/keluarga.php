@@ -52,10 +52,7 @@
         </li>
     </ul>
     <div class="tab-content py-3">
-        <div
-            class="tab-pane fade show active"
-            id="primary"
-            role="tabpanel">
+        <div class="tab-pane fade show active" id="primary" role="tabpanel">
             <div class="card shadow-none border">
                 <div class="card-header bg-light-success text-center ">
                     <h6 class="text-uppercase"><?= $row->jns_kelamin === 'PRIA' ? 'istri' : 'suami'; ?></h6>
