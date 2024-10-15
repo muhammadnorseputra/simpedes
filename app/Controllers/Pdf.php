@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use CodeIgniter\HTTP\ResponseInterface;
+use CodeIgniter\I18n\Time;
 use TCPDF;
 
 class Pdf extends BaseController
@@ -32,7 +33,7 @@ class Pdf extends BaseController
         $html = view('backend/pages/cetak/profile', $data);
 
 		$pdf->SetCreator(PDF_CREATOR);
-		$pdf->SetAuthor('M. NOR SEPUTRA');
+		$pdf->SetAuthor(config('SiteConfig')->siteSortName);
 		$pdf->SetTitle("PROFILE PEGAWAI - {$profile->nama}");
 		$pdf->SetSubject("Profile Pegawai {$profile->nama}");
 
@@ -51,6 +52,38 @@ class Pdf extends BaseController
 		$this->response->setContentType('application/pdf');
 		//Close and output PDF document
 		$pdf->Output("PROFILE-{$profile->nik}-{$profile->nama}.pdf", 'I');
+    }
+
+    public function absensi()
+    {
+        helper(["number","tgl_indo","time","hash"]);
+        $now = new Time('now', 'Asia/Jakarta', 'id_ID');
+        $req = $this->request;
+
+        $unor = db_connect()->table('ref_unit_kerja u')
+        ->join('ref_kecamatan k', 'u.kecamatan=k.id_kecamatan')
+        ->where('u.id_unit_kerja', $req->getPost('unit'))
+        ->get()
+        ->getRow();
+
+        $rekap = db_connect()->table('riwayat_absensi a')
+        ->select('a.id,a.nik,a.bulan,a.tahun,a.hadir,a.izin,a.sakit,a.tk,a.cuti,a.tudin,a.created_at,p.nama,p.gelar_depan,p.gelar_blk,u.nama_unit_kerja')
+        ->join('pegawai p', 'a.nik=p.nik')
+        ->join('ref_unit_kerja u', 'p.fid_unit_kerja=u.id_unit_kerja')
+        ->where('a.bulan', $req->getPost('bulan'))
+        ->where('a.tahun', $now->getYear()) // Tahun Ini
+        ->where('p.fid_unit_kerja', $req->getPost('unit'))
+        ->get();
+
+        $data = [
+            'title' => 'Rekap Absensi',
+            'req' => $req->getPost(),
+            'unor' => $unor,
+            'rekap' => $rekap->getResult()
+        ];
+        //line ini penting
+		$this->response->setContentType('application/pdf');
+        return view('backend/pages/cetak/absensi', $data);
     }
 
     public function cetak_tt_tunjangan()

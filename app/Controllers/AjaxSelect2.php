@@ -246,6 +246,10 @@ class AjaxSelect2 extends BaseController
         $postData = $request->getPost();
 
         $response = array();
+        // set count page
+        $page = $postData['page'];
+        $resultCount = 10;
+        $offset = ($page - 1) * $resultCount;
 
         // Read new token and assign in $response['token']
         $response[csrf_token()] = csrf_hash();
@@ -268,7 +272,9 @@ class AjaxSelect2 extends BaseController
                 ->like('nama', $q)
                 ->orLike('nik', $q)
             ->groupEnd()
-            ->orderBy('created_at', 'desc')->get();
+            ->orderBy('created_at', 'desc')
+            ->limit($resultCount)
+            ->offset($offset);
         else:
             $pegawai = $this->db->table('pegawai')
             ->where('status', 'AKTIF')
@@ -276,17 +282,28 @@ class AjaxSelect2 extends BaseController
                 ->like('nama', $q)
                 ->orLike('nik', $q)
             ->groupEnd()
-            ->orderBy('created_at', 'desc')->get();
+            ->orderBy('created_at', 'desc')
+            ->limit($resultCount)
+            ->offset($offset);
         endif;
 
-        if(count($pegawai->getResultArray()) > 0):
+        if(count($pegawai->get()->getResultArray()) > 0):
             $data = array();
-            foreach($pegawai->getResult() as $list){
+            foreach($pegawai->get()->getResult() as $list){
                 $data[] = array(
                     "id" => $list->nik,
                     "text" => $list->nik." - ".namalengkap($list->gelar_depan,$list->nama,$list->gelar_blk),
                 );
             }
+
+            $count = count($data) === $resultCount ? $pegawai->countAllResults() : count($data);
+            $endCount = $offset + $resultCount;
+            $morePages = $count > $endCount;
+
+            $response["pagination"] = [
+                "more" => $morePages,
+                "count" => $count
+            ];
 
             $response['data'] = $data;
 

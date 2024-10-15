@@ -174,11 +174,16 @@
 					url: $url,
 					method: $method,
 					data: $data,
+					beforeSend: function() {
+						_.find("button[type='submit']").html(`<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>`).prop("disabled", true);
+					},
 					success: function (res) {
 						
 						if(res.status !== true) {
 							// NotifError(res.message)
 							$containerMsg.attr("class", "alert alert-danger d-flex justify-content-start align-items-center p-2").html(`<span class="ms-2">${res.message}</span> <i class="bx bxs-error-circle bx-sm ms-auto"></i>`);
+							_.find("button[type='submit']").html(`Masuk`).prop("disabled", false);
+							return false;
 						}
 						if(res.status === true) {
 							$containerMsg.attr("class", "alert alert-success d-flex justify-content-start align-items-center p-2").html(`<span class="ms-2">${res.message}</span> <i class="bx bxs-check-circle bx-sm ms-auto text-success"></i>`);
@@ -191,6 +196,7 @@
 					error: function(err) {
 						$containerMsg.attr("class", "alert alert-danger d-flex justify-content-start align-items-center p-2").html(`<span class="ms-2">${ err.responseJSON.message || err.statusText} (${err.status})</span> <i class="bx bxs-error-circle bx-sm ms-auto"></i>`);
 						// NotifError(`${ err.responseJSON.message || err.statusText} (${err.status})`)
+                    _.find("button[type='submit']").html(`Masuk`).prop("disabled", false);
 					},
 				})
 			})

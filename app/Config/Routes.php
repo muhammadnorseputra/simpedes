@@ -146,6 +146,7 @@ $routes->group('select2', ['filter' => 'isAjaxOnly'], function($route) {
 $routes->group('cetak', function($route) {
     $route->get('profile/(:any)', 'Pdf::index/$1');
     $route->get('nominatif', 'Pdf::cetak_nomperkec');
+    $route->post('absensi', 'Pdf::absensi');
 });
 
 $routes->group('pembayaran', function($route) {

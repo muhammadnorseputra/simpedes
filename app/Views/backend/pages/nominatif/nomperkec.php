@@ -1,9 +1,10 @@
 <?php  
+use CodeIgniter\I18n\Time;
 class MYPDF extends TCPDF {
     public function Header(){
         $this->SetFont("DejaVuSans", "N", 8);
         $this->cell(0,5,"Daftar Nominatif Pegawai per Kecamatan ",0,0,'L',0); 
-        $this->cell(0,5,"Dicetak oleh ".session()->fullname." (NIK. ".session()->nik.") pada ".date_indo(date("Y-m-d"))."",0,0,'R',0); 
+        $this->cell(0,5,"Dicetak oleh ".(session()->get('fullname') ? session()->get('fullname') : session()->get('username'))." (NIK. ".session()->nik.") pada ".date_indo(date("Y-m-d"))."",0,0,'R',0); 
         //buat garis horizontal
         $this->Line(PDF_MARGIN_LEFT,$this->GetY()+5,$this->getPageWidth()-PDF_MARGIN_LEFT,$this->GetY()+ 5);  
     }
@@ -35,7 +36,7 @@ class MYPDF extends TCPDF {
         $this->Cell(60, 10, 'JABATAN', 1, 0, 'C', 1, '', 0, false, 'T', 'M');
         // $this->Cell(30, 10, 'GAJI', 1, 0, 'C', 1, '', 0, false, 'T', 'M');
         // $this->Cell(30, 10, 'TUNJANGAN', 1, 0, 'C', 1, '', 0, false, 'T', 'M');
-        $this->Cell(30, 10, 'PENDIDIKAN', 1, 0, 'C', 1, '', 0, false, 'T', 'M');
+        $this->Cell(25, 10, 'PENDIDIKAN', 1, 0, 'C', 1, '', 0, false, 'T', 'M');
         $this->Cell(30, 10, 'USIA', 1, 0, 'C', 1, '', 0, false, 'T', 'M');
         $this->Cell(50, 10, 'UNIT KERJA', 1, 0, 'C', 1, '', 0, false, 'T', 'M');
         $this->Cell(0, 10, 'TTL', 1, 1, 'C', 1, '', 0, false, 'T', 'M');
@@ -76,7 +77,7 @@ class MYPDF extends TCPDF {
                 $this->Cell(60, 10, 'JABATAN', 1, 0, 'C', 1, '', 0, false, 'T', 'M');
                 // $this->Cell(30, 10, 'GAJI', 1, 0, 'C', 1, '', 0, false, 'T', 'M');
                 // $this->Cell(30, 10, 'TUNJANGAN', 1, 0, 'C', 1, '', 0, false, 'T', 'M');
-                $this->Cell(30, 10, 'PENDIDIKAN', 1, 0, 'C', 1, '', 0, false, 'T', 'M');
+                $this->Cell(25, 10, 'PENDIDIKAN', 1, 0, 'C', 1, '', 0, false, 'T', 'M');
                 $this->Cell(30, 10, 'USIA', 1, 0, 'C', 1, '', 0, false, 'T', 'M');
                 $this->Cell(50, 10, 'UNIT KERJA', 1, 0, 'C', 1, '', 0, false, 'T', 'M');
                 $this->Cell(0, 10, 'TTL', 1, 1, 'C', 1, '', 0, false, 'T', 'M');
@@ -88,9 +89,9 @@ class MYPDF extends TCPDF {
             $this->MultiCell(60, 10, namalengkap($row->gelar_depan,$row->nama,$row->gelar_blk), 1, 'L', 1, 0, '', '', true, 0, false, true, 10, 'M');
             $this->MultiCell(30, 10, $row->jns_kelamin, 1, 'C', 1, 0, '', '', true, 0, false, true, 10, 'M');
             $this->MultiCell(60, 10, $row->nama_jabatan, 1, 'L', 1, 0, '', '', true, 0, false, true, 10, 'M');
-            $this->MultiCell(30, 10, isNull($row->nama_tingkat_pendidikan), 1, 'C', 1, 0, '', '', true, 0, false, true, 10, 'M');
+            $this->MultiCell(25, 10, isNull($row->nama_tingkat_pendidikan), 1, 'C', 1, 0, '', '', true, 0, false, true, 10, 'M');
             $this->MultiCell(30, 10, hitungUsia($row->tgl_lahir), 1, 'J', 1, 0, '', '', true, 0, false, true, 10, 'M');
-            $this->MultiCell(50, 10, $row->nama_unit_kerja, 1, 'L', 1, 0, '', '', true, 0, false, true, 10, 'M');
+            $this->MultiCell(50, 10, substr_replace($row->nama_unit_kerja,".",4,0), 1, 'L', 1, 0, '', '', true, 0, false, true, 10, 'M');
             $this->MultiCell(0, 10, $row->tmp_lahir.", ".date_indo($row->tgl_lahir), 1, 'L', 1, 1, '', '', true, 0, false, true, 10, 'M');
         $no++;
         $maxline++;
@@ -105,7 +106,8 @@ class MYPDF extends TCPDF {
         // Set font
         $this->SetFont('helvetica', 'N', 8);
         // Page number
-        $this->Cell(130, 10, 'Copyright ::: '.config('SiteConfig')->siteSortName, 0, false, 'L', 0, '', 0, false, 'T', 'M');
+        $now = new Time('now', 'Asia/Jakarta', 'id_ID');
+        $this->Cell(130, 10, 'Copyright ::: '.config('SiteConfig')->siteSortName.' | Waktu Server'.(substr($now->addHours(1),10)), 0, false, 'L', 0, '', 0, false, 'T', 'M');
         $this->setX(-32);
         // $this->SetTextColor(245,245,245);
         $this->Cell(20, 10, 'Halaman '.$this->getAliasNumPage().' / '.$this->getAliasNbPages(), 0, 1, 'L', 0, '', 0, false, 'T', 'M');
@@ -116,7 +118,7 @@ $pdf = new MYPDF("LANDSCAPE", "MM", "LEGAL", true, 'UTF-8', false);
 
 // set document information
 $pdf->SetCreator(PDF_CREATOR);
-$pdf->SetAuthor('M. NOR SEPUTRA');
+$pdf->SetAuthor(config('SiteConfig')->siteSortName);
 $pdf->SetTitle("Nominatif Pegawai - Kecamatan ".ucwords(strtolower($kecamatan->nama_kecamatan))." ".$req['tahun']);
 $pdf->SetSubject("Nominatif Pegawai - Kecamatan ".$kecamatan->nama_kecamatan." ".$req['tahun']);
 $pdf->SetKeywords("Nominatif Pegawai - Kecamatan ".$kecamatan->nama_kecamatan." ".$req['tahun']);

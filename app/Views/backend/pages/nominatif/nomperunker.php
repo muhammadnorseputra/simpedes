@@ -122,7 +122,7 @@ $pdf = new MYPDF("LANDSCAPE", "MM", "LEGAL", true, 'UTF-8', false);
 
 // set document information
 $pdf->SetCreator(PDF_CREATOR);
-$pdf->SetAuthor('M. NOR SEPUTRA');
+$pdf->SetAuthor(config('SiteConfig')->siteSortName);
 $pdf->SetTitle("Nominatif Pegawai - ".$unor->nama_unit_kerja." ".$req['tahun']);
 $pdf->SetSubject("Nominatif Pegawai - ".$unor->nama_unit_kerja." ".$req['tahun']);
 $pdf->SetKeywords("Nominatif Pegawai - ".$unor->nama_unit_kerja." ".$req['tahun']);

@@ -65,7 +65,7 @@
 <?= $this->section('script'); ?>
 <script>
     $(function() {
-      // options kelurahan / desa
+        // options kelurahan / desa
         $( 'select#unit' ).select2( {
             theme: "bootstrap-5",
             width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
@@ -97,8 +97,8 @@
             cache: false
             }
         });
-        let SELECTED_DESA = new Option('<?= @session()->nama_desa ?>', '<?= @session()->id_desa ?>', false, false);
-        $( 'select[name="fid_keldesa"]' ).append(SELECTED_DESA).trigger('change');
+        let SELECTED_UNOR = new Option('<?= @session()->nama_unit_kerja ?>', '<?= @session()->id_unit_kerja ?>', false, false);
+        $( 'select[name="unit"]' ).append(SELECTED_UNOR).trigger('change');
     });
 </script>
 <?= $this->endSection(); ?>

@@ -190,7 +190,7 @@ $pdf = new MYPDF("LANDSCAPE", "MM", "LEGAL", true, 'UTF-8', false);
 
 // set document information
 $pdf->SetCreator(PDF_CREATOR);
-$pdf->SetAuthor('M. NOR SEPUTRA');
+$pdf->SetAuthor(config('SiteConfig')->siteSortName);
 $pdf->SetTitle($unor->nama_unit_kerja." - Tunjangan - ".bulan($req['bulan'])." ".$tahun);
 $pdf->SetSubject($unor->nama_unit_kerja." - Tunjangan");
 $pdf->SetKeywords('Tunjangan,'.$unor->nama_unit_kerja);

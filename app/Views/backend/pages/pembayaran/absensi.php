@@ -193,6 +193,44 @@
         <?= form_close(); ?>
     </div>
 </div>
+
+<!-- Modal Cetak Absensi -->
+<div class="modal fade" id="cetak-absensi" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <?= form_open(base_url('cetak/absensi'), ['class' => 'modal-content needs-validation', 'target' => '_blank', 'data-parsley-validate' => '', 'id' => 'FormCetak', 'novalidate' => '', 'autocomplete' => 'off']); ?>
+            <div class="modal-header">
+                <h5 class="modal-title">Pilih Unit & Periode</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body d-flex flex-column justify-content-start align-items-start gap-3">
+                <div class="col-12">
+                    <label for="unit" class="form-label">Pilih Desa / Unit Kerja <span class="text-danger">*</span></label>
+                    <select class="form-select" name="unit" id="unit" data-placeholder="Pilih Unit Kerja" 
+                    data-parsley-errors-container="#errroUnit"
+                    data-parsley-error-message="Tidak Boleh Kosong"
+                    required></select>
+                    <div id="errroUnit"></div>
+                </div>
+                <div class="col-12">
+                    <div class="list-group">
+                        <?php foreach (listBulan() as $key => $value): 
+                            $check = $now->getMonth() == $key ? "checked" : "";    
+                        ?>
+                        <label class="list-group-item">
+                            <input class="form-check-input me-1" type="radio" name="bulan" value="<?= $key; ?>" <?= $check; ?>>
+                            <?= $value; ?>
+                        </label>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batal</button>
+                <button type="submit" class="btn btn-primary"><i class="bx bx-printer"></i> Cetak Rekap</button>
+            </div>
+        <?= form_close(); ?>
+    </div>
+</div>
 <?= $this->endSection(); ?>
 
 <?= $this->section('script'); ?>
@@ -205,6 +243,11 @@
             backdrop: 'static'
         });
         const MODAL_EDIT = new bootstrap.Modal("#edit-absensi", {
+            keyboard: false,
+            backdrop: 'static'
+        });
+
+        const MODAL_CETAK = new bootstrap.Modal("#cetak-absensi", {
             keyboard: false,
             backdrop: 'static'
         });
@@ -298,12 +341,20 @@
         })
 
         $.fn.dataTable.ext.buttons.reload = {
-                text: '<i class="bx bx-refresh"></i> Refresh',
-                action: function ( e, dt, node, config ) {
-                    dt.ajax.reload();
-                },
-                className: 'btn btn-secondary',
-            };
+            text: '<i class="bx bx-refresh"></i> Refresh',
+            action: function ( e, dt, node, config ) {
+                dt.ajax.reload();
+            },
+            className: 'btn btn-secondary',
+        };
+
+        $.fn.dataTable.ext.buttons.print = {
+            text: '<i class="bx bx-printer"></i> Cetak',
+            action: function ( e, dt, node, config ) {
+                MODAL_CETAK.show()
+            },
+            className: 'btn btn-success',
+        };
 
         $.fn.dataTable.ext.buttons.add = {
             text: '<i class="bx bx-plus"></i> Tambah',
@@ -328,7 +379,7 @@
                     buttons: ['add']
                 }],
                 topEnd: [{
-                    buttons: ['reload']
+                    buttons: ['reload','print']
                 }],
             },
             ajax: {
@@ -433,42 +484,28 @@
             dropdownParent: $("#add-absensi"),
             maximumInputLength: 20,
             minimumResultsForSearch: 10,
-            createTag: function (params) {
-                // Don't offset to create a tag if there is no @ symbol
-                if (params.term.indexOf('@') === -1) {
-                // Return null to disable tag creation
-                return null;
-                }
-
-                return {
-                    id: params.term,
-                    text: params.term
-                }
-            },
             ajax: { 
-            url: "<?= base_url('select2/pegawai')?>",
-            type: "POST",
-            dataType: 'json',
-            delay: 250,
-            data: function (params) {
-                // CSRF Hash
-                var csrfName = '<?= csrf_token() ?>'; // CSRF Token name
-                var csrfHash = '<?= csrf_hash() ?>'; // CSRF hash
+                url: "<?= base_url('select2/pegawai')?>",
+                type: "POST",
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    // CSRF Hash
+                    var csrfName = '<?= csrf_token() ?>'; // CSRF Token name
+                    var csrfHash = '<?= csrf_hash() ?>'; // CSRF hash
 
-                return {
-                    searchTerm: params.term, // search term
-                    [csrfName]: csrfHash // CSRF Token
-                };
-            },
-            escapeMarkup: function (markup) {
-                return markup;
+                    return {
+                        searchTerm: params.term || "", // search term
+                        page: params.page || 1,
+                        [csrfName]: csrfHash // CSRF Token
+                    };
                 },
-            processResults: function (response) {
-                return {
-                    results: response.data
-                };
-            },
-            cache: false
+                processResults: function (response) {
+                    return {
+                        results: response.data
+                    };
+                },
+                cache: true
             }
         });
 
@@ -498,6 +535,40 @@
                 return false;
             }
         });
+
+        // Cetak by unit kerja
+        $( 'select#unit' ).select2( {
+            theme: "bootstrap-5",
+            width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
+            placeholder: $( this ).data( 'placeholder' ),
+            minimumResultsForSearch: 15,
+            dropdownParent: $("#cetak-absensi"),
+            allowClear: true,
+            ajax: { 
+            url: "<?= base_url('select2/unit_kerja')?>",
+                type: "POST",
+                dataType: 'json',
+                delay: 350,
+                data: function (params) {
+                    // CSRF Hash
+                    var csrfName = '<?= csrf_token() ?>'; // CSRF Token name
+                    var csrfHash = '<?= csrf_hash() ?>'; // CSRF hash
+
+                    return {
+                        searchTerm: params.term, // search term
+                        [csrfName]: csrfHash // CSRF Token
+                    };
+                },
+                processResults: function (response) {
+                    return {
+                        results: response.data
+                    };
+                },
+                cache: false
+            }
+        });
+        let SELECTED_UNOR = new Option('<?= @session()->nama_unit_kerja ?>', '<?= @session()->id_unit_kerja ?>', false, false);
+        $( 'select[name="unit"]' ).append(SELECTED_UNOR).trigger('change');
     }); 
 </script>
 <?= $this->endSection(); ?>
