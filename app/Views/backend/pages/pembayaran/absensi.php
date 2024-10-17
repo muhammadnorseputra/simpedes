@@ -483,7 +483,7 @@
             placeholder: $( this ).data( 'placeholder' ),
             dropdownParent: $("#add-absensi"),
             maximumInputLength: 20,
-            minimumResultsForSearch: 10,
+            // minimumResultsForSearch: 10,
             ajax: { 
                 url: "<?= base_url('select2/pegawai')?>",
                 type: "POST",
