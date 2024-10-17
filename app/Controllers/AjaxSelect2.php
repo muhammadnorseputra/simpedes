@@ -133,7 +133,7 @@ class AjaxSelect2 extends BaseController
             foreach($unor->getResult() as $list){
                 $data[] = array(
                     "id" => $list->id_unit_kerja,
-                    "text" => ucwords($list->nama_unit_kerja)." - Kec. ".ucwords(strtolower($list->nama_kecamatan)),
+                    "text" => ucwords(substr_replace($list->nama_unit_kerja,".",4,0))." - Kec. ".ucwords(strtolower($list->nama_kecamatan)),
                 );
             }
 
@@ -184,7 +184,7 @@ class AjaxSelect2 extends BaseController
         foreach($unor->getResult() as $list){
             $data[] = array(
                 "id" => $list->id_unit_kerja,
-                "text" => ucwords(strtolower($list->nama_unit_kerja))." - Kec. ".ucwords(strtolower($list->nama_kecamatan)),
+                "text" => ucwords(strtolower(substr_replace($list->nama_unit_kerja,".",4,0)))." - Kec. ".ucwords(strtolower($list->nama_kecamatan)),
             );
         }
 
