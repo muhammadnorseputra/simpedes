@@ -287,7 +287,7 @@ class AjaxSelect2 extends BaseController
             ->offset($offset);
         endif;
 
-        if($pegawai->countAllResults(false) > 0):
+        if($pegawai->countAllResults() > 0):
             $data = array();
             foreach($pegawai->get()->getResult() as $list){
                 $data[] = array(
