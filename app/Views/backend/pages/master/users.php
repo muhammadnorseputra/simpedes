@@ -709,11 +709,6 @@ $(document).ready(function() {
           escapeMarkup: function (markup) {
             return markup;
             },
-          processResults: function (response) {
-             return {
-                results: response.results
-             };
-          },
           cache: false
         }
     });
