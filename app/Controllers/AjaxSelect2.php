@@ -298,7 +298,7 @@ class AjaxSelect2 extends BaseController
                 );
             }
 
-            $count = count($data) === $resultCount ? $pegawai->countAll() : count($data);
+            $count = count($data) === $resultCount ? $pegawai->countAll(false) : count($data);
             $endCount = $offset + $resultCount;
             $morePages = $count > $endCount;
 
