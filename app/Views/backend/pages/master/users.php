@@ -701,16 +701,17 @@ $(document).ready(function() {
              var csrfHash = '<?= csrf_hash() ?>'; // CSRF hash
 
              return {
-                searchTerm: params.term, // search term
-                [csrfName]: csrfHash // CSRF Token
-             };
+                    searchTerm: params.term || "", // search term
+                    page: params.page || 1,
+                    [csrfName]: csrfHash // CSRF Token
+                };
           },
           escapeMarkup: function (markup) {
             return markup;
             },
           processResults: function (response) {
              return {
-                results: response.data
+                results: response.results
              };
           },
           cache: false
