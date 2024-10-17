@@ -58,6 +58,11 @@
 									</div>
 									<div class="form-body">
 										<div id="message"></div>
+										<?php if(session('error')):  ?>
+											<div class="alert alert-danger d-flex justify-content-start align-items-center p-2" role="alert">
+												<span class="ms-2"><?= session('error')['message']; ?> </span><i class="bx bxs-error-circle bx-sm ms-auto"></i>
+											</div>
+										<?php endif; ?>
 										<?= form_open(base_url("auth/action"), ["id" => "formAuth", "class" => 'row g-3 needs-validation', 'novalidate' => '']) ?>
 											<div class="col-12">
 												<div class="form-floating">

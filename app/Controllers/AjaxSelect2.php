@@ -274,7 +274,8 @@ class AjaxSelect2 extends BaseController
             ->groupEnd()
             ->orderBy('created_at', 'desc')
             ->limit($resultCount)
-            ->offset($offset);
+            ->offset($offset)
+            ->get();
         else:
             $pegawai = $this->db->table('pegawai')
             ->where('status', 'AKTIF')
@@ -284,19 +285,20 @@ class AjaxSelect2 extends BaseController
             ->groupEnd()
             ->orderBy('created_at', 'desc')
             ->limit($resultCount)
-            ->offset($offset);
+            ->offset($offset)
+            ->get();
         endif;
 
-        if(count($pegawai->get()->getResultArray()) > 0):
+        if(count($pegawai->getResultArray()) > 0):
             $data = array();
-            foreach($pegawai->get()->getResult() as $list){
+            foreach($pegawai->getResult() as $list){
                 $data[] = array(
                     "id" => $list->nik,
                     "text" => $list->nik." - ".namalengkap($list->gelar_depan,$list->nama,$list->gelar_blk),
                 );
             }
 
-            $count = count($data) === $resultCount ? $pegawai->countAllResults() : count($data);
+            $count = count($data) === $resultCount ? count($pegawai->getResultArray()) : count($data);
             $endCount = $offset + $resultCount;
             $morePages = $count > $endCount;
 

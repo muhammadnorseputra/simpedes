@@ -24,7 +24,8 @@ class Auth extends BaseController
         $now = new Time('now', 'Asia/Jakarta', 'id_ID');
 
         if(!$this->request->isAjax()) {
-          return throw PageNotFoundException::forPageNotFound("Bad Request With Ajax Only");
+        //   return throw PageNotFoundException::forPageNotFound("Bad Request With Ajax Only");
+          return redirect()->to('auth')->with('error', ['message' => 'Bad Request With Ajax Only']);
         }
 
         $validation = service("validation");
@@ -45,7 +46,12 @@ class Auth extends BaseController
                 'message' => 'Formulir Tidak Lengkap',
                 'data' => $validation->getErrors()
             ];
-            return $this->response->setJson($res);
+
+            if($this->request->isAjax()) {
+                return $this->response->setJson($res);
+            }
+             
+            return redirect()->to('auth')->with('error', $res);
         }
 
         $username = $this->request->getPost('username');
