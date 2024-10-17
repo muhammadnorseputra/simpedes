@@ -305,12 +305,12 @@ class AjaxSelect2 extends BaseController
                 "count" => $count
             ];
 
-            $response['data'] = $data;
+            $response['results'] = $data;
 
             return $this->response->setJSON($response);
         endif;
 
-        $response['data'] = [[
+        $response['results'] = [[
             "id" => 0,
             "text" => 'Data tidak ditemukan, silahkan ketikan kata kunci yang benar',
             'disabled' => true

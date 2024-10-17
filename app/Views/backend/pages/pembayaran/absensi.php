@@ -488,7 +488,7 @@
                 url: "<?= base_url('select2/pegawai')?>",
                 type: "POST",
                 dataType: 'json',
-                delay: 250,
+                delay: 350,
                 data: function (params) {
                     // CSRF Hash
                     var csrfName = '<?= csrf_token() ?>'; // CSRF Token name
@@ -498,11 +498,6 @@
                         searchTerm: params.term || "", // search term
                         page: params.page || 1,
                         [csrfName]: csrfHash // CSRF Token
-                    };
-                },
-                processResults: function (response) {
-                    return {
-                        results: response.data
                     };
                 },
                 cache: true
