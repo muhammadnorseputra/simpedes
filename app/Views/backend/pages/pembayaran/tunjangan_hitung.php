@@ -27,7 +27,7 @@
             ?>
             <div class="alert alert-warning" role="alert">
                 <b>Perhatian !</b> 
-                Perhitungan setelah 3 Hari sejak ditambahkan, akan dikunci oleh sistem atau tidak bisa dibatalkan.
+                Perhitungan hanya bisa dilakukan setelah tanggal 15 keatas setiap bulan.
             </div>
             <table id="example" class="table table-striped table-bordered table-hover border border-3">
                 <thead>

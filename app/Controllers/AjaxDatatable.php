@@ -599,14 +599,22 @@ class AjaxDatatable extends BaseController
             return number_to_currency($value, "IDR", "id_ID");
         })
         ->add('action', function($row) {
-            if(checkDaysAfterCreation($row->created_at, 1)) {
+
+            $now = new Time('now', 'Asia/Jakarta', 'id_ID');
+            $current_date = $now->now()->addHours(1);
+            // Mendapatkan tanggal 15 bulan ini pukul 24:00 (sebenarnya tanggal 16 pukul 00:00)
+            $start_date = $now->createFromDate($current_date->getYear(), $current_date->getMonth(), 16);
+            // Mendapatkan tanggal 15 bulan depan
+            $end_date = $start_date->addMonths(1);
+            if ($current_date >= $start_date && $current_date < $end_date):
                 return '<div class="dropdown">
                 <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="true"><i class="bx bx-edit"></i></button>
                 <ul class="dropdown-menu" data-popper-placement="bottom-start">
                 <li><button type="button" class="dropdown-item text-danger d-flex justify-content-between align-items-center" id="hapus" data-uid="'.dohash($row->id).'">Batalkan Perhitungan <i class="bx bx-trash"></i></button></li>
                 </ul>
                 </div>';
-            }
+            endif;
+
             return "<i class='bx bx-lock text-primary'></i>";
 
         })
