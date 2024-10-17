@@ -500,7 +500,10 @@
                         [csrfName]: csrfHash // CSRF Token
                     };
                 },
-                cache: true
+                escapeMarkup: function (markup) {
+                    return markup;
+                },
+                cache: false
             }
         });
 

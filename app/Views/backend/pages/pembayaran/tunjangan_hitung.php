@@ -267,7 +267,7 @@ $(document).ready(function() {
           url: "<?= base_url('select2/pegawai')?>",
           type: "POST",
           dataType: 'json',
-          delay: 250,
+          delay: 360,
           data: function (params) {
              // CSRF Hash
              var csrfName = '<?= csrf_token() ?>'; // CSRF Token name
