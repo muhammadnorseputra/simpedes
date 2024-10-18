@@ -1,5 +1,6 @@
 <?php  
 namespace App\Controllers;
+use CodeIgniter\I18n\Time;
 
 class Dashboard extends BaseController
 {
@@ -161,9 +162,84 @@ class Dashboard extends BaseController
         return $tbl->getResultArray();
     }
 
+    private function totalPengeluaranTunjanganPerTahun($year)
+    {
+
+        $total_pengeluaran_tunjangan_tahunan = $this->db->table('riwayat_tunjangan rj')
+        ->selectSum('rj.jumlah_uang')
+        ->join('pegawai p', 'rj.nik=p.nik', 'left')
+        ->where('rj.tahun', $year)
+        ->when(session()->role, static function($query, $status) {
+            if($status === 'OPERATOR') {
+                $query->where('p.fid_unit_kerja', session()->id_unit_kerja);
+            }
+        })
+        ->get()
+        ->getRow()->jumlah_uang;
+
+        return $total_pengeluaran_tunjangan_tahunan;
+    }
+
+    private function trendsAbsensiByMonth()
+    {
+        $query = db_connect()->table('riwayat_absensi a')
+                ->select('a.nik, 
+                           SUM(a.hadir) as total_hadir, 
+                           SUM(a.izin) as total_izin, 
+                           SUM(a.sakit) as total_sakit, 
+                           SUM(a.tk) as total_tk, 
+                           SUM(a.cuti) as total_cuti, 
+                           SUM(a.tudin) as total_tudin')
+                ->join('pegawai p', 'a.nik=p.nik')
+                ->where('bulan', date('m'))
+                ->groupBy('nik')
+                ->when(session()->role, static function($query, $status) {
+                    if($status === 'OPERATOR') {
+                        $query->where('p.fid_unit_kerja', session()->id_unit_kerja);
+                    }
+                })
+                ->get();
+        $jml_peg_hadir = [];
+        $jml_peg_izin = [];
+        $jml_peg_sakit = [];
+        $jml_peg_tk = [];
+        $jml_peg_cuti = [];
+        $jml_peg_tudin = [];
+        foreach ($query->getResult() as $row) {
+            if($row->total_hadir != 0) {
+                $jml_peg_hadir[] = $row->nik;
+            }
+            if($row->total_izin != 0) {
+                $jml_peg_izin[] = $row->nik;
+            }
+            if($row->total_sakit != 0) {
+                $jml_peg_sakit[] = $row->nik;
+            }
+            if($row->total_tk != 0) {
+                $jml_peg_tk[] = $row->nik;
+            }
+            if($row->total_cuti != 0) {
+                $jml_peg_cuti[] = $row->nik;
+            }
+            if($row->total_tudin != 0) {
+                $jml_peg_tudin[] = $row->nik;
+            }
+        }
+        $arr = [
+            'Hadir' => count($jml_peg_hadir),
+            'Izin' => count($jml_peg_izin),
+            'Sakit' => count($jml_peg_sakit),
+            'TK' => count($jml_peg_tk),
+            'Cuti' => count($jml_peg_cuti),
+            'Tudin' => count($jml_peg_tudin)
+        ];
+        return $arr;
+    }
+
     public function index(): string
     {
-        helper(['number']);
+        helper(['number','tgl_indo']);
+        $now = new Time('now', 'Asia/Jakarta', 'id_ID');
         
         if(session()->role === 'ADMIN' || session()->role === 'USER') {
             $total_pegawai_bpd_aktif = $this->db->table('pegawai p')
@@ -202,22 +278,6 @@ class Dashboard extends BaseController
             ->whereIn('p.status', ['NON_AKTIF','NON_AKTIF_NIK_DITOLAK']);
         }
 
-        if(session()->role === 'ADMIN' || session()->role === 'USER') {
-            $total_pengeluaran_tunjangan_tahunan = $this->db->table('riwayat_tunjangan')
-            ->selectSum('jumlah_uang')
-            ->where('tahun', date('Y'))
-            ->get()
-            ->getRow()->jumlah_uang;
-        } else {
-            $total_pengeluaran_tunjangan_tahunan = $this->db->table('riwayat_tunjangan rj')
-            ->selectSum('rj.jumlah_uang')
-            ->join('pegawai p', 'rj.nik=p.nik', 'left')
-            ->where('rj.tahun', date('Y'))
-            ->where('p.fid_unit_kerja', session()->id_unit_kerja)
-            ->get()
-            ->getRow()->jumlah_uang;
-        }
-
         $total_unit_kerja_aktif = $this->db->table('ref_unit_kerja')->where('aktif', 'Y');
         $total_desa = $this->db->table('ref_desa');
         $total_userportal = $this->db->table('users');
@@ -226,13 +286,14 @@ class Dashboard extends BaseController
         $data = [
             'title' => 'Dashboard',
             'config' => $config,
+            'now' => $now->addHours(1),
             'total_pegawai_bpd_aktif' => $total_pegawai_bpd_aktif->countAllResults(false),
             'total_pegawai_pemdes_aktif' => $total_pegawai_pemdes_aktif->countAllResults(false),
             'total_pegawai_non_aktif' => $total_pegawai_non_aktif->countAllResults(false),
             'total_unit_kerja_aktif' => $total_unit_kerja_aktif->countAllResults(false),
             'total_desa' => $total_desa->countAll(),
             'total_userportal' => $total_userportal->countAll(),
-            'total_pengeluaran_tunjangan_tahunan' => $total_pengeluaran_tunjangan_tahunan,
+            'total_pengeluaran_tunjangan_tahunan' => $this->totalPengeluaranTunjanganPerTahun(2024),
             'charts' => [
                 'gender_pria' => $this->trendsPegawaiByGender('PRIA'),
                 'gender_wanita' => $this->trendsPegawaiByGender('WANITA'),
@@ -242,7 +303,8 @@ class Dashboard extends BaseController
                 'status_kawin' => $this->trendsPegawaiByStatusKawin(),
                 'lokasi' => $this->locationMaps(),
                 'jenis_pegawai' => $this->trendsPegawaiByJenis(),
-                'tunjangan' => $this->trendsTunjanganBulanan()
+                'tunjangan' => $this->trendsTunjanganBulanan(),
+                'absensi' => $this->trendsAbsensiByMonth()
             ]
         ];
         return view('backend/pages/dashboard', $data);

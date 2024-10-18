@@ -46,21 +46,6 @@
             </div>
         </div>
     </div>
-    <div class="col">
-        <div class="card radius-10 border-start border-0 border-4 border-warning">
-            <div class="card-body">
-                <div class="d-flex align-items-center">
-                    <div>
-                        <p class="mb-0 text-secondary">Total Pengeluaran Tunjangan</p>
-                        <h4 class="my-1 text-warning"><?= number_to_currency($total_pengeluaran_tunjangan_tahunan ?? 0, "IDR", "id_ID"); ?></h4>
-                        <p class="mb-0 font-13">Tahun <?= date('Y') ?></p>
-                    </div>
-                    <div class="widgets-icons-2 rounded-circle bg-gradient-orange text-white ms-auto"><i class='bx bxs-wallet' ></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
     <?php if(session()->role === 'ADMIN'): ?>
     <div class="col">
         <div class="card radius-10 border-start border-0 border-4 border-success">
@@ -96,7 +81,7 @@
 </div><!--end row-->
 <div class="row">
     <!-- Chart Pengeluaran Tunjangan Bulanan -->
-    <div class="col-12 col-ld-12 d-flex">
+    <div class="col-12 col-lg-8 d-flex order-last order-md-first">
         <div class="card radius-10 w-100">
             <div class="card-header">
                 <div class="d-flex align-items-center gap-2">
@@ -108,7 +93,41 @@
                 </div>
             </div>
             <div class="card-body">
-                <div id="tunjangan">
+                <div id="tunjangan"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="row">
+            <div class="col">
+                <div class="card radius-10 border-start border-0 border-4 border-warning">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div>
+                                <p class="mb-0 text-secondary">Total Pengeluaran Tunjangan</p>
+                                <h4 class="my-1 text-warning"><?= number_to_currency($total_pengeluaran_tunjangan_tahunan ?? 0, "IDR", "id_ID"); ?></h4>
+                                <p class="mb-0 font-13">Tahun <?= date('Y') ?></p>
+                            </div>
+                            <div class="widgets-icons-2 rounded-circle bg-gradient-orange text-white ms-auto"><i class='bx bxs-wallet' ></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card radius-10 w-100">
+                    <div class="card-header">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bx bx-chart bx-md"></i>
+                            <div>
+                                <h6 class="mb-0">Trend Absensi <?= bulan($now->getMonth()) ?></h6>
+                                <p class="mb-0 text-secondary">Absensi Pegawai Berdsarkan Keterangan</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="absensi"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -251,6 +270,56 @@
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 <script>
 $(function() {
+    // Trend Absensi
+    var ABSENSI = <?= json_encode($charts['absensi']); ?>;
+
+    // Konversi data untuk Highcharts
+    var ABSENSI_CATEGORIES = [];
+    var ABSENSI_DATA = [];
+
+    Object.entries(ABSENSI).forEach(([key,value]) => {
+        ABSENSI_CATEGORIES.push(key);
+        ABSENSI_DATA.push(parseInt(value));
+    });
+
+    Highcharts.chart('absensi', {
+        chart: {
+            polar: true,
+            type: 'column',
+        height: 270 // Atur tinggi chart sesuai kebutuhan
+        },
+        title: {
+            text: ''
+        },
+        credits: {
+            enabled: false
+        },
+        legend: {
+            enabled: false
+        },
+        pane: {
+            startAngle: 0,
+            endAngle: 360
+        },
+        xAxis: {
+            categories: ABSENSI_CATEGORIES,
+            tickmarkPlacement: 'on',
+            lineWidth: 0
+        },
+        yAxis: {
+            gridLineInterpolation: 'polygon',
+            lineWidth: 0,
+            min: 0,
+            max: 10 // Sesuaikan dengan nilai maksimum
+        },
+        series: [{
+            colorByPoint: true,
+            name: 'Jumlah Pegawai',
+            data: ABSENSI_DATA,
+            pointPlacement: 'on'
+        }]
+    });
+
     // Trend Tunjangan
     // Data dari PHP (CI4 Query Builder)
     var TUNJANGAN = <?= json_encode($charts['tunjangan']); ?>;
@@ -263,7 +332,6 @@ $(function() {
         TUNJANGAN_CATEGORIES.push(item.bulan);
         TUNJANGAN_DATA.push(parseInt(item.jumlah_uang));
     });
-    console.log(TUNJANGAN_CATEGORIES)
     Highcharts.chart('tunjangan', {
         chart: {
             type: 'line',
