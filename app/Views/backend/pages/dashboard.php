@@ -99,7 +99,7 @@
     </div>
     <div class="col-lg-4">
         <div class="row">
-            <div class="col">
+            <div class="col-12">
                 <div class="card radius-10 border-start border-0 border-4 border-warning">
                     <div class="card-body">
                         <div class="d-flex align-items-center">
@@ -114,7 +114,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col">
+            <div class="col-12">
                 <div class="card radius-10 w-100">
                     <div class="card-header">
                         <div class="d-flex align-items-center gap-2">
