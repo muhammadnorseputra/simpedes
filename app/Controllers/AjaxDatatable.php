@@ -193,10 +193,10 @@ class AjaxDatatable extends BaseController
     public function users() 
     {
     
-        helper(["hash"]);
+        helper(["hash","pegawai"]);
 
         $builder = $this->db->table('users s')
-        ->select('s.nik,p.nipd,p.nama,s.username,s.is_disabled,s.role,p.gelar_depan,p.gelar_blk,p.jns_kelamin,p.fid_unit_kerja,p.photo,u.nama_unit_kerja')
+        ->select('s.nik,p.nipd,p.nama,s.username,s.is_disabled,s.role,s.last_login,p.gelar_depan,p.gelar_blk,p.jns_kelamin,p.fid_unit_kerja,p.photo,u.nama_unit_kerja')
         ->join('pegawai p','s.nik=p.nik', 'left')
         ->join('ref_unit_kerja u', 's.fid_unit_kerja=u.id_unit_kerja', 'left')
         ->when(session()->role, static function($query, $status) {
@@ -221,6 +221,12 @@ class AjaxDatatable extends BaseController
                 return '<a href="'.base_url("assets/images/users/default.png").'" target="_blank"><img src="'.base_url("assets/images/users/default.png").'" class="user-img" alt="default.png"></a>';
             }
             return '<a href="'.base_url("assets/images/users/".$value).'" target="_blank"><img src="'.base_url("assets/images/users/".$value).'" class="user-img" alt="'.$value.'"></a>';
+        })
+        ->format('last_login', function($value) {
+            if($value !== null) {
+                return '<div class="d-flex aling-items-center justify-content-start gap-2 text-secondary"><i class="bx bx-timer text-primary" data-bs-toggle="tooltip" title="'.$value.'"></i> '.updateAt($value).'</div>';
+            }
+            return "";
         })
         ->add('action', function($row) {
             $isDisabled = $row->is_disabled === 'Y' ? 'Enabled' : 'Disabled';

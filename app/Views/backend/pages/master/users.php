@@ -27,6 +27,7 @@
                             <th>Nama Lengkap / Role</th>
                             <th>Username</th>
                             <th>Unit Kerja</th>
+                            <th>Terakhir Login</th>
                             <th>Aksi</th>
                         </tr>
                         <tr>
@@ -36,6 +37,7 @@
                             <th class="filterhead"></th>
                             <th class="filterhead"></th>
                             <th class="filterhead"></th>
+                            <th></th>
                             <th></th>
                         </tr>
                     </thead>
@@ -572,6 +574,7 @@ $(document).ready(function() {
             {data: 'nama',  className: 'align-middle'},
             {data: 'username',  className: 'align-top'},
             {data: 'nama_unit_kerja', orderable: false},
+            {data: 'last_login', orderable: false, searchable: false},
             {data: 'action', width: '10%',orderable: false, searchable: false}
         ],
         createdRow: function(row, data, dataIndex){
