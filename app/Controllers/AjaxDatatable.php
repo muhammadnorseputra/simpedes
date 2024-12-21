@@ -358,7 +358,7 @@ class AjaxDatatable extends BaseController
             {
                 if($builder->status === 'AKTIF'):
                     return '<div class="mb-2 chip chip-md">
-                    <img src="'.base_url("assets/images/users/".$builder->photo).'" alt="'.$builder->nama.'" width="150" class="user-img"/><a href="'.base_url("app/pegawai/detail/".dohash($builder->nik)).'" title="'.$builder->nik.'">NIPD. '.$builder->nipd.'</a></div> <br>';
+                    <img src="'.base_url("assets/images/users/".$builder->photo).'" alt="'.$builder->nama.'" width="150" class="user-img"/><a href="'.base_url("app/pegawai/detail/".dohash($builder->nik)).'" title="'.$builder->nik.'">NIK. '.$builder->nipd.'</a></div> <br>';
                 endif;
                 return '<div class="mb-2 chip chip-md"><img src="'.base_url("assets/images/users/".$builder->photo).'" alt="'.$builder->nama.'" width="150" class="user-img"/>NIPD. '.$builder->nipd.'</div><br>';
             }

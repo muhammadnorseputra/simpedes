@@ -135,9 +135,12 @@
                     <option selected value="">-- Pilih Pekerjaan --</option>
                     <option value="Pegawai Negeri">Pegawai Negeri</option>
                     <option value="Pegawai Swasta">Pegawai Swasta</option>
+                    <option value="Perangkat Desa">Perangkat Desa</option>
                     <option value="Wiraswasta">Wiraswasta</option>
                     <option value="Honorer">Honorer</option>
                     <option value="Rumah Tangga">Rumah Tangga</option>
+                    <option value="Pelajar">Pelajar / Mahasiswa(i)</option>
+                    <option value="Belum Bekerja">Belum Bekerja</option>
                 </select>
             </div>
             <div class="col-12">
@@ -289,12 +292,30 @@
         ["id" => "", "nik" => ""]) ?>
         <div class="row g-3 px-4">
             <div class="col-12">
+                <label for="nik_anak" class="form-label">NIK (Nomor Induk Kependudukan) <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="nik_anak" name="nik_anak" placeholder="Masukan NIK" required/>
+            </div>
+            <div class="col-12">
                 <label for="nama_anak" class="form-label">Nama Anak <span class="text-danger">*</span></label>
                 <input type="text" class="form-control" id="nama_anak" name="nama_anak" placeholder="Nama Anak" required/>
             </div>
             <div class="col-12">
                 <label for="tmp_lahir" class="form-label">Tempat Lahir <span class="text-danger">*</span></label>
                 <input type="text" class="form-control" id="tmp_lahir" name="tmp_lahir" placeholder="Tempat Lahir" required/>
+            </div>
+            <div class="col-12">
+                <label for="pekerjaan">Pekerjaan <span class="text-danger">*</span></label>
+                <select class="form-select" name="pekerjaan" id="pekerjaan" required>
+                    <option selected value="">-- Pilih Pekerjaan --</option>
+                    <option value="Pegawai Negeri">Pegawai Negeri</option>
+                    <option value="Pegawai Swasta">Pegawai Swasta</option>
+                    <option value="Perangkat Desa">Perangkat Desa</option>
+                    <option value="Wiraswasta">Wiraswasta</option>
+                    <option value="Honorer">Honorer</option>
+                    <option value="Rumah Tangga">Rumah Tangga</option>
+                    <option value="Pelajar">Pelajar / Mahasiswa(i)</option>
+                    <option value="Belum Bekerja">Belum Bekerja</option>
+                </select>
             </div>
             <div class="col-6">
                 <label for="tgl_lahir">Tanggal Lahir <span class="text-danger">*</span></label>

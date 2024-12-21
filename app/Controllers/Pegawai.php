@@ -745,11 +745,13 @@ class Pegawai extends BaseController
         {
             $data = [
                 'nik' => rehash($id),
+                'nik_anak' => $request->getPost('nik_anak'),
                 'nama_anak' => $request->getPost('nama_anak'),
                 'fid_sutri_ke' => $request->getPost('fid_sutri_ke'),
                 'jns_kelamin' => $request->getPost('jns_kelamin'),
                 'tmp_lahir' => $request->getPost('tmp_lahir'),
                 'tgl_lahir' => $request->getPost('tgl_lahir'),
+                'pekerjaan' => $request->getPost('pekerjaan'),
                 'status' => $request->getPost('status'),
                 'status_hidup' => $request->getPost('status_hidup') === 'YA' ? 'YA' : 'TIDAK',
                 'tanggungan' => $request->getPost('tanggungan') === 'YA' ? 'YA' : 'TIDAK',
@@ -779,11 +781,13 @@ class Pegawai extends BaseController
         if($request->isAJAX() && $request->is("put") && $paramsType === "anak" && $methodType = "update")
         {
             $update = [
+                'nik_anak' => $request->getPost('nik_anak'),
                 'nama_anak' => $request->getPost('nama_anak'),
                 'fid_sutri_ke' => $request->getPost('fid_sutri_ke'),
                 'jns_kelamin' => $request->getPost('jns_kelamin'),
                 'tmp_lahir' => $request->getPost('tmp_lahir'),
                 'tgl_lahir' => $request->getPost('tgl_lahir'),
+                'pekerjaan' => $request->getPost('pekerjaan'),
                 'status' => $request->getPost('status'),
                 'status_hidup' => $request->getPost('status_hidup') === 'YA' ? 'YA' : 'TIDAK',
                 'tanggungan' => $request->getPost('tanggungan') === 'YA' ? 'YA' : 'TIDAK',

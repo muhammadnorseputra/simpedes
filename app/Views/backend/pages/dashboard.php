@@ -286,7 +286,7 @@ $(function() {
         chart: {
             polar: true,
             type: 'column',
-        height: 270 // Atur tinggi chart sesuai kebutuhan
+            height: 270 // Atur tinggi chart sesuai kebutuhan
         },
         title: {
             text: ''
@@ -310,7 +310,7 @@ $(function() {
             gridLineInterpolation: 'polygon',
             lineWidth: 0,
             min: 0,
-            max: 10 // Sesuaikan dengan nilai maksimum
+            max: 7 // Sesuaikan dengan nilai maksimum
         },
         series: [{
             colorByPoint: true,

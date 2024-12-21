@@ -29,12 +29,30 @@
         ["id" => dohash($row->id), "nik" => dohash($row->nik)]) ?>
         <div class="row g-3 px-4">
             <div class="col-12">
+                <label for="nik_anak" class="form-label">NIK (Nomor Induk Kependudukan) <span class="text-danger">*</span></label>
+                <input type="text" value="<?= $row->nik_anak; ?>" class="form-control" id="nik_anak" name="nik_anak" placeholder="Masukan NIK" required/>
+            </div>
+            <div class="col-12">
                 <label for="nama_anak" class="form-label">Nama Anak <span class="text-danger">*</span></label>
                 <input type="text" value="<?= $row->nama_anak; ?>" class="form-control" id="nama_anak" name="nama_anak" placeholder="Nama Anak" required/>
             </div>
             <div class="col-12">
                 <label for="tmp_lahir" class="form-label">Tempat Lahir <span class="text-danger">*</span></label>
                 <input type="text" value="<?= $row->tmp_lahir; ?>" class="form-control" id="tmp_lahir" name="tmp_lahir" placeholder="Tempat Lahir" required/>
+            </div>
+            <div class="col-12">
+                <label for="pekerjaan">Pekerjaan <span class="text-danger">*</span></label>
+                <select class="form-select" name="pekerjaan" id="pekerjaan" required>
+                    <option value="">-- Pilih Pekerjaan Anak --</option>
+                    <option value="Pegawai Negeri" <?= $row->pekerjaan === 'Pegawai Negeri' ? 'selected' : ''; ?>>Pegawai Negeri</option>
+                    <option value="Pegawai Swasta" <?= $row->pekerjaan === 'Pegawai Swasta' ? 'selected' : ''; ?>>Pegawai Swasta</option>
+                    <option value="Perangkat Desa" <?= $row->pekerjaan === 'Perangkat Desa' ? 'selected' : ''; ?>>Perangkat Desa</option>
+                    <option value="Wiraswasta" <?= $row->pekerjaan === 'Wiraswasta' ? 'selected' : ''; ?>>Wiraswasta</option>
+                    <option value="Honorer" <?= $row->pekerjaan === 'Honorer' ? 'selected' : ''; ?>>Honorer</option>
+                    <option value="Rumah Tangga" <?= $row->pekerjaan === 'Rumah Tangga' ? 'selected' : ''; ?>>Rumah Tangga</option>
+                    <option value="Pelajar" <?= $row->pekerjaan === 'Pelajar' ? 'selected' : ''; ?>>Pelajar / Mahasiswa(i)</option>
+                    <option value="Belum Bekerja" <?= $row->pekerjaan === 'Belum Bekerja' ? 'selected' : ''; ?>>Belum Bekerja</option>
+                </select>
             </div>
             <div class="col-6">
                 <label for="tgl_lahir">Tanggal Lahir <span class="text-danger">*</span></label>

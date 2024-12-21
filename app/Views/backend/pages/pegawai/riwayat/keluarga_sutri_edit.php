@@ -46,9 +46,12 @@
                     <option value="">-- Pilih Pekerjaan --</option>
                     <option value="Pegawai Negeri" <?= $row->pekerjaan === 'Pegawai Negeri' ? 'selected' : ''; ?>>Pegawai Negeri</option>
                     <option value="Pegawai Swasta" <?= $row->pekerjaan === 'Pegawai Swasta' ? 'selected' : ''; ?>>Pegawai Swasta</option>
+                    <option value="Perangkat Desa" <?= $row->pekerjaan === 'Perangkat Desa' ? 'selected' : ''; ?>>Perangkat Desa</option>
                     <option value="Wiraswasta" <?= $row->pekerjaan === 'Wiraswasta' ? 'selected' : ''; ?>>Wiraswasta</option>
                     <option value="Honorer" <?= $row->pekerjaan === 'Honorer' ? 'selected' : ''; ?>>Honorer</option>
                     <option value="Rumah Tangga" <?= $row->pekerjaan === 'Rumah Tangga' ? 'selected' : ''; ?>>Rumah Tangga</option>
+                    <option value="Pelajar" <?= $row->pekerjaan === 'Pelajar' ? 'selected' : ''; ?>>Pelajar / Mahasiswa(i)</option>
+                    <option value="Belum Bekerja" <?= $row->pekerjaan === 'Belum Bekerja' ? 'selected' : ''; ?>>Belum Bekerja</option>
                 </select>
             </div>
             <div class="col-12">
