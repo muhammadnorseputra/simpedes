@@ -26,13 +26,14 @@ class PegawaiModel extends Model
         return $builder;
     }
 
-    public function getDetailPegawaiByJabatanId($id) 
+    public function getDetailPegawaiByJabatanId($id,$unker_id) 
     {
         $builder = $this->where('p.status', 'AKTIF')
         ->join('ref_unit_kerja u', 'p.fid_unit_kerja=u.id_unit_kerja')
         ->join('ref_desa d', 'p.fid_keldesa=d.id_desa')
         ->join('ref_jabatan j', 'p.fid_jabatan=j.id')
         ->where('j.id', $id)
+        ->where('p.fid_unit_kerja', $unker_id)
         ->get();
         return $builder;
     }

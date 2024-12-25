@@ -343,6 +343,28 @@
         <?= form_close(); ?>
     </div>
 </div>
+<!-- Modal Setting Account User-->
+<div class="modal fade" id="set-account" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <?= form_open(base_url('app/master/users/set-account'), ['class' => 'modal-content needs-validation', 'id' => 'FormSetAccount', 'novalidate' => '', 'autocomplete' => 'off'], ['token' => '']); ?>
+            <div class="modal-header">
+                <h5 class="modal-title">Setting Account Userportal</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body d-flex flex-column justify-content-start align-items-start gap-3">
+                <div class="col-12 d-none" id="preview"></div>
+                <div class="col-12">
+                    <label for="username">Username</label>
+                    <input type="text" name="username" id="username" placeholder="username" class="form-control">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batal</button>
+                <button type="submit" class="btn btn-primary"><i class="bx bx-save"></i> Simpan Perubahan</button>
+            </div>
+        <?= form_close(); ?>
+    </div>
+</div>
 <?= $this->endSection(); ?>
 
 <?= $this->section('script'); ?>
@@ -353,11 +375,14 @@
 <script src="<?= base_url("template/vertical/plugins/datatable/js/datatables.min.js") ?>" type="text/javascript"></script>
 <script type="text/javascript">
 $(document).ready(function() {
+    // init element
     const FORM_RESET_PASSWORD  = $("form#FormReset");
     const FORM_ADD_USER  = $("form#FormAddUser");
     const FORM_ADD_USER_MANUAL  = $("form#FormAddUserManual");
     const FORM_SET_ROLE  = $("form#FormSetRole");
+    const FORM_SET_ACCOUNT  = $("form#FormSetAccount");
 
+    // init modal
     const MODAL_RESET_PASSWORD = new bootstrap.Modal("#reset-password", {
         keyboard: false,
         backdrop: 'static'
@@ -370,8 +395,12 @@ $(document).ready(function() {
         keyboard: false,
         backdrop: 'static'
     });
+    const MODAL_SET_ACCOUNT = new bootstrap.Modal("#set-account", {
+        keyboard: false,
+        backdrop: 'static'
+    });
 
-
+    // form action
     FORM_ADD_USER.on("submit", function(e) {
         e.preventDefault();
         let _ = $(this);
@@ -505,7 +534,44 @@ $(document).ready(function() {
                 });
         }
     })
+    FORM_SET_ACCOUNT.on("submit", function(e) {
+        e.preventDefault();
+        let _ = $(this);
+        _.parsley({
+            trigger: 'change'
+        }).validate();
 
+        if(_.parsley().isValid()) {
+            // CSRF Hash
+            let csrfName = '<?= csrf_token() ?>'; // CSRF Token name
+            let csrfHash = '<?= csrf_hash() ?>'; // CSRF hash
+            let username = _.find("input[name='username']").val();
+            let token = _.find("input[name='token']").val();
+            let data = {
+                [csrfName]: csrfHash,
+                _method: 'PUT',
+                username,
+                token,
+            };
+            $.post(_.attr('action'), data, function(res){
+                if(res.status === true) {
+                    iziToast.success({
+                        message: res.message,
+                        position: 'topCenter',
+                    });
+                    MODAL_SET_ACCOUNT.hide();
+                    return datatable.ajax.reload();
+                }
+            }, 'json').fail((err) => {
+                    iziToast.error({
+                        message: err.responseJSON.message || err.statusText,
+                        position: 'topCenter',
+                    });
+                });
+        }
+    })
+
+    // modal on close
     $("#reset-password").on('hidden.bs.modal', (event) => {
        FORM_RESET_PASSWORD[0].reset();
        FORM_RESET_PASSWORD.parsley().reset();
@@ -519,7 +585,12 @@ $(document).ready(function() {
        FORM_ADD_USER_MANUAL.find('select[name="fid_unit_kerja"]').val('').trigger('change');
        FORM_ADD_USER_MANUAL.parsley().reset();
     })
+    $("#set-account").on('hidden.bs.modal', (event) => {
+        FORM_SET_ACCOUNT[0].reset();
+        FORM_SET_ACCOUNT.parsley().reset();
+    })
 
+    // datatable extend
     $.fn.dataTable.ext.buttons.reload = {
         text: '<i class="bx bx-refresh"></i> Refresh',
         action: function ( e, dt, node, config ) {
@@ -535,7 +606,7 @@ $(document).ready(function() {
         },
         className: 'btn btn-primary'
     };
-
+    // init datatable
     var datatable = $('table#example').DataTable({
         processing: true,
         serverSide: true,
@@ -607,6 +678,7 @@ $(document).ready(function() {
         }
     });
 
+    // disable function button
     datatable.on("click", "button#DisabledFn", function() {
         let _ = $(this),
         is_disabled = _.data('status'),
@@ -633,7 +705,7 @@ $(document).ready(function() {
                 });
             });
     })
-
+    // set role function button
     datatable.on("click", "button#SetRoleFn", function() {
         let _ = $(this),
         token = _.data('uid'),
@@ -663,14 +735,44 @@ $(document).ready(function() {
             return false;
         }
     })
-
+    // set account function button
+    datatable.on("click", "button#SetAccountFn", function() {
+        let _ = $(this),
+        token = _.data('uid'),
+        username = _.data('account');
+        MODAL_SET_ACCOUNT.show();
+        FORM_SET_ACCOUNT.find("input[name='token']").val(token);
+        FORM_SET_ACCOUNT.find("input[name='username']").val(username);
+        let preview = $("#set-account").find("div#preview").removeClass("d-none");
+        preview.html('');
+        if(token !== '') {
+            preview.html('Loading ...');
+            $.getJSON(`${origin}/select2/pegawai`, { nik: token }, function(res) {
+                const { photo, nama, nama_unit_kerja } = res.data;
+                preview.html(`
+                    <div class="d-flex flex-row justify-content-start align-items-center gap-3">
+                        <img src="${photo}" class="user-img" alt="${nama}">
+                        <div class="d-inline-flex flex-column justify-content-start align-items-start">
+                            <span class="fw-bold">${nama}</span>
+                            <span>${nama_unit_kerja}</span>
+                        </div>
+                    </div>  
+                    <hr/>
+                `)
+            }).fail((err) => {
+                preview.addClass('text-danger').html( err.responseJSON.message || err.statusText )
+            })
+            return false;
+        }
+    })
+    // edit function button
     datatable.on("click", "button#EditFn", function() {
         let _ = $(this),
         token = _.data('uid');
         FORM_RESET_PASSWORD.find('input[name="token"]').val(token);
         MODAL_RESET_PASSWORD.show();
     });
-
+    
     const select2 = $( 'select#pegawai' ).select2({
         theme: "bootstrap-5",
         width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',

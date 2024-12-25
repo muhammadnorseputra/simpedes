@@ -400,6 +400,21 @@ class Master extends BaseController
             }
             return $this->failNotFound('User not disabled');
         }
+        if($request->is('put') && $request->is('ajax') && $paramsType === 'set-account') {
+            $data = [
+                'username' => $request->getPost('username')
+            ];
+            $db = $this->db->table('users')->where('nik', $request->getPost('token'))->update($data);
+            if($db)
+            {
+                $msg = [
+                    'status' => true,
+                    'message' => 'Informasi account berhasil diperbaharui',
+                ];
+                return $this->respond($msg, 200);
+            }
+            return $this->failNotFound('User not found');
+        }
 
         if($request->is('patch') && $request->is('ajax')) {
             $data = [

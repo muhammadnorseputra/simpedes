@@ -407,7 +407,7 @@
             <td class="text-center">
             <?php if($row->jenis === 'BPD'): ?>
             <div> 
-                <?php $kabpd = $ttd->getDetailPegawaiByJabatanId(8)->getRow(); ?>
+                <?php $kabpd = $ttd->getDetailPegawaiByJabatanId(8, $row->fid_unit_kerja)->getRow(); ?>
                 Paringin, <?= date_indo(date('Y-m-d')); ?>
                 <br>
                 Mengesahkan, <br> <span class="font-weight-bold">KETUA BPD</span>
@@ -417,7 +417,7 @@
             </div>
             <?php else: ?>
             <div>
-            <?php $kades = $ttd->getDetailPegawaiByJabatanId(1)->getRow(); ?>
+            <?php $kades = $ttd->getDetailPegawaiByJabatanId(1, $row->fid_unit_kerja)->getRow(); ?>
                 Paringin, <?= date_indo(date('Y-m-d')); ?>
                 <br>
                 Mengesahkan, <br><span class="font-weight-bold"> KEPALA DESA</span>
