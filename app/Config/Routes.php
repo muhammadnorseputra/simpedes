@@ -170,3 +170,7 @@ $routes->group('nominatif', function($route) {
     $route->post('nomperkec', 'Pdf::cetak_nomperkec');
     $route->post('cetak', 'Pdf::cetak_nomperunker');
 });
+
+$routes->group('export', function($route) {
+    $route->get('excel', 'Export::excel');
+});

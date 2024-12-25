@@ -65,6 +65,13 @@ $(document).ready(function() {
         },
         className: 'btn btn-primary'
     };
+    $.fn.dataTable.ext.buttons.excel = {
+        text: '<i class="bx bx-export"></i> Excel',
+        action: function ( e, dt, node, config ) {
+            window.location.href= `${origin}/app/master/pegawai/peremajaan`
+        },
+        className: 'btn btn-success'
+    };
 
     var datatable = $('table#example').DataTable({
         processing: true,
@@ -81,7 +88,7 @@ $(document).ready(function() {
                     'spacer',
                     {
                         text: '<i class="bx bx-export"></i> Export',
-                        'split': ['print', 'csv']
+                        'split': ['print', 'csv','excel']
                     },
                     'spacer',
                     'reload',
