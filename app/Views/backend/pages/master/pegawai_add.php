@@ -18,7 +18,7 @@
 
     <div class="alert alert-warning" role="alert">
             <b>Perhatian !</b> 
-            Formulir yang diberi tanda (<span class="text-danger">*</span>) wajib diisi.
+            Formulir yang diberi tanda (<span class="text-danger">*</span>) wajib diisi dan perhatikan ketentuan yang bertanda (<span class="text-danger">**</span>)
         </div>
     <div class="card">
     <div class="card-header px-4 py-3 d-flex justify-content-start align-items-center">
@@ -225,14 +225,14 @@
             <div class="row mb-3 gap-md-0 gap-3">
               <div class="col-md-4">
                   <div class="form-floating">
-                      <input type="text" name="no_bpjs_kesehatan" value="<?= @$default->no_bpjs_kesehatan ?>" class="form-control" id="no_bpjs_kesehatan" placeholder="Nomor BPJS Kesehatan">
-                      <label for="no_bpjs_kesehatan">Nomor BPJS Kesehatan</label>
+                      <input type="text" name="no_bpjs_kesehatan" value="<?= @$default->no_bpjs_kesehatan ?>" class="form-control" id="no_bpjs_kesehatan" placeholder="Nomor BPJS Kesehatan" required>
+                      <label for="no_bpjs_kesehatan">Nomor BPJS Kesehatan <span class="text-danger">*</span></label>
                   </div>
               </div>
               <div class="col-md-4">
                   <div class="form-floating">
-                      <input type="text" name="no_bpjs_ketenagakerjaan" value="<?= @$default->no_bpjs_ketenagakerjaan ?>" class="form-control" id="no_bpjs_ketenagakerjaan" placeholder="Nomor BPJS Ketenaga Kerjaan">
-                      <label for="no_bpjs_ketenagakerjaan">Nomor BPJS Ketenaga Kerjaan</label>
+                      <input type="text" name="no_bpjs_ketenagakerjaan" value="<?= @$default->no_bpjs_ketenagakerjaan ?>" class="form-control" id="no_bpjs_ketenagakerjaan" placeholder="Nomor BPJS Ketenaga Kerjaan" required>
+                      <label for="no_bpjs_ketenagakerjaan">Nomor BPJS Ketenaga Kerjaan <span class="text-danger">*</span></label>
                   </div>
               </div>
               <div class="col-md-4">
@@ -271,7 +271,7 @@
                         data-parsley-mime-type="image/jpg,image/jpeg"
                         data-parsley-image-dimensions="150x150">
                         <?php endif; ?>
-                        <label for="formFile" class="form-label mt-2">** Format File (jpg/jpeg) <br> ** Maksimal size : 300 kb <br> ** Dimensi 4x6 / 3x4</label>
+                        <label for="formFile" class="form-label mt-2"><span class="text-danger">**</span> Format File (jpg/jpeg) <br> <span class="text-danger">**</span> Maksimal size : 300 kb <br> <span class="text-danger">**</span> Dimensi 4x6 atau 3x4</label>
                     </div>
                 </div>
                 
@@ -310,7 +310,7 @@
                         data-parsley-mime-type="image/jpg,image/jpeg"
                         data-parsley-image-dimensions="150x150">
                         <?php endif; ?>
-                        <label for="fileKTP" class="form-label mt-2">** Format File (jpg/jpeg) <br> ** Maksimal size : 300 kb <br> ** Mode landscape</label>
+                        <label for="fileKTP" class="form-label mt-2"><span class="text-danger">**</span> Format File (jpg/jpeg) <br> <span class="text-danger">**</span> Maksimal size : 300 kb <br> <span class="text-danger">**</span> Mode landscape</label>
                     </div>
                     </div>
                 </div>
