@@ -98,7 +98,7 @@ class Export extends BaseController
                 ->setCellValue('S' . $column, $peg['nama_status_kawin'])
                 ->setCellValueExplicit('T' . $column, $peg['no_bpjs_kesehatan'], DataType::TYPE_STRING)
                 ->setCellValueExplicit('U' . $column, $peg['no_bpjs_ketenagakerjaan'], DataType::TYPE_STRING)
-                ->setCellValue('P' . $column, $peg['no_npwp'])
+                ->setCellValueExplicit('V' . $column, $peg['no_npwp'], DataType::TYPE_STRING)
                 ->setCellValue('W' . $column, $peg['status'])
                 ->setCellValue('X' . $column, $peg['ket_status']);
             $no++;
