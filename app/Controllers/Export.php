@@ -5,9 +5,11 @@ namespace App\Controllers;
 use App\Controllers\BaseController;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
 
 class Export extends BaseController
 {
+    
     public function excel()
     {   
         $pegawai = model('PegawaiModel');
@@ -64,9 +66,9 @@ class Export extends BaseController
         $no=1;
         foreach ($data as $peg) {
             $sheet->setCellValue('A' . $column, $no)
-                ->setCellValue('B' . $column, "'".$peg['nik'])
-                ->setCellValue('C' . $column, "'".$peg['no_kk'])
-                ->setCellValue('D' . $column, "'".$peg['nipd'])
+                ->setCellValueExplicit('B' . $column, $peg['nik'], DataType::TYPE_STRING)
+                ->setCellValueExplicit('C' . $column, $peg['no_kk'], DataType::TYPE_STRING)
+                ->setCellValueExplicit('D' . $column, $peg['nipd'], DataType::TYPE_STRING)
                 ->setCellValue('E' . $column, $peg['nama'])
                 ->setCellValue('F' . $column, $peg['gelar_depan'])
                 ->setCellValue('G' . $column, $peg['gelar_blk'])
@@ -82,8 +84,8 @@ class Export extends BaseController
                 ->setCellValue('Q' . $column, $peg['no_hp'])
                 ->setCellValue('R' . $column, $peg['email'])
                 ->setCellValue('S' . $column, $peg['nama_status_kawin'])
-                ->setCellValue('T' . $column, $peg['no_bpjs_kesehatan'])
-                ->setCellValue('U' . $column, $peg['no_bpjs_ketenagakerjaan'])
+                ->setCellValueExplicit('T' . $column, $peg['no_bpjs_kesehatan'], DataType::TYPE_STRING)
+                ->setCellValueExplicit('U' . $column, $peg['no_bpjs_ketenagakerjaan'], DataType::TYPE_STRING)
                 ->setCellValue('P' . $column, $peg['no_npwp'])
                 ->setCellValue('W' . $column, $peg['status'])
                 ->setCellValue('X' . $column, $peg['ket_status']);

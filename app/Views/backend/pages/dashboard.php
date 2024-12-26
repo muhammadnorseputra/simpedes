@@ -521,14 +521,15 @@ $(function() {
         },
         tooltip: {
             headerFormat: 'Kelompok Usia <b>{point.x}</b><br/>',
-            pointFormat: 'Jumlah: <b>{point.y}</b>'
+            pointFormat: 'Jumlah: <b>{point.y}</b>',
+            useHTML: false
         },
         plotOptions: {
             column: {
-                //stacking: 'normal',
-                    dataLabels: {
-                        enabled: true,
-                    },
+                stacking: 'normal',
+                dataLabels: {
+                    enabled: true,
+                },
             }
         },
         series: [{

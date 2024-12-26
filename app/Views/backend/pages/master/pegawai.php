@@ -23,11 +23,12 @@
                         <tr>
                             <th>NIK</th>
                             <th>NIPD</th>
-                            <th>Photo</th>
+                            <th>Foto</th>
                             <th>Nama Lengkap</th>
                             <th>Unit Kerja / Jabatan</th>
-                            <th>Status</th>
-                            <th>Role</th>
+                            <th>Status Data</th>
+                            <th>Kewenangan</th>
+                            <th>Waktu (Tambah/Ubah)</th>
                             <th>Aksi</th>
                         </tr>
                         <tr>
@@ -37,6 +38,7 @@
                             <th class="filterhead"></th>
                             <th class="filterhead"></th>
                             <th class="filterhead"></th>
+                            <th></th>
                             <th></th>
                             <th></th>
                         </tr>
@@ -66,9 +68,9 @@ $(document).ready(function() {
         className: 'btn btn-primary'
     };
     $.fn.dataTable.ext.buttons.excel = {
-        text: '<i class="bx bx-export"></i> Excel',
+        text: '<i class="bx bx-share"></i> Excel',
         action: function ( e, dt, node, config ) {
-            window.location.href= `${origin}/app/master/pegawai/peremajaan`
+            window.location.href= `${origin}/export/excel`
         },
         className: 'btn btn-success'
     };
@@ -88,7 +90,7 @@ $(document).ready(function() {
                     'spacer',
                     {
                         text: '<i class="bx bx-export"></i> Export',
-                        'split': ['print', 'csv','excel']
+                        'split': ['print','csv','pdf','copy','excel']
                     },
                     'spacer',
                     'reload',
@@ -112,6 +114,7 @@ $(document).ready(function() {
             {data: 'nama_unit_kerja', orderable: false},
             {data: 'status', width: '10%', orderable: false},
             {data: 'role', width: '10%', orderable: false},
+            {data: 'created_at', width: '10%', orderable: true},
             {data: 'action', width: '10%',orderable: false, searchable: false}
         ],
         orderCellsTop: true,

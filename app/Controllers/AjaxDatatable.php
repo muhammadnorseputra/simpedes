@@ -143,7 +143,7 @@ class AjaxDatatable extends BaseController
 
         $builder = $this->db->table('pegawai p')
         ->select('p.nik,p.nipd,p.nama,p.gelar_depan,p.gelar_blk,p.jns_kelamin,p.fid_unit_kerja,p.photo,p.status,
-        u.nama_unit_kerja,j.nama_jabatan,s.role')
+        u.nama_unit_kerja,j.nama_jabatan,s.role,p.created_at,p.updated_at')
         ->join('ref_unit_kerja u', 'p.fid_unit_kerja=u.id_unit_kerja', 'left')
         ->join('ref_jabatan j', 'p.fid_jabatan=j.id','left')
         ->join('users s', 'p.nik=s.nik', 'left')
@@ -176,6 +176,12 @@ class AjaxDatatable extends BaseController
             if ($value && $value === "USER") return "<span class='badge rounded-pill text-white bg-success p-2 text-uppercase px-3'><i class='bx bxs-user me-1'></i> ".$value."</span>";
             if ($value && $value === "ADMIN") return "<span class='badge rounded-pill text-white bg-primary p-2 text-uppercase px-3'><i class='bx bxs-user me-1'></i> ".$value."</span>";
             return "";
+        })
+        ->edit('created_at', function($row) {
+            if($row->updated_at !== null) {
+                return '<div class="d-flex aling-items-center justify-content-start gap-2 text-secondary"><i class="bx bx-timer text-primary" data-bs-toggle="tooltip" title="Waktu Ubah : '.$row->updated_at.'"></i> U. '.updateAt($row->updated_at).'</div>';  
+            } 
+            return '<div class="d-flex aling-items-center justify-content-start gap-2 text-secondary"><i class="bx bx-timer text-primary" data-bs-toggle="tooltip" title="Waktu Tambah : '.$row->created_at.'"></i> T. '.updateAt($row->created_at).'</div>';
         })
         ->add('action', function($row) {
             $verif = $row->status === 'VERIFIKASI' || $row->status === 'AKTIF' || $row->status === 'NON_AKTIF' || $row->status === 'NON_AKTIF_NIK_DITOLAK' ? 
