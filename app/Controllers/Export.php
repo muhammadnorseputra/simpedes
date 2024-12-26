@@ -3,15 +3,20 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
+use CodeIgniter\I18n\Time;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Cell\DataType;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Style\Color;
 
 class Export extends BaseController
 {
     
     public function excel()
     {   
+        $now = new Time('now', 'Asia/Jakarta', 'id_ID');
+
         $pegawai = model('PegawaiModel');
         $data = $pegawai->select('p.*,j.nama_jabatan,u.nama_unit_kerja,a.nama_agama,d.nama_desa as desa_domisili,sk.nama_status_kawin')
         ->join('ref_jabatan j', 'fid_jabatan=j.id', 'left')
@@ -52,7 +57,14 @@ class Export extends BaseController
         $sheet->getDefaultColumnDimension()->setAutoSize(true);
         $sheet->setAutoFilter('A1:X1');
         $sheet->getStyle('A1:X1')->applyFromArray([
-            'font' => ['bold' => true]
+            'font' => [
+                'bold' => true,
+                'color' => ['argb' => 'FFFFFFFF']
+            ],
+            'fill' => array(
+                'fillType' => Fill::FILL_SOLID,
+                'startColor' => array('argb' => 'FF4F81BD')
+            )
         ]);
 
         $protection = $sheet->getProtection();
@@ -80,8 +92,8 @@ class Export extends BaseController
                 ->setCellValue('M' . $column, $peg['nama_agama'])
                 ->setCellValue('N' . $column, $peg['alamat'])
                 ->setCellValue('O' . $column, $peg['desa_domisili'])
-                ->setCellValue('P' . $column, $peg['no_telp_rumah'])
-                ->setCellValue('Q' . $column, $peg['no_hp'])
+                ->setCellValueExplicit('P' . $column, $peg['no_telp_rumah'], DataType::TYPE_STRING)
+                ->setCellValueExplicit('Q' . $column, $peg['no_hp'], DataType::TYPE_STRING)
                 ->setCellValue('R' . $column, $peg['email'])
                 ->setCellValue('S' . $column, $peg['nama_status_kawin'])
                 ->setCellValueExplicit('T' . $column, $peg['no_bpjs_kesehatan'], DataType::TYPE_STRING)
@@ -93,7 +105,7 @@ class Export extends BaseController
             $column++;
         }
         $writer = new Xlsx($spreadsheet);
-        $filename = date('Y-m-d-His'). '-DATA-PEGAWAI';
+        $filename = $now->addHours(1).'-DATA-PEGAWAI';
 
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename=' . $filename . '.xlsx');
