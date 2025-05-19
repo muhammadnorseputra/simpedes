@@ -13,37 +13,38 @@ class Master extends BaseController
 
     protected $db;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->db = db_connect();
     }
 
     public function jabatan($paramsId = "")
     {
         $request = $this->request;
-        if($paramsId !== "" && $request->is("get")) {
+        if ($paramsId !== "" && $request->is("get")) {
             $db = $this->db->table('ref_jabatan')->where('id', $paramsId)->get();
-            
-            if(count($db->getResultArray()) === 0) {
+
+            if (count($db->getResultArray()) === 0) {
                 return throw PageNotFoundException::forPageNotFound();
             }
 
             $atasanId = $this->db->table('ref_jabatan')
-            ->select('id,nama_jabatan')
-            ->where('id', $db->getRow()->id_atasan)
-            ->get();
+                ->select('id,nama_jabatan')
+                ->where('id', $db->getRow()->id_atasan)
+                ->get();
             $data = [
                 'row' => count($db->getResultArray()),
                 'data' => $db->getRow(),
-                'title' => 'Master Jabatan '.$paramsId,
+                'title' => 'Master Jabatan ' . $paramsId,
                 'getAtasan' => $atasanId->getFirstRow()
             ];
 
-            
+
 
             return view('backend/pages/master/jabatan_edit', $data);
         }
 
-        if($request->is("put") && $request->is("ajax")) {
+        if ($request->is("put") && $request->is("ajax")) {
             $input = $request->getPost();
             $data = [
                 'nama_jabatan' => $input['nama_jabatan'],
@@ -55,8 +56,8 @@ class Master extends BaseController
             ];
 
             $db = $this->db->table('ref_jabatan')->where('id', $input['_id'])->update($data);
-            
-            if($db) {
+
+            if ($db) {
                 $msg = [
                     'statusCode' => 201,
                     'status' => $data,
@@ -69,11 +70,11 @@ class Master extends BaseController
                     'message' => 'Gagal menambahkan diperbaharui !',
                 ];
             }
-    
+
             return $this->response->setJson($msg);
         }
 
-        if($request->is("post") && $request->is("ajax")) {
+        if ($request->is("post") && $request->is("ajax")) {
             $input = $request->getPost();
             $data = [
                 'nama_jabatan' => $input['nama_jabatan'],
@@ -83,10 +84,10 @@ class Master extends BaseController
                 'tunjangan' => str_replace(".", "", $input['tunjangan']),
                 'usia_bup' => str_replace(".", "", $input['bup']),
             ];
-    
+
             $query = $this->db->table('ref_jabatan')->insert($data);
-            
-            if($query) {
+
+            if ($query) {
                 $msg = [
                     'statusCode' => 201,
                     'status' => $data,
@@ -99,15 +100,15 @@ class Master extends BaseController
                     'message' => 'Gagal menambahkan data !',
                 ];
             }
-    
+
             return $this->response->setJson($msg);
         }
 
-        if($request->is("delete") && $request->is("ajax")) {
+        if ($request->is("delete") && $request->is("ajax")) {
             $id = $request->getPost('id');
             $db = $this->db->table('ref_jabatan')->delete(['id' => $id]);
 
-            if($db) {
+            if ($db) {
                 $msg = [
                     'statusCode' => 201,
                     'status' => $db,
@@ -120,7 +121,7 @@ class Master extends BaseController
                     'message' => 'Gagal menghapus data !',
                 ];
             }
-    
+
             return $this->response->setJson($msg);
         }
 
@@ -140,28 +141,28 @@ class Master extends BaseController
 
         $request = $this->request;
 
-        if($paramsType === 'peremajaan' && $paramsType !== "") {
-            
-            $defaultData = $this->db->table('pegawai')->where('nik', rehash($request->getGet('token')))->get(); 
-                            
-            if($request->is("post") && $request->is("ajax")) {
+        if ($paramsType === 'peremajaan' && $paramsType !== "") {
+
+            $defaultData = $this->db->table('pegawai')->where('nik', rehash($request->getGet('token')))->get();
+
+            if ($request->is("post") && $request->is("ajax")) {
                 $ceknik = $this->db->table('pegawai')->where('nik', $request->getPost('nik'))->get();
                 $imageFile = $request->getFile('photo');
                 $ktpFile = $request->getFile('photo_ktp');
 
                 // jika data sudah ada dan status ENTRI_ULANG
-                if(count($ceknik->getResult()) > 0 && $ceknik->getRow()->status === 'ENTRI_ULANG') {
+                if (count($ceknik->getResult()) > 0 && $ceknik->getRow()->status === 'ENTRI_ULANG') {
                     // upload photo
-                    $updatePhotoNewName = $request->getPost('nik').".".$imageFile->getClientExtension();
-                    if($imageFile->isValid() === true) {
+                    $updatePhotoNewName = $request->getPost('nik') . "." . $imageFile->getClientExtension();
+                    if ($imageFile->isValid() === true) {
                         $imageFile->move("assets/images/users", $updatePhotoNewName, true);
                     }
                     // upload KTP
-                    $updateNewNameKtp = $request->getPost('nik').".".$ktpFile->getClientExtension();
-                    if($ktpFile->isValid() === true) {
+                    $updateNewNameKtp = $request->getPost('nik') . "." . $ktpFile->getClientExtension();
+                    if ($ktpFile->isValid() === true) {
                         $ktpFile->move("assets/file_ktp/", $updateNewNameKtp, true);
                     }
-                    
+
                     // jika data sudah ada
                     $update = [
                         'no_kk' => $request->getPost('no_kk'),
@@ -190,17 +191,17 @@ class Master extends BaseController
                         'updated_by' => session()->get('nik')
                     ];
 
-                    if($imageFile->hasMoved() === false) {
+                    if ($imageFile->hasMoved() === false) {
                         unset($update["photo"]);
                     }
 
-                    if($ktpFile->hasMoved() === false) {
+                    if ($ktpFile->hasMoved() === false) {
                         unset($update["photo_ktp"]);
                     }
 
                     $SaveUpdate = $this->db->table('pegawai')->where('nik', $request->getPost('nik'))->update($update);
 
-                    if($SaveUpdate) {
+                    if ($SaveUpdate) {
                         $msg = [
                             'statusCode' => 200,
                             'status' => $SaveUpdate,
@@ -217,7 +218,7 @@ class Master extends BaseController
                     // var_dump($imageFile->hasMoved());die();
                 }
 
-                if(count($ceknik->getResult()) > 0 && $ceknik->getRow()->status !== 'ENTRI_ULANG') {
+                if (count($ceknik->getResult()) > 0 && $ceknik->getRow()->status !== 'ENTRI_ULANG') {
                     $msg = [
                         'statusCode' => 500,
                         'status' => false,
@@ -228,10 +229,10 @@ class Master extends BaseController
                 }
 
                 // upload photo
-                $newName = $request->getPost('nik').".".$imageFile->getClientExtension();
+                $newName = $request->getPost('nik') . "." . $imageFile->getClientExtension();
                 $imageFile->move("assets/images/users/", $newName, true);
                 // upload KTP
-                $newNameKtp = $request->getPost('nik').".".$ktpFile->getClientExtension();
+                $newNameKtp = $request->getPost('nik') . "." . $ktpFile->getClientExtension();
                 $ktpFile->move("assets/file_ktp/", $newNameKtp, true);
 
                 $akun = [
@@ -259,20 +260,20 @@ class Master extends BaseController
                     'photo_ktp' => $newNameKtp,
                     'status' => 'VERIFIKASI',
                     'created_at' => $now->addHours(1),
-                    'created_by' => session()->get('nik') 
+                    'created_by' => session()->get('nik')
                 ];
                 $save = $this->db->table('pegawai')->insert($akun);
-                if($save) {
+                if ($save) {
                     $msg = [
                         'statusCode' => 201,
                         'status' => true,
                         'message' => 'Data berhasil ditambahkan !',
-                        'redirect' => base_url("/app/master/pegawai/peremajaan?token=".dohash($request->getPost('nik')))
+                        'redirect' => base_url("/app/master/pegawai/peremajaan?token=" . dohash($request->getPost('nik')))
                     ];
                 } else {
                     $msg = [
                         'statusCode' => 500,
-                        'status' => fales,
+                        'status' => false,
                         'message' => 'Gagal gagal ditambahkan !',
                         'redirect' => false
                     ];
@@ -280,20 +281,20 @@ class Master extends BaseController
                 return $this->response->setJson($msg);
             }
 
-            if($request->is("put") && $request->is("ajax")) {
+            if ($request->is("put") && $request->is("ajax")) {
                 $nik = $request->getPost('token');
                 $update = [
                     'status' => 'VERIFIKASI'
                 ];
                 $db = $this->db->table('pegawai')->where('nik', rehash($nik))->update($update);
-                if($db) {
+                if ($db) {
                     $msg = [
                         'statusCode' => 200,
                         'status' => $db,
                         'message' => 'Data usulan berhasil dikirim !',
                     ];
                     return $this->response->setJson($msg);
-                } 
+                }
 
                 $msg = [
                     'statusCode' => 500,
@@ -303,7 +304,7 @@ class Master extends BaseController
                 return $this->response->setJson($msg);
             }
 
-            if($request->is("patch") && $request->is("ajax")) {
+            if ($request->is("patch") && $request->is("ajax")) {
 
                 $nik = $request->getPost('token');
                 $update = [
@@ -311,7 +312,7 @@ class Master extends BaseController
                     'ket_status' => $request->getPost('ket_status')
                 ];
                 $db = $this->db->table('pegawai')->where('nik', rehash($nik))->update($update);
-                if($db) {
+                if ($db) {
                     $msg = [
                         'statusCode' => 200,
                         'status' => $db,
@@ -331,13 +332,15 @@ class Master extends BaseController
 
             $defaultDesa = $this->db->table('ref_desa')->where('id_desa', @$defaultData->getFirstRow()->fid_keldesa)->get();
             $defaultUnitKerja = $this->db->table('ref_unit_kerja')->where('id_unit_kerja', @$defaultData->getFirstRow()->fid_unit_kerja)->get();
-            
+
             // jika status data verifikasi
-            if(@$defaultData->getRow()->status !== 'ENTRI_ULANG' 
-            && @$defaultData->getRow()->status !== 'ENTRI' 
-            && $session->get('role') !== 'ADMIN'
-            && $session->get('role') !== 'USER'
-            && isset($defaultData->getRow()->status)):
+            if (
+                @$defaultData->getRow()->status !== 'ENTRI_ULANG'
+                && @$defaultData->getRow()->status !== 'ENTRI'
+                && $session->get('role') !== 'ADMIN'
+                && $session->get('role') !== 'USER'
+                && isset($defaultData->getRow()->status)
+            ):
                 $data = [
                     'title' => 'Verifikasi Usulan Pegawai',
                     'status' => @$defaultData->getRow()
@@ -355,7 +358,7 @@ class Master extends BaseController
             return view('backend/pages/master/pegawai_add', $data);
         };
 
-        if(session()->role === 'OPERATOR') {
+        if (session()->role === 'OPERATOR') {
             return redirect()->to('app/pegawai/unit');
         }
 
@@ -365,17 +368,17 @@ class Master extends BaseController
         return view('backend/pages/master/pegawai', $data);
     }
 
-    public function users($paramsType = "") {
+    public function users($paramsType = "")
+    {
         helper("hash");
 
         $request = $this->request;
-        if($request->is('put') && $request->is('ajax') && $paramsType === 'status-active') {
+        if ($request->is('put') && $request->is('ajax') && $paramsType === 'status-active') {
             $data = [
                 'is_disabled' => $request->getPost('status')
             ];
             $db = $this->db->table('users')->where('nik', $request->getPost('token'))->update($data);
-            if($db)
-            {
+            if ($db) {
                 $msg = [
                     'status' => true,
                     'message' => 'User diperbaharui',
@@ -385,13 +388,12 @@ class Master extends BaseController
             return $this->failNotFound('User not disabled');
         }
 
-        if($request->is('put') && $request->is('ajax') && $paramsType === 'set-role') {
+        if ($request->is('put') && $request->is('ajax') && $paramsType === 'set-role') {
             $data = [
                 'role' => $request->getPost('role')
             ];
             $db = $this->db->table('users')->where('nik', $request->getPost('token'))->update($data);
-            if($db)
-            {
+            if ($db) {
                 $msg = [
                     'status' => true,
                     'message' => 'Role user diperbaharui',
@@ -400,13 +402,12 @@ class Master extends BaseController
             }
             return $this->failNotFound('User not disabled');
         }
-        if($request->is('put') && $request->is('ajax') && $paramsType === 'set-account') {
+        if ($request->is('put') && $request->is('ajax') && $paramsType === 'set-account') {
             $data = [
                 'username' => $request->getPost('username')
             ];
             $db = $this->db->table('users')->where('nik', $request->getPost('token'))->update($data);
-            if($db)
-            {
+            if ($db) {
                 $msg = [
                     'status' => true,
                     'message' => 'Informasi account berhasil diperbaharui',
@@ -416,33 +417,12 @@ class Master extends BaseController
             return $this->failNotFound('User not found');
         }
 
-        if($request->is('patch') && $request->is('ajax')) {
+        if ($request->is('patch') && $request->is('ajax')) {
             $data = [
                 'password' => password_hash($request->getPost('retype_new_password'), PASSWORD_DEFAULT)
             ];
             $db = $this->db->table('users')->where('nik', $request->getPost('token'))->update($data);
-            if($db)
-            {
-                $msg = [
-                    'status' => true,
-                    'message' => 'Password telah diperbaharui',
-                ];
-                return $this->respond($msg, 200);
-            }
-            $msg = [
-                'status' => false,
-                'message' => 'Password gagal diperbaharui',
-            ];
-            return $this->respond($msg, 400);
-        }
-        
-        if($request->is('put') && $request->is('ajax') && $paramsType === 'ganti-password') {
-            $data = [
-                'password' => password_hash($request->getPost('retype_new_password'), PASSWORD_DEFAULT)
-            ];
-            $db = $this->db->table('users')->where('nik', rehash($request->getPost('token')))->update($data);
-            if($db)
-            {
+            if ($db) {
                 $msg = [
                     'status' => true,
                     'message' => 'Password telah diperbaharui',
@@ -456,10 +436,28 @@ class Master extends BaseController
             return $this->respond($msg, 400);
         }
 
-        if($request->is('post') && $request->is('ajax')) {
+        if ($request->is('put') && $request->is('ajax') && $paramsType === 'ganti-password') {
+            $data = [
+                'password' => password_hash($request->getPost('retype_new_password'), PASSWORD_DEFAULT)
+            ];
+            $db = $this->db->table('users')->where('nik', rehash($request->getPost('token')))->update($data);
+            if ($db) {
+                $msg = [
+                    'status' => true,
+                    'message' => 'Password telah diperbaharui',
+                ];
+                return $this->respond($msg, 200);
+            }
+            $msg = [
+                'status' => false,
+                'message' => 'Password gagal diperbaharui',
+            ];
+            return $this->respond($msg, 400);
+        }
+
+        if ($request->is('post') && $request->is('ajax')) {
             // ENTRI MANUAL
-            if($request->getPost('is_manual') === 'YA')
-            {
+            if ($request->getPost('is_manual') === 'YA') {
                 $data = [
                     'nik' => $request->getPost('nik'),
                     'role' => $request->getPost('role'),
@@ -469,7 +467,7 @@ class Master extends BaseController
                     'created_by' => session()->name
                 ];
                 $created = $this->db->table('users')->insert($data);
-                if($created) {
+                if ($created) {
                     $msg = [
                         'status' => true,
                         'message' => 'Userportal (Manual) Berhasil Ditambahkan',
@@ -477,7 +475,7 @@ class Master extends BaseController
                     ];
                     return $this->respond($msg, 201);
                 }
-    
+
                 $msg = [
                     'status' => false,
                     'message' => 'Userportal (Manual) gagal ditambahkan',
@@ -486,8 +484,7 @@ class Master extends BaseController
                 return $this->respond($msg, 400);
             }
             // ENTRI MANUAL DINAS
-            if($request->getPost('is_manual') === 'DINAS')
-            {
+            if ($request->getPost('is_manual') === 'DINAS') {
                 $data = [
                     'nik' => $request->getPost('nik'),
                     'role' => 'USER',
@@ -497,7 +494,7 @@ class Master extends BaseController
                     'created_by' => session()->name
                 ];
                 $created = $this->db->table('users')->insert($data);
-                if($created) {
+                if ($created) {
                     $msg = [
                         'status' => true,
                         'message' => 'Userportal (Dinas) Berhasil Ditambahkan',
@@ -505,7 +502,7 @@ class Master extends BaseController
                     ];
                     return $this->respond($msg, 201);
                 }
-    
+
                 $msg = [
                     'status' => false,
                     'message' => 'Userportal (Dinas) gagal ditambahkan',
@@ -523,7 +520,7 @@ class Master extends BaseController
                 'created_by' => session()->name
             ];
             $created = $this->db->table('users')->insert($data);
-            if($created) {
+            if ($created) {
                 $msg = [
                     'status' => true,
                     'message' => 'Userportal Berhasil Ditambahkan',
@@ -538,11 +535,9 @@ class Master extends BaseController
                 'data' => $data
             ];
             return $this->respond($msg, 400);
-
         }
 
-        if($request->is('get') && $paramsType === 'ganti-password')
-        {
+        if ($request->is('get') && $paramsType === 'ganti-password') {
             $data = [
                 'title' => 'Ganti Password ',
                 'nik' => dohash(session()->nik)
