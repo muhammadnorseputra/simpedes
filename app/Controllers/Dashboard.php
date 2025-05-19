@@ -1,24 +1,27 @@
-<?php  
+<?php
+
 namespace App\Controllers;
+
 use CodeIgniter\I18n\Time;
 
 class Dashboard extends BaseController
 {
     protected $db;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->db = db_connect();
     }
 
     private function trendsPegawaiByGender($jns_kelamin)
     {
-        if(session()->role === 'ADMIN' || session()->role === 'USER') {
+        if (session()->role === 'ADMIN' || session()->role === 'USER') {
             $db = $this->db->table('pegawai')->where('jns_kelamin', $jns_kelamin)->where('status', 'AKTIF');
         } else {
             $db = $this->db->table('pegawai')
-            ->where('jns_kelamin', $jns_kelamin)
-            ->where('status', 'AKTIF')
-            ->where('fid_unit_kerja', session()->id_unit_kerja);
+                ->where('jns_kelamin', $jns_kelamin)
+                ->where('status', 'AKTIF')
+                ->where('fid_unit_kerja', session()->id_unit_kerja);
         }
         return $db->countAllResults(false);
     }
@@ -27,9 +30,9 @@ class Dashboard extends BaseController
     {
         $builder = $this->db->table('pegawai');
 
-        if(session()->role === 'OPERATOR') {  
+        if (session()->role === 'OPERATOR') {
             $builder->where('fid_unit_kerja', session()->id_unit_kerja);
-        } 
+        }
         // Mengelompokkan pegawai berdasarkan kelompok usia
         $builder->select("CASE
                     WHEN TIMESTAMPDIFF(YEAR, tgl_lahir, CURDATE()) BETWEEN 18 AND 25 THEN '18-25'
@@ -41,10 +44,10 @@ class Dashboard extends BaseController
                     WHEN TIMESTAMPDIFF(YEAR, tgl_lahir, CURDATE()) BETWEEN 51 AND 55 THEN '51-55'
                     WHEN TIMESTAMPDIFF(YEAR, tgl_lahir, CURDATE()) BETWEEN 56 AND 60 THEN '56-60'
                     END AS kelompok_usia, COUNT(*) AS jumlah")
-        ->groupBy('kelompok_usia')
-        ->where('status', 'AKTIF')
-        ->having('kelompok_usia IS NOT NULL');
-        
+            ->groupBy('kelompok_usia')
+            ->where('status', 'AKTIF')
+            ->having('kelompok_usia IS NOT NULL');
+
         $query = $builder->get();
         $data = $query->getResultArray();
         return $data;
@@ -62,10 +65,10 @@ class Dashboard extends BaseController
         $builder->join('ref_tingkat_pendidikan tp', 'rp.fid_tingkat = tp.id_tingkat_pendidikan');
         $builder->join("({$subquery->getCompiledSelect()}) latest_rp", 'rp.nik = latest_rp.nik AND rp.created_at = latest_rp.max_created_at');
 
-        if(session()->role === 'OPERATOR') {  
+        if (session()->role === 'OPERATOR') {
             $builder->join('pegawai p', 'rp.nik = p.nik');
             $builder->where('p.fid_unit_kerja', session()->id_unit_kerja);
-        } 
+        }
 
         $builder->groupBy('rp.fid_tingkat');
         $builder->orderBy('rp.created_at', 'DESC');
@@ -83,7 +86,7 @@ class Dashboard extends BaseController
         $builder->select('ref_agama.nama_agama, COUNT(*) as total');
         $builder->join('ref_agama', 'pegawai.fid_agama = ref_agama.id_agama');
         $builder->where('pegawai.status', 'AKTIF');
-        if(session()->role === 'OPERATOR') {  
+        if (session()->role === 'OPERATOR') {
             $builder->where('pegawai.fid_unit_kerja', session()->id_unit_kerja);
         }
         $builder->groupBy('ref_agama.nama_agama');
@@ -98,7 +101,7 @@ class Dashboard extends BaseController
         $builder->select('sk.nama_status_kawin, COUNT(*) as total');
         $builder->join('ref_status_kawin sk', 'p.fid_status_kawin = sk.id_status_kawin', 'left');
         $builder->where('p.status', 'AKTIF');
-        if(session()->role === 'OPERATOR') {  
+        if (session()->role === 'OPERATOR') {
             $builder->where('p.fid_unit_kerja', session()->id_unit_kerja);
         }
         $builder->groupBy('sk.nama_status_kawin');
@@ -113,7 +116,7 @@ class Dashboard extends BaseController
         $builder->select('j.jenis, COUNT(*) as total');
         $builder->join('ref_jabatan j', 'p.fid_jabatan = j.id');
         $builder->where('p.status', 'AKTIF');
-        if(session()->role === 'OPERATOR') {  
+        if (session()->role === 'OPERATOR') {
             $builder->where('p.fid_unit_kerja', session()->id_unit_kerja);
         }
         $builder->groupBy('j.jenis');
@@ -126,7 +129,7 @@ class Dashboard extends BaseController
     {
         helper(["tgl_indo"]);
 
-        if(session()->role === 'ADMIN' || session()->role === 'USER') {
+        if (session()->role === 'ADMIN' || session()->role === 'USER') {
             $builder = $this->db->table('riwayat_tunjangan');
             $builder->select('bulan');
             $builder->selectSum('jumlah_uang');
@@ -166,16 +169,16 @@ class Dashboard extends BaseController
     {
 
         $total_pengeluaran_tunjangan_tahunan = $this->db->table('riwayat_tunjangan rj')
-        ->selectSum('rj.jumlah_uang')
-        ->join('pegawai p', 'rj.nik=p.nik', 'left')
-        ->where('rj.tahun', $year)
-        ->when(session()->role, static function($query, $status) {
-            if($status === 'OPERATOR') {
-                $query->where('p.fid_unit_kerja', session()->id_unit_kerja);
-            }
-        })
-        ->get()
-        ->getRow()->jumlah_uang;
+            ->selectSum('rj.jumlah_uang')
+            ->join('pegawai p', 'rj.nik=p.nik', 'left')
+            ->where('rj.tahun', $year)
+            ->when(session()->role, static function ($query, $status) {
+                if ($status === 'OPERATOR') {
+                    $query->where('p.fid_unit_kerja', session()->id_unit_kerja);
+                }
+            })
+            ->get()
+            ->getRow()->jumlah_uang;
 
         return $total_pengeluaran_tunjangan_tahunan;
     }
@@ -183,22 +186,22 @@ class Dashboard extends BaseController
     private function trendsAbsensiByMonth()
     {
         $query = db_connect()->table('riwayat_absensi a')
-                ->select('a.nik, 
+            ->select('a.nik, 
                            SUM(a.hadir) as total_hadir, 
                            SUM(a.izin) as total_izin, 
                            SUM(a.sakit) as total_sakit, 
                            SUM(a.tk) as total_tk, 
                            SUM(a.cuti) as total_cuti, 
                            SUM(a.tudin) as total_tudin')
-                ->join('pegawai p', 'a.nik=p.nik')
-                ->where('bulan', date('m'))
-                ->groupBy('nik')
-                ->when(session()->role, static function($query, $status) {
-                    if($status === 'OPERATOR') {
-                        $query->where('p.fid_unit_kerja', session()->id_unit_kerja);
-                    }
-                })
-                ->get();
+            ->join('pegawai p', 'a.nik=p.nik')
+            ->where('bulan', date('m'))
+            ->groupBy('nik')
+            ->when(session()->role, static function ($query, $status) {
+                if ($status === 'OPERATOR') {
+                    $query->where('p.fid_unit_kerja', session()->id_unit_kerja);
+                }
+            })
+            ->get();
         $jml_peg_hadir = [];
         $jml_peg_izin = [];
         $jml_peg_sakit = [];
@@ -206,22 +209,22 @@ class Dashboard extends BaseController
         $jml_peg_cuti = [];
         $jml_peg_tudin = [];
         foreach ($query->getResult() as $row) {
-            if($row->total_hadir != 0) {
+            if ($row->total_hadir != 0) {
                 $jml_peg_hadir[] = $row->nik;
             }
-            if($row->total_izin != 0) {
+            if ($row->total_izin != 0) {
                 $jml_peg_izin[] = $row->nik;
             }
-            if($row->total_sakit != 0) {
+            if ($row->total_sakit != 0) {
                 $jml_peg_sakit[] = $row->nik;
             }
-            if($row->total_tk != 0) {
+            if ($row->total_tk != 0) {
                 $jml_peg_tk[] = $row->nik;
             }
-            if($row->total_cuti != 0) {
+            if ($row->total_cuti != 0) {
                 $jml_peg_cuti[] = $row->nik;
             }
-            if($row->total_tudin != 0) {
+            if ($row->total_tudin != 0) {
                 $jml_peg_tudin[] = $row->nik;
             }
         }
@@ -238,44 +241,44 @@ class Dashboard extends BaseController
 
     public function index(): string
     {
-        helper(['number','tgl_indo']);
+        helper(['number', 'tgl_indo']);
         $now = new Time('now', 'Asia/Jakarta', 'id_ID');
-        
-        if(session()->role === 'ADMIN' || session()->role === 'USER') {
+
+        if (session()->role === 'ADMIN' || session()->role === 'USER') {
             $total_pegawai_bpd_aktif = $this->db->table('pegawai p')
-            ->join('ref_jabatan j', 'p.fid_jabatan=j.id')
-            ->where('p.status', 'AKTIF')
-            ->where('j.jenis', 'BPD');
+                ->join('ref_jabatan j', 'p.fid_jabatan=j.id')
+                ->where('p.status', 'AKTIF')
+                ->where('j.jenis', 'BPD');
         } else {
             $total_pegawai_bpd_aktif = $this->db->table('pegawai p')
-            ->join('ref_jabatan j', 'p.fid_jabatan=j.id')
-            ->where('p.status', 'AKTIF')
-            ->where('j.jenis', 'BPD')
-            ->where('p.fid_unit_kerja', session()->id_unit_kerja);
+                ->join('ref_jabatan j', 'p.fid_jabatan=j.id')
+                ->where('p.status', 'AKTIF')
+                ->where('j.jenis', 'BPD')
+                ->where('p.fid_unit_kerja', session()->id_unit_kerja);
         }
 
-        if(session()->role === 'ADMIN' || session()->role === 'USER') {
+        if (session()->role === 'ADMIN' || session()->role === 'USER') {
             $total_pegawai_pemdes_aktif = $this->db->table('pegawai p')
-            ->join('ref_jabatan j', 'p.fid_jabatan=j.id')
-            ->where('p.status', 'AKTIF')
-            ->where('j.jenis', 'PEMDES');
+                ->join('ref_jabatan j', 'p.fid_jabatan=j.id')
+                ->where('p.status', 'AKTIF')
+                ->where('j.jenis', 'PEMDES');
         } else {
             $total_pegawai_pemdes_aktif = $this->db->table('pegawai p')
-            ->join('ref_jabatan j', 'p.fid_jabatan=j.id')
-            ->where('p.status', 'AKTIF')
-            ->where('j.jenis', 'PEMDES')
-            ->where('p.fid_unit_kerja', session()->id_unit_kerja);
+                ->join('ref_jabatan j', 'p.fid_jabatan=j.id')
+                ->where('p.status', 'AKTIF')
+                ->where('j.jenis', 'PEMDES')
+                ->where('p.fid_unit_kerja', session()->id_unit_kerja);
         }
 
-        if(session()->role === 'ADMIN' || session()->role === 'USER') {
+        if (session()->role === 'ADMIN' || session()->role === 'USER') {
             $total_pegawai_non_aktif = $this->db->table('pegawai p')
-            ->join('ref_jabatan j', 'p.fid_jabatan=j.id')
-            ->whereIn('p.status', ['NON_AKTIF','NON_AKTIF_NIK_DITOLAK']);
+                ->join('ref_jabatan j', 'p.fid_jabatan=j.id')
+                ->whereIn('p.status', ['NON_AKTIF', 'NON_AKTIF_NIK_DITOLAK']);
         } else {
             $total_pegawai_non_aktif = $this->db->table('pegawai p')
-            ->join('ref_jabatan j', 'p.fid_jabatan=j.id')
-            ->where('p.fid_unit_kerja', session()->id_unit_kerja)
-            ->whereIn('p.status', ['NON_AKTIF','NON_AKTIF_NIK_DITOLAK']);
+                ->join('ref_jabatan j', 'p.fid_jabatan=j.id')
+                ->where('p.fid_unit_kerja', session()->id_unit_kerja)
+                ->whereIn('p.status', ['NON_AKTIF', 'NON_AKTIF_NIK_DITOLAK']);
         }
 
         $total_unit_kerja_aktif = $this->db->table('ref_unit_kerja')->where('aktif', 'Y');
@@ -293,7 +296,7 @@ class Dashboard extends BaseController
             'total_unit_kerja_aktif' => $total_unit_kerja_aktif->countAllResults(false),
             'total_desa' => $total_desa->countAll(),
             'total_userportal' => $total_userportal->countAll(),
-            'total_pengeluaran_tunjangan_tahunan' => $this->totalPengeluaranTunjanganPerTahun(2024),
+            'total_pengeluaran_tunjangan_tahunan' => $this->totalPengeluaranTunjanganPerTahun(date('Y')),
             'charts' => [
                 'gender_pria' => $this->trendsPegawaiByGender('PRIA'),
                 'gender_wanita' => $this->trendsPegawaiByGender('WANITA'),
@@ -310,5 +313,3 @@ class Dashboard extends BaseController
         return view('backend/pages/dashboard', $data);
     }
 }
-
-?>

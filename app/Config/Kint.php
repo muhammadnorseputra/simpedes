@@ -40,7 +40,7 @@ class Kint extends BaseConfig
     | RichRenderer Settings
     |--------------------------------------------------------------------------
     */
-    public string $richTheme = 'aante-light.css';
+    public string $richTheme = 'original.css';
     public bool $richFolder  = false;
     public int $richSort     = AbstractRenderer::SORT_FULL;
 
