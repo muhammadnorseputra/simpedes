@@ -150,8 +150,39 @@ class Master extends BaseController
                 $imageFile = $request->getFile('photo');
                 $ktpFile = $request->getFile('photo_ktp');
 
+                $validationRule = [
+                    'photo' => [
+                        'label' => 'Photo',
+                        'rules' => [
+                            'uploaded[photo]',
+                            'is_image[photo]',
+                            'mime_in[photo,image/jpg,image/jpeg]',
+                            'max_size[photo,300]',
+                        ],
+                    ],
+                    'photo_ktp' => [
+                        'label' => 'Photo KTP',
+                        'rules' => [
+                            'uploaded[photo_ktp]',
+                            'is_image[photo_ktp]',
+                            'mime_in[photo_ktp,image/jpg,image/jpeg]',
+                            'max_size[photo_ktp,300]',
+                        ],
+                    ],
+                ];
+
+                if (!$this->validateData([], $validationRule)) {
+                    $msg = [
+                        'statusCode' => 400,
+                        'status' => false,
+                        'message' => 'Gagal validasi data !',
+                        'errors' => $this->validator->listErrors()
+                    ];
+                    return $this->response->setJson($msg);
+                }
+
                 // jika data sudah ada dan status ENTRI_ULANG
-                if (count($ceknik->getResult()) > 0 && $ceknik->getRow()->status === 'ENTRI_ULANG') {
+                if (count($ceknik->getResult()) > 0 && $ceknik->getRow()->status === 'ENTRI_ULANG'  && $this->validateData([], $validationRule)) {
                     // upload photo
                     $updatePhotoNewName = $request->getPost('nik') . "." . $imageFile->getClientExtension();
                     if ($imageFile->isValid() === true) {

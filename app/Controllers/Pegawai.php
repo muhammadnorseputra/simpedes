@@ -1055,7 +1055,18 @@ class Pegawai extends BaseController
             $berkas_id = rehash($request->getPost('id'));
             $berkas_nik = rehash($request->getPost('nik'));
 
-            if ($berkas->isValid()) {
+            $validationRule = [
+                'berkas' => [
+                    'label' => 'Berkas',
+                    'rules' => [
+                        'uploaded[berkas]',
+                        'mime_in[berkas,application/pdf]',
+                        'max_size[berkas,1024]',
+                    ],
+                ],
+            ];
+
+            if ($berkas->isValid() && $this->validateData([], $validationRule)) {
                 // upload berkas
                 $filename = $tahun . "-" . $berkas_id . "-" . $berkas_nik . "." . $berkas->getClientExtension();
                 $berkas->move("assets/file_lhkpn/", $filename, true);
